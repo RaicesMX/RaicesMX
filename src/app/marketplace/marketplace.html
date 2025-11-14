@@ -1,0 +1,80 @@
+<!-- src/app/marketplace/marketplace.component.html -->
+<div class="marketplace-container">
+
+  <!-- HEADER -->
+  <header class="header-marketplace">
+    <div class="header-content">
+      <div class="header-left">
+        <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-header">
+        <span class="logo-text">RaícesMX</span>
+        <span class="separator">|</span>
+        <span class="header-desc">Artesanías Mexicanas Auténticas</span>
+      </div>
+
+      <div class="header-center">
+        <input type="text" placeholder="Buscar..." class="search-input">
+        <button class="btn-search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="white" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="header-right">
+        <a href="#" class="nav-link">Inicio</a>
+        <a href="#" class="nav-link">Categorías</a>
+        <a href="#" class="nav-link">Catálogo</a>
+        <a href="#" class="nav-link cart-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+          </svg>
+        </a>
+        <a href="#" class="nav-link">Perfil</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO SIMPLE -->
+  <section class="hero-section">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="franjas-doradas">
+      <div class="franja f1"></div>
+      <div class="franja f2"></div>
+      <div class="franja f3"></div>
+    </div>
+
+    <div class="hero-content">
+      <h1 class="hero-title">Descubre <span class="dorado">RaícesMX</span></h1>
+      <p class="hero-subtitle">Artesanías mexicanas auténticas</p>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS (AHORA SÍ SE VERÁN) -->
+  <section class="productos-section">
+    <div class="container">
+      <h2 class="section-title">Explora Nuestros Productos</h2>
+      <div class="productos-grid">
+        <div class="producto-card" *ngFor="let producto of productos">
+          <div class="card-image">
+            <!-- IMAGEN CON RUTA ABSOLUTA PARA FORZAR CARGA -->
+            <img [src]="producto.imagen" [alt]="producto.nombre" (error)="onImgError($event)">
+          </div>
+          <div class="card-content">
+            <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+            <p class="producto-precio">${{ producto.precio }} MXN</p>
+            <div class="card-actions">
+              <a href="/">Ver más</a>
+              <button class="btn-agregar">Agregar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer-marketplace">
+    <p>© 2025 RaícesMX – Equipo III. Todos los derechos reservados.</p>
+  </footer>
+</div>

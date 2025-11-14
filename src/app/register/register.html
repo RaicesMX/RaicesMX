@@ -1,0 +1,128 @@
+<!-- src/app/register/register.component.html -->
+<div class="register-wrapper">
+  <div class="bg-alebrije"></div>
+  <div class="overlay-alebrije"></div>
+
+  <div class="particulas">
+    <div class="particula large"></div>
+    <div class="particula medium"></div>
+    <div class="particula large"></div>
+    <div class="particula small"></div>
+    <div class="particula medium"></div>
+  </div>
+
+  <div class="portal-ring"></div>
+
+  <form (ngSubmit)="onSubmit()" class="form-registro">
+    <div class="form-header">
+      <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-registro">
+      <h1 class="titulo-raiz">
+        <span class="vino">Raíces</span><span class="dorado">MX</span>
+      </h1>
+      <p class="subtitulo-raiz">Únete a nuestra comunidad</p>
+    </div>
+
+    <div class="inputs-grid">
+      <!-- Nombre -->
+      <div class="input-group">
+        <label>Nombre</label>
+        <input
+          type="text"
+          placeholder="Tu nombre"
+          [(ngModel)]="nombre"
+          name="nombre"
+          required
+          class="input-registro"
+        />
+      </div>
+
+      <!-- Apellido -->
+      <div class="input-group">
+        <label>Apellido</label>
+        <input
+          type="text"
+          placeholder="Tu apellido"
+          [(ngModel)]="apellido"
+          name="apellido"
+          required
+          class="input-registro"
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="input-group full">
+        <label>Correo Electrónico</label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            placeholder="tu@raices.mx"
+            [(ngModel)]="email"
+            name="email"
+            required
+            email
+            class="input-registro"
+          />
+        </div>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="input-group full">
+        <label>Contraseña</label>
+        <div class="input-wrapper password-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Mínimo 8 caracteres"
+            [(ngModel)]="password"
+            name="password"
+            required
+            minlength="8"
+            class="input-registro"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <span class="icon-eye"></span>
+          </button>
+        </div>
+        <p class="password-hint">
+          Debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo.
+        </p>
+      </div>
+
+      <!-- Confirmar -->
+      <div class="input-group full">
+        <label>Confirmar Contraseña</label>
+        <div class="input-wrapper password-wrapper">
+          <input
+            [type]="showConfirm ? 'text' : 'password'"
+            placeholder="Repite tu contraseña"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            required
+            class="input-registro"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="toggleConfirm()"
+            [attr.aria-label]="showConfirm ? 'Ocultar' : 'Mostrar'"
+          >
+            <span class="icon-eye"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-registro">
+      <span>Crear Cuenta</span>
+      <div class="btn-ripple"></div>
+    </button>
+
+    <p class="link-login">
+      ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a>
+    </p>
+  </form>
+</div>

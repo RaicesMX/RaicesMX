@@ -1,0 +1,91 @@
+$gold: #D4AF37;
+$vino: #7A1A2C;
+$white: #FFFFFF;
+
+.detalle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, $vino 20%, darken($vino, 10%) 80%);
+  padding: 4rem 2rem;
+}
+
+.detalle-card {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 20px;
+  max-width: 800px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.detalle-img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.detalle-info {
+  padding: 2rem;
+  text-align: center;
+}
+
+.detalle-nombre {
+  font-size: 2rem;
+  font-weight: 800;
+  color: $vino;
+}
+
+.detalle-precio {
+  color: $gold;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 1rem 0;
+}
+
+.detalle-descripcion {
+  color: #444;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.detalle-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+button {
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-volver {
+  background: transparent;
+  color: $vino;
+  border: 2px solid $vino;
+
+  &:hover { background: $vino; color: white; }
+}
+
+.btn-agregar {
+  background: $vino;
+  color: white;
+
+  &:hover { background: lighten($vino, 10%); }
+}
+
+.btn-compartir {
+  background: $gold;
+  color: white;
+
+  &:hover { background: darken($gold, 10%); }
+}
