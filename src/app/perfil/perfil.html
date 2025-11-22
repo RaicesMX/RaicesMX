@@ -1,0 +1,224 @@
+<div class="perfil-container">
+<!-- Header (se mantiene igual) -->
+<header class="header-marketplace">
+    <div class="header-content">
+        <div class="header-left">
+            <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-header">
+                <span class="logo-text">RaícesMX</span>
+                <span class="separator">|</span>
+                <span class="header-desc">Artesanías Mexicanas Auténticas</span>
+        </div>
+<div class="header-center">
+        <input type="text" placeholder="Buscar productos..." class="search-input">
+    <button class="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="white" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+    </button>
+</div>
+    <nav class="header-right">
+        <a class="nav-link" routerLink="/marketplace">Inicio</a>
+        <a class="nav-link" routerLink="/categorias">Categorías</a>
+        <a class="nav-link" routerLink="/ofertas">Ofertas</a>
+        <a class="nav-link" routerLink="/ayuda">Ayuda</a>
+        <a class="nav-link" routerLink="/favoritos">Favoritos</a>
+        <a class="nav-link cart-link" routerLink="/carrito">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+            </svg>
+            <span class="cart-badge">2</span>
+        </a>
+        <a class="nav-link active" routerLink="/perfil">Perfil</a>
+    </nav>
+    </div>
+</header>
+<!-- Contenido principal del perfil como Dashboard -->
+<main class="perfil-main">
+    <div class="perfil-content">  
+<!-- Banner de bienvenida -->
+<section class="bienvenida-section">
+    <div class="bienvenida-content">
+        <h1>¡Hola, {{ usuario.nombre.split(' ')[0] }}! 👋</h1>
+        <p>Gestiona tu cuenta y preferencias desde aquí</p>
+    </div>
+        <div class="estadisticas-rapidas">
+            <div class="estadistica">
+                <span class="numero">5</span>
+                <span class="label">Pedidos</span>
+            </div>
+        <div class="estadistica">
+            <span class="numero">12</span>
+            <span class="label">Favoritos</span>
+        </div>
+        <div class="estadistica">
+            <span class="numero">2</span>
+            <span class="label">Direcciones</span>
+        </div>
+    </div>
+</section>
+
+<!-- Panel de control con pestañas -->
+<div class="dashboard-panel">
+<!-- Navegación por pestañas -->
+    <nav class="tab-navigation">
+        <button class="tab-btn" 
+                [class.active]="tabActiva === 'informacion'" 
+                (click)="cambiarTab('informacion')">
+                    📋 Información Personal
+        </button>
+        <button class="tab-btn" 
+                [class.active]="tabActiva === 'direcciones'" 
+                (click)="cambiarTab('direcciones')">
+                📍 Direcciones
+        </button>
+        <button class="tab-btn" 
+                [class.active]="tabActiva === 'privacidad'" 
+                (click)="cambiarTab('privacidad')">
+                🔒 Privacidad y Seguridad
+        </button>
+    </nav>
+<!-- Contenido de las pestañas -->
+        <div class="tab-content">
+<!-- Pestaña: Información Personal -->
+          <div *ngIf="tabActiva === 'informacion'" class="tab-pane">
+            <div class="pane-header">
+                <h2>Información Personal</h2>
+                <button class="btn-editar" (click)="toggleEdicion()">
+                    {{ editando ? 'Cancelar' : 'Editar Información' }}
+                </button>
+            </div>
+
+<div class="formulario-perfil">
+    <div class="form-row">
+        <div class="form-group">
+            <label>Nombre completo *</label>
+            <div *ngIf="!editando" class="info-value">{{ usuario.nombre }}</div>
+            <input *ngIf="editando" type="text" [(ngModel)]="usuarioEditado.nombre" class="form-input">
+        </div>
+        <div class="form-group">
+            <label>CURP *</label>
+            <div *ngIf="!editando" class="info-value">{{ usuario.curp }}</div>
+                <input *ngIf="editando" type="text" [(ngModel)]="usuarioEditado.curp" class="form-input" 
+                placeholder="ABCD123456HEMLMN09" maxlength="18">
+        </div>
+        </div>
+
+<div class="form-row">
+    <div class="form-group">
+        <label>Correo electrónico *</label>
+            <div *ngIf="!editando" class="info-value">{{ usuario.email }}</div>
+                <input *ngIf="editando" type="email" [(ngModel)]="usuarioEditado.email" class="form-input">
+    </div>
+    <div class="form-group">
+        <label>Teléfono *</label>
+            <div *ngIf="!editando" class="info-value">{{ usuario.telefono }}</div>
+                <input *ngIf="editando" type="tel" [(ngModel)]="usuarioEditado.telefono" class="form-input">
+    </div>
+</div>
+
+<div class="form-group">
+    <label>Fecha de nacimiento</label>
+        <div *ngIf="!editando" class="info-value">{{ usuario.fechaNacimiento | date:'longDate' }}</div>
+    <input *ngIf="editando" type="date" [(ngModel)]="usuarioEditado.fechaNacimiento" class="form-input">
+</div>
+
+<!-- Botón guardar en modo edición -->
+<div *ngIf="editando" class="acciones-formulario">
+            <button class="btn-guardar" (click)="guardarCambios()">Guardar Cambios</button>
+            <button class="btn-cancelar" (click)="toggleEdicion()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Pestaña: Direcciones -->
+    <div *ngIf="tabActiva === 'direcciones'" class="tab-pane">
+        <div class="pane-header">
+            <h2>Mis Direcciones</h2>
+            <button class="btn-primary" (click)="agregarDireccion()">
+            ＋ Agregar Dirección
+        </button>
+    </div>
+
+<div class="direcciones-list">
+    <div *ngFor="let direccion of direcciones; let i = index" class="direccion-card">
+        <div class="direccion-header">
+            <h3>{{ direccion.nombre }}</h3>
+                <span *ngIf="direccion.principal" class="badge-principal">Principal</span>
+            </div>
+                
+            <div class="direccion-info">
+                <p><strong>Dirección:</strong> {{ direccion.calle }}, {{ direccion.colonia }}</p>
+                <p><strong>Ciudad:</strong> {{ direccion.ciudad }}, {{ direccion.estado }}</p>
+                <p><strong>C.P.:</strong> {{ direccion.codigoPostal }}</p>
+                <p><strong>Entre calles:</strong> {{ direccion.entreCalles }}</p>
+                <p><strong>Instrucciones:</strong> {{ direccion.instrucciones }}</p>
+            </div>
+
+            <div class="direccion-acciones">
+                <button class="btn-secundario" (click)="editarDireccion(i)">Editar</button>
+                    <button *ngIf="!direccion.principal" class="btn-secundario" (click)="establecerPrincipal(i)">
+                        Establecer como principal
+                    </button>
+                <button class="btn-eliminar" (click)="eliminarDireccion(i)">Eliminar</button>
+                </div>
+            </div>
+
+              <div *ngIf="direcciones.length === 0" class="sin-direcciones">
+                <p>No tienes direcciones guardadas</p>
+                <button class="btn-primary" (click)="agregarDireccion()">Agregar primera dirección</button>
+            </div>
+        </div>
+    </div>
+<!-- Pestaña: Privacidad y Seguridad -->
+          <div *ngIf="tabActiva === 'privacidad'" class="tab-pane">
+            <div class="pane-header">
+                <h2>Privacidad y Seguridad</h2>
+            </div>
+
+            <div class="configuraciones-list">
+                <div class="configuracion-item">
+                <div class="config-info">
+                    <h3>Cambiar Contraseña</h3>
+                    <p>Actualiza tu contraseña regularmente para mantener tu cuenta segura</p>
+                </div>
+                <button class="btn-primary" (click)="cambiarContrasena()">Cambiar</button>
+            </div>
+
+            <div class="configuracion-item">
+                <div class="config-info">
+                    <h3>Verificación en dos pasos</h3>
+                    <p>Añade una capa extra de seguridad a tu cuenta</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" [(ngModel)]="verificacionDosPasos">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="configuracion-item">
+                <div class="config-info">
+                    <h3>Notificaciones por email</h3>
+                    <p>Recibe notificaciones sobre tus pedidos y ofertas especiales</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" [(ngModel)]="notificacionesEmail" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="configuracion-item">
+                <div class="config-info">
+                    <h3>Eliminar cuenta</h3>
+                    <p>Elimina permanentemente tu cuenta y todos tus datos</p>
+                </div>
+                <button class="btn-eliminar-cuenta" (click)="eliminarCuenta()">Eliminar Cuenta</button>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+    </div>
+    </main>
+</div>

@@ -1,6 +1,4 @@
-/* src/app/marketplace/marketplace.component.scss */
 @import '../welcome/welcome.scss';
-
 $gold: #D4AF37;
 $vino: #7A1A2C;
 $white: #FFFFFF;
@@ -15,8 +13,7 @@ $gray-light: #f8f9fa;
   overflow-y: auto;
 }
 
-
-/* === HEADER === */
+/* === HEADER MEJORADO === */
 .header-marketplace {
   position: fixed;
   top: 0;
@@ -40,18 +37,310 @@ $gray-light: #f8f9fa;
   gap: 1rem;
 }
 
-.header-left { display: flex; align-items: center; gap: 0.8rem; font-weight: 600; }
-.logo-header { width: 40px; filter: drop-shadow(0 0 8px rgba($gold, 0.4)); }
-.logo-text { font-weight: 800; color: $vino; font-size: 1.15rem; }
-.separator { color: #a0aec0; }
-.header-desc { color: #4a5568; font-size: 0.9rem; }
+.header-left { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.8rem; 
+  font-weight: 600; 
+  
+  &:hover {
+    cursor: pointer;
+    .logo-header {
+      transform: scale(1.05);
+    }
+  }
+}
 
-.header-center { display: flex; gap: 0.5rem; flex: 1; max-width: 400px; margin: 0 2rem; }
-.search-input { padding: 0.6rem 1rem; border: 1px solid #ddd; border-radius: 50px; width: 100%; &:focus { outline: none; border-color: $vino; } }
-.btn-search { background: $vino; color: white; border: none; padding: 0.6rem 1rem; border-radius: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.logo-header { 
+  width: 40px; 
+  filter: drop-shadow(0 0 8px rgba($gold, 0.4)); 
+  transition: transform 0.3s ease;
+}
 
-.header-right { display: flex; align-items: center; gap: 1.2rem; }
-.nav-link { color: #2d3748; text-decoration: none; font-weight: 500; font-size: 0.95rem; &:hover { color: $vino; } }
+.logo-text { 
+  font-weight: 800; 
+  color: $vino; 
+  font-size: 1.15rem; 
+}
+
+.separator { 
+  color: #a0aec0; 
+}
+
+.header-desc { 
+  color: #4a5568; 
+  font-size: 0.9rem; 
+}
+
+.header-center { 
+  display: flex; 
+  gap: 0.5rem; 
+  flex: 1; 
+  max-width: 400px; 
+  margin: 0 2rem; 
+}
+
+.search-input { 
+  padding: 0.6rem 1.5rem; 
+  border: 1px solid #e2e8f0; 
+  border-radius: 50px; 
+  width: 100%; 
+  font-size: 0.9rem;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+  
+  &:focus { 
+    outline: none; 
+    border-color: $vino; 
+    background: white;
+    box-shadow: 0 0 0 3px rgba($vino, 0.1);
+  } 
+  
+  &::placeholder {
+    color: #94a3b8;
+  }
+}
+
+.btn-search { 
+  background: linear-gradient(135deg, $vino, darken($vino, 10%)); 
+  color: white; 
+  border: none; 
+  padding: 0.6rem 1.2rem; 
+  border-radius: 50px; 
+  cursor: pointer; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    background: linear-gradient(135deg, lighten($vino, 5%), $vino);
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba($vino, 0.3);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: ripple 0.6s ease-out;
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.header-right { 
+  display: flex; 
+  align-items: center; 
+  gap: 1rem; 
+}
+
+.nav-link { 
+    color: #2d3748; 
+    text-decoration: none; 
+    font-weight: 500; 
+    font-size: 0.9rem; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    position: relative;
+    white-space: nowrap;
+    
+    /* ESTADO NORMAL Y HOVER - CORREGIDO */
+    &:hover { 
+        color: $vino; 
+        background: rgba($vino, 0.05);
+        transform: translateY(-2px);
+    }
+    
+    /* Pseudo-elemento after para el subrayado */
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: $vino;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+    
+    /* Subrayado al hover - CORREGIDO */
+    &:hover::after {
+        width: 70%;
+    }
+    
+    /* ESTADO ACTIVO - CORREGIDO */
+    &.active {
+        color: $vino;
+        background: rgba($vino, 0.1);
+        font-weight: 600;
+        transform: none;
+        
+        &::after {
+            width: 70%;
+        }
+        
+        &:hover {
+            color: $vino;
+            background: rgba($vino, 0.1);
+            transform: none;
+        }
+    }
+}
+
+/* Estilos específicos para el ícono del carrito */
+.cart-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  &::after {
+    display: none; /* Remove underline for icon */
+  }
+  
+  &:hover {
+    background: rgba($gold, 0.1);
+    
+    svg {
+      transform: scale(1.1);
+    }
+  }
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
+}
+
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: $gold;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+}
+
+/* Animación de pulso para el badge del carrito */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($gold, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 5px rgba($gold, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($gold, 0);
+  }
+}
+
+/* Ripple effect animation */
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+  }
+  100% {
+    width: 200%;
+    height: 200%;
+    opacity: 0;
+  }
+}
+
+/* Responsive header mejorado */
+@media (max-width: 992px) {
+  .header-content { 
+    flex-direction: column; 
+    align-items: stretch; 
+    gap: 0.8rem;
+  }
+  
+  .header-center { 
+    order: 3; 
+    width: 100%; 
+    margin: 0.5rem 0; 
+  }
+  
+  .header-right { 
+    order: 2; 
+    justify-content: center;
+    gap: 0.8rem;
+  }
+  
+  .nav-link {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-marketplace {
+    padding: 0.7rem 1rem;
+  }
+  
+  .header-left {
+    gap: 0.5rem;
+  }
+  
+  .logo-text {
+    font-size: 1rem;
+  }
+  
+  .header-desc {
+    font-size: 0.8rem;
+  }
+  
+  .header-right {
+    gap: 0.5rem;
+  }
+  
+  .nav-link {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .search-input {
+    padding: 0.5rem 1rem;
+  }
+  
+  .btn-search {
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-desc {
+    display: none; /* Ocultar descripción en móviles muy pequeños */
+  }
+  
+  .separator {
+    display: none;
+  }
+}
 
 /* === HERO === */
 .hero-section {
@@ -184,11 +473,17 @@ $gray-light: #f8f9fa;
   font-weight: 600;
   text-decoration: none;
   font-size: 0.9rem;
-  &:hover { text-decoration: underline; }
+  transition: all 0.3s ease;
+  
+  &:hover { 
+    text-decoration: underline;
+    color: darken($vino, 10%);
+    transform: translateX(5px);
+  }
 }
 
 .btn-agregar {
-  background: $vino;
+  background: linear-gradient(135deg, $vino, darken($vino, 10%));
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
@@ -196,8 +491,28 @@ $gray-light: #f8f9fa;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
-  &:hover { background: lighten($vino, 8%); transform: scale(1.05); }
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &:hover { 
+    background: linear-gradient(135deg, lighten($vino, 5%), $vino);
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba($vino, 0.3);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: ripple 0.6s ease-out;
+    }
+  }
 }
 
 /* === FOOTER === */
@@ -220,7 +535,22 @@ $gray-light: #f8f9fa;
 @media (max-width: 768px) {
   .hero-title { font-size: 2.8rem; }
   .hero-subtitle { font-size: 1.2rem; }
+  
+  .productos-section {
+    padding: 4rem 1rem 6rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .productos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+  }
 }
+
 /* Compensar el header fijo */
 .productos-section,
 .hero-section {

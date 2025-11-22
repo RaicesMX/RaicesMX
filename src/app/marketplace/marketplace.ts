@@ -1,50 +1,72 @@
-// src/app/marketplace/marketplace.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-marketplace',
   templateUrl: './marketplace.html',
   styleUrls: ['./marketplace.scss'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, RouterModule]
 })
 export class MarketplaceComponent {
+  itemsCarrito: number = 3;
+  
   productos = [
     {
+      id: 1,
+      nombre: 'Jarrón de Talavera Poblana',
+      precio: 850,
+      imagen: 'assets/images/Jarrón_Talavera.jpg'
+    },
+    {
+      id: 2,
       nombre: 'Alebrije Artesanal',
       precio: 450,
       imagen: 'assets/images/Alebrigue_Artesanal.jpg'
     },
     {
-      nombre: 'Blusa Bordada',
+      id: 3,
+      nombre: 'Blusa Bordada Tradicional',
       precio: 380,
       imagen: 'assets/images/Blusa_Bordada.jpg'
     },
     {
+      id: 4,
       nombre: 'Cerámica Talavera',
       precio: 220,
       imagen: 'assets/images/Ceramica_Talavera.jpg'
     },
     {
-      nombre: 'Jarrón Talavera',
-      precio: 520,
-      imagen: 'assets/images/Jarrón_Talavera.jpg'
+      id: 5,
+      nombre: 'Máscara Huichol Artesanal',
+      precio: 620,
+      imagen: 'assets/images/Máscara_Huichol.jpg'
     },
     {
-      nombre: 'Plato Talavera',
+      id: 6,
+      nombre: 'Plato Talavera Decorativo',
       precio: 180,
       imagen: 'assets/images/Plato_Talavera.jpg'
-    },
-    {
-      nombre: 'Máscara Huichol',
-      precio: 680,
-      imagen: 'assets/images/Máscara_Huichol.jpg'
     }
   ];
 
+  // 🟦 Añade el método agregarAlCarrito
+  agregarAlCarrito(producto: any) {
+    this.itemsCarrito++;
+    alert(`Agregado al carrito: ${producto.nombre}`);
+  }
+
   // Fallback si no carga
   onImgError(event: any) {
-    event.target.src = 'assets/images/TO.png'; // Usa esta imagen como respaldo
+    event.target.src = 'assets/images/TO.png';
+  }
+  
+  // 🟦 Verificar página activa para resaltar en el header
+  esPaginaActiva(ruta: string): boolean {
+    if (typeof window !== 'undefined') {
+        return window.location.pathname === ruta;
+    }
+    return false;
   }
 }

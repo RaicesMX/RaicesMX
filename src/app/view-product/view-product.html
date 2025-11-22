@@ -1,0 +1,174 @@
+<div class="product-view">
+<!-- ===== HEADER ===== -->
+<header class="header-marketplace">
+    <div class="header-content">
+        <div class="header-left">
+            <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-header">
+            <span class="logo-text">RaícesMX</span>
+            <span class="separator">|</span>
+            <span class="header-desc">Artesanías Mexicanas Auténticas</span>
+        </div>
+
+    <div class="header-center">
+        <input type="text" placeholder="Buscar productos..." class="search-input">
+        <button class="btn-search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="white" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+        </button>
+    </div>
+<!-- ========== BARRA DE NAVEGACIÓN ======== -->
+    <nav class="header-right">
+        <a class="nav-link" routerLink="/marketplace">Inicio</a>
+        <a class="nav-link" routerLink="/categorias">Categorías</a>
+        <a class="nav-link" routerLink="/ofertas">Ofertas</a>
+        <a class="nav-link" routerLink="/ayuda">Ayuda</a>
+        <a class="nav-link" routerLink="/favoritos">Favoritos</a>
+        <a class="nav-link cart-link" routerLink="/carrito">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+            </svg>
+        <span class="cart-badge" *ngIf="itemsCarrito > 0">{{ itemsCarrito }}</span>
+    </a>
+<!-- PERFIL ACTUALIZADO -->
+            <a class="nav-link" routerLink="/perfil">Perfil</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ===== CONTENIDO PRINCIPAL ===== -->
+<div class="product-container">
+
+    <!-- =========== GALERÍA + INFORMACIÓN ======== -->
+    <div class="product-main">
+
+        <!-- ===== GALERÍA CORREGIDA ===== -->
+        <div class="product-gallery">
+            <!-- Contenedor principal SIMPLIFICADO -->
+            <div class="main-img-container" [class.zoomed]="imagenZoomed">
+                <!-- Imagen principal -->
+                <img 
+                    [src]="producto.imagen" 
+                    class="main-img" 
+                    alt="Producto"
+                    (click)="alternarZoom()"
+                    #mainImage
+                />
+                
+                <!-- Indicador de zoom (solo cuando NO está en zoom) -->
+                <div class="zoom-indicator" *ngIf="!imagenZoomed">
+                    🔍 Click para zoom
+                </div>
+                
+                <!-- Controles de zoom (solo cuando ESTÁ en zoom) -->
+                <div class="zoom-controls" *ngIf="imagenZoomed">
+                    <button class="zoom-btn" (click)="cerrarZoom($event)">
+                        <span>✕</span>
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Miniaturas -->
+            <div class="thumbs">
+                <img 
+                    *ngFor="let img of producto.imagenes; let i = index" 
+                    [src]="img" 
+                    class="thumb" 
+                    [class.active]="i === imagenActiva"
+                    (click)="cambiarImagen(i)"
+                    (load)="onImageLoad()"
+                />
+            </div>
+        </div>
+
+        <!-- Información -->
+        <div class="product-info">
+            <h1 class="product-name">{{ producto.nombre }}</h1>
+
+            <!-- Sistema de calificación interactivo -->
+            <div class="product-rating">
+                <div class="stars-container">
+                    <span *ngFor="let star of [1,2,3,4,5]; let i = index" 
+                        class="star"
+                        [class.active]="i < calificacionUsuario"
+                        (click)="calificar(i + 1)"
+                        (mouseover)="hoverCalificacion = i + 1"
+                        (mouseleave)="hoverCalificacion = 0">
+                        ★
+                    </span>
+                </div>
+                <span class="rating-count">({{ producto.resenas?.length || 124 }} reseñas)</span>
+                <span *ngIf="calificacionUsuario > 0" class="user-rating">
+                    Tu calificación: {{ calificacionUsuario }} ⭐
+                </span>
+            </div>
+
+            <p class="product-price">${{ producto.precio }} MXN</p>
+
+            <p class="product-description">{{ producto.descripcion }}</p>
+
+            <div class="product-stock" [class.low-stock]="producto.stock < 10">
+                Stock disponible: <strong>{{ producto.stock }}</strong>
+                <span *ngIf="producto.stock < 10" class="stock-warning"> - ¡Últimas unidades!</span>
+            </div>
+
+            <div class="qty-container">
+                <label>Cantidad:</label>
+                <div class="qty-controls">
+                    <button class="qty-btn" (click)="disminuir()" [disabled]="cantidad <= 1">-</button>
+                    <input type="number" min="1" [max]="producto.stock" [(ngModel)]="cantidad" class="qty-input" />
+                    <button class="qty-btn" (click)="aumentar()" [disabled]="cantidad >= producto.stock">+</button>
+                </div>
+            </div>
+
+            <!-- Botones principales con efectos -->
+            <div class="actions">
+                <button class="btn-buy" (click)="comprarAhora()">
+                    <span class="btn-content">Comprar ahora</span>
+                    <div class="btn-glow"></div>
+                </button>
+                <button class="btn-add" (click)="agregarAlCarrito()">
+                    <span class="btn-content">Agregar al carrito</span>
+                    <div class="btn-glow"></div>
+                </button>
+                <button class="btn-share" (click)="compartir()">
+                    <span class="btn-content">Compartir</span>
+                </button>
+            </div>
+
+            <!-- Envío -->
+            <div class="shipping-box">
+                <h3>Envío</h3>
+                <p>📦 Llegada estimada: <strong>2 - 5 días</strong></p>
+                <p>🚚 Costo estimado: <strong>$79 MXN</strong></p>
+                <p>↩️ Devoluciones: <strong>30 días</strong></p>
+            </div>
+
+            <!-- Información del vendedor -->
+            <div class="seller-box">
+                <h3>Vendedor</h3>
+                <p><strong>Artesanos de México</strong></p>
+                <p class="seller-desc">Productos 100% hechos a mano por artesanos.</p>
+                <div class="seller-rating">
+                    ⭐⭐⭐⭐⭐ (4.8/5.0)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======== PRODUCTOS RELACIONADOS ========= -->
+    <div class="related-section">
+        <h2>Productos relacionados</h2>
+
+        <div class="related-grid">
+            <div class="related-card" *ngFor="let prod of productosRelacionados">
+            <img [src]="prod.imagen" />
+            <h4>{{ prod.nombre }}</h4>
+            <p>${{ prod.precio }} MXN</p>
+            <button class="btn-ver" (click)="verProducto(prod.id)">Ver producto</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
