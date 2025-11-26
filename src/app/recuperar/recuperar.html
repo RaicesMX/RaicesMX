@@ -1,0 +1,228 @@
+<div class="portal-wrapper">
+<!-- Fondo Alebrije + Overlay -->
+    <div class="bg-alebrije"></div>
+        <div class="overlay-alebrije"></div>
+
+<!-- Partículas Doradas -->
+    <div class="particulas">
+        <div class="particula large"></div>
+        <div class="particula medium"></div>
+        <div div class="particula large"></div>
+        <div class="particula small"></div>
+        <div class="particula medium"></div>
+        <div class="particula large"></div>
+        <div class="particula small"></div>
+    </div>
+
+  <!-- Anillo giratorio -->
+<div class="portal-ring"></div>
+
+<!-- Formulario -->
+  <div class="formulario-raiz" #formulario>
+    <div class="form-header">
+      <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-alebrije">
+      <h1 class="titulo-raiz">
+        <span class="vino">Raíces</span><span class="dorado">MX</span>
+      </h1>
+      <p class="subtitulo-raiz">Recupera tu acceso al mercado artesanal</p>
+    </div>
+
+    <!-- Paso 1: Ingresar email -->
+    <form *ngIf="currentStep === 1" (ngSubmit)="onSubmitEmail()" class="form-raiz">
+      <div class="step-indicator">
+        <div class="step active">1</div>
+        <div class="step-line"></div>
+        <div class="step">2</div>
+        <div class="step-line"></div>
+        <div class="step">3</div>
+      </div>
+
+      <h3 class="step-title">Ingresa tu correo electrónico</h3>
+      
+      <div class="input-group">
+        <label for="email">Correo Electrónico</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="tu@raices.mx"
+          [(ngModel)]="email"
+          name="email"
+          required
+          class="input-raiz"
+        />
+        <div class="input-hint">
+          Te enviaremos un código de verificación a este correo
+        </div>
+      </div>
+
+      <button type="submit" class="btn-raiz" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Enviar Código</span>
+        <span *ngIf="isLoading" class="loading-text">
+          <div class="spinner"></div>
+          Enviando...
+        </span>
+        <div class="btn-ripple"></div>
+      </button>
+    </form>
+
+    <!-- Paso 2: Verificar código -->
+    <form *ngIf="currentStep === 2" (ngSubmit)="onSubmitCode()" class="form-raiz">
+      <div class="step-indicator">
+        <div class="step completed">1</div>
+        <div class="step-line completed"></div>
+        <div class="step active">2</div>
+        <div class="step-line"></div>
+        <div class="step">3</div>
+      </div>
+
+      <h3 class="step-title">Verifica tu identidad</h3>
+      <p class="step-description">
+        Hemos enviado un código de 6 dígitos a: <strong>{{ email }}</strong>
+      </p>
+      
+      <div class="input-group">
+        <label for="verificationCode">Código de Verificación</label>
+        <input
+          type="text"
+          id="verificationCode"
+          placeholder="123456"
+          [(ngModel)]="verificationCode"
+          name="verificationCode"
+          maxlength="6"
+          required
+          class="input-raiz code-input"
+        />
+        <div class="code-actions">
+          <button type="button" class="btn-link" (click)="resendCode()" [disabled]="resendCooldown > 0">
+            Reenviar código {{ resendCooldown > 0 ? '(' + resendCooldown + 's)' : '' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="previousStep()">
+          ← Volver
+        </button>
+        <button type="submit" class="btn-raiz" [disabled]="isLoading || verificationCode.length !== 6">
+          <span *ngIf="!isLoading">Verificar Código</span>
+          <span *ngIf="isLoading" class="loading-text">
+            <div class="spinner"></div>
+            Verificando...
+          </span>
+        </button>
+      </div>
+    </form>
+
+    <!-- Paso 3: Nueva contraseña -->
+    <form *ngIf="currentStep === 3" (ngSubmit)="onSubmitNewPassword()" class="form-raiz">
+      <div class="step-indicator">
+        <div class="step completed">1</div>
+        <div class="step-line completed"></div>
+        <div class="step completed">2</div>
+        <div class="step-line completed"></div>
+        <div class="step active">3</div>
+      </div>
+
+      <h3 class="step-title">Crea tu nueva contraseña</h3>
+      
+      <div class="input-group">
+        <label for="newPassword">Nueva Contraseña</label>
+        <div class="password-wrapper">
+          <input
+            [type]="showNewPassword ? 'text' : 'password'"
+            id="newPassword"
+            placeholder="••••••••"
+            [(ngModel)]="newPassword"
+            name="newPassword"
+            required
+            class="input-raiz"
+            (input)="checkPasswordStrength()"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="toggleNewPassword()"
+            [attr.aria-label]="showNewPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <span class="icon-eye"></span>
+          </button>
+        </div>
+        <div class="password-strength" [class]="passwordStrength">
+          Seguridad: {{ getPasswordStrengthText() }}
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <div class="password-wrapper">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            id="confirmPassword"
+            placeholder="••••••••"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            required
+            class="input-raiz"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="toggleConfirmPassword()"
+            [attr.aria-label]="showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <span class="icon-eye"></span>
+          </button>
+        </div>
+        <div class="password-match" [class.valid]="passwordsMatch()" [class.invalid]="confirmPassword && !passwordsMatch()">
+          {{ getPasswordMatchText() }}
+        </div>
+      </div>
+
+      <div class="password-requirements">
+        <h4>Requisitos de seguridad:</h4>
+        <ul>
+          <li [class.valid]="newPassword.length >= 8">Mínimo 8 caracteres</li>
+          <li [class.valid]="hasUpperCase">Una letra mayúscula</li>
+          <li [class.valid]="hasLowerCase">Una letra minúscula</li>
+          <li [class.valid]="hasNumber">Un número</li>
+          <li [class.valid]="hasSpecialChar">Un carácter especial</li>
+        </ul>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="previousStep()">
+          ← Volver
+        </button>
+        <button type="submit" class="btn-raiz" [disabled]="isLoading || !isFormValid()">
+          <span *ngIf="!isLoading">Restablecer Contraseña</span>
+          <span *ngIf="isLoading" class="loading-text">
+            <div class="spinner"></div>
+            Procesando...
+          </span>
+        </button>
+      </div>
+    </form>
+
+    <!-- Mensaje de éxito -->
+    <div *ngIf="currentStep === 4" class="success-state">
+      <div class="success-icon">✓</div>
+      <h3 class="step-title">¡Contraseña restablecida!</h3>
+      <p class="success-message">
+        Tu contraseña ha sido actualizada exitosamente. Ahora puedes iniciar sesión con tus nuevas credenciales.
+      </p>
+      <button class="btn-raiz" routerLink="/login">
+        Ir al Inicio de Sesión
+      </button>
+    </div>
+
+    <!-- Mensajes de estado -->
+    <div *ngIf="message" class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
+      {{ message }}
+    </div>
+
+    <div class="form-footer">
+      <a routerLink="/login" class="link-recuperar">← Volver al Inicio de Sesión</a>
+      <a routerLink="/register" class="link-registro">¿No tienes cuenta? Crear una aquí</a>
+    </div>
+  </div>
+</div>

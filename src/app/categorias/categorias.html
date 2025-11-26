@@ -1,0 +1,298 @@
+<div class="categorias-container">
+  <!-- Header (se mantiene igual) -->
+  <header class="header-marketplace">
+    <div class="header-content">
+      <div class="header-left">
+        <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-header">
+        <span class="logo-text">RaícesMX</span>
+        <span class="separator">|</span>
+        <span class="header-desc">Artesanías Mexicanas Auténticas</span>
+      </div>
+      
+      <div class="header-center">
+        <input type="text" placeholder="Buscar productos..." class="search-input">
+        <button class="btn-search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="white" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+          </svg>
+        </button>
+      </div>
+      
+      <nav class="header-right">
+        <a class="nav-link" routerLink="/marketplace">Inicio</a>
+        <a class="nav-link active" routerLink="/categorias">Categorías</a>
+        <a class="nav-link" routerLink="/ofertas">Ofertas</a>
+        <a class="nav-link" routerLink="/ayuda">Ayuda</a>
+        <a class="nav-link" routerLink="/favoritos">Favoritos</a>
+        <a class="nav-link cart-link" routerLink="/carrito">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+          </svg>
+          <span class="cart-badge">3</span>
+        </a>
+        <a class="nav-link" routerLink="/perfil">Perfil</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido principal MEJORADO -->
+  <main class="categorias-main">
+    <div class="categorias-content">
+      
+      <!-- Hero Section Mejorada -->
+      <section class="categorias-hero">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1 class="hero-title">
+              <span class="hero-accent">Descubre</span> el Alma de México
+            </h1>
+            <p class="hero-subtitle">
+              Explora nuestras categorías artesanales y conecta con tradiciones centenarias
+            </p>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <span class="stat-number">{{ categorias.length }}+</span>
+                <span class="stat-label">Técnicas</span>
+              </div>
+              <div class="hero-stat">
+                <span class="stat-number">{{ obtenerTotalArtesanos() }}+</span>
+                <span class="stat-label">Artesanos</span>
+              </div>
+              <div class="hero-stat">
+                <span class="stat-number">{{ obtenerTotalProductos() }}+</span>
+                <span class="stat-label">Productos</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="floating-elements">
+              <div class="floating-item item-1">🎨</div>
+              <div class="floating-item item-2">🧵</div>
+              <div class="floating-item item-3">🏺</div>
+              <div class="floating-item item-4">✨</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filtros Mejorados con Pestañas -->
+      <section class="filtros-mejorados">
+        <div class="filtros-container">
+          <!-- Pestañas de Filtro Rápidas -->
+          <div class="filtro-tabs">
+            <button class="tab-filtro" 
+                    [class.active]="filtroRapido === 'todos'"
+                    (click)="aplicarFiltroRapido('todos')">
+              🎯 Todos
+            </button>
+            <button class="tab-filtro" 
+                    [class.active]="filtroRapido === 'populares'"
+                    (click)="aplicarFiltroRapido('populares')">
+              🔥 Populares
+            </button>
+            <button class="tab-filtro" 
+                    [class.active]="filtroRapido === 'nuevos'"
+                    (click)="aplicarFiltroRapido('nuevos')">
+              🆕 Nuevos
+            </button>
+          </div>
+
+          <!-- Barra de Búsqueda y Filtros Avanzados -->
+          <div class="filtros-avanzados">
+            <div class="search-box">
+              <div class="search-icon">🔍</div>
+              <input 
+                type="text" 
+                placeholder="Buscar categorías, técnicas, regiones..." 
+                [(ngModel)]="terminoBusqueda"
+                (input)="filtrarCategorias()"
+                class="search-input-avanzado"
+              >
+              <div class="search-actions">
+                <button class="btn-clear" (click)="limpiarBusqueda()" *ngIf="terminoBusqueda">
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div class="filtros-group">
+              <div class="filtro-dropdown">
+                <label>📍 Región</label>
+                <select [(ngModel)]="filtroRegion" (change)="filtrarCategorias()" class="dropdown-select">
+                  <option value="">Todas las regiones</option>
+                  <option *ngFor="let region of regiones" [value]="region">{{ region }}</option>
+                </select>
+              </div>
+
+              <div class="filtro-dropdown">
+                <label>📊 Ordenar por</label>
+                <select [(ngModel)]="ordenSeleccionado" (change)="ordenarCategorias()" class="dropdown-select">
+                  <option value="nombre">Nombre A-Z</option>
+                  <option value="popularidad">Más populares</option>
+                  <option value="productos">Más productos</option>
+                  <option value="nuevos">Más recientes</option>
+                </select>
+              </div>
+
+              <button class="btn-filtros-toggle" (click)="toggleFiltrosAvanzados()">
+                🎚️ {{ mostrarFiltrosAvanzados ? 'Menos' : 'Más' }} Filtros
+              </button>
+            </div>
+
+            <!-- Filtros Avanzados Desplegables -->
+            <div *ngIf="mostrarFiltrosAvanzados" class="filtros-avanzados-content">
+              <div class="filtros-avanzados-grid">
+                <div class="filtro-avanzado">
+                  <label>⭐ Rating Mínimo</label>
+                  <div class="rating-filtro">
+                    <button *ngFor="let star of [4, 3, 2, 1]" 
+                            class="btn-rating"
+                            [class.active]="filtroRating === star"
+                            (click)="filtroRating = filtroRating === star ? 0 : star">
+                      {{ star }}+ ⭐
+                    </button>
+                  </div>
+                </div>
+
+                <div class="filtro-avanzado">
+                  <label>👨‍🎨 Artesanos</label>
+                  <select [(ngModel)]="filtroArtesanos" (change)="filtrarCategorias()" class="dropdown-select">
+                    <option value="">Cualquier cantidad</option>
+                    <option value="5">5+ artesanos</option>
+                    <option value="10">10+ artesanos</option>
+                    <option value="15">15+ artesanos</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Grid de Categorías Mejorado -->
+      <section class="categorias-grid-mejorado">
+        <!-- Indicador de Resultados -->
+        <div class="resultados-info">
+          <h2 class="resultados-title">
+            {{ categoriasFiltradas.length }} Categorías 
+            <span *ngIf="filtroActivo" class="resultados-filtro">
+              · Filtradas
+            </span>
+          </h2>
+          <button class="btn-reset-filtros" 
+                  (click)="limpiarFiltros()" 
+                  *ngIf="filtroActivo">
+            🗑️ Limpiar Filtros
+          </button>
+        </div>
+
+        <!-- Grid Mejorado -->
+        <div class="grid-categorias">
+          <div *ngFor="let categoria of categoriasFiltradas; let i = index" 
+               class="categoria-card-mejorada"
+               [class.featured]="categoria.popular"
+               (click)="verCategoria(categoria)">
+            
+            <!-- Badge de Estado -->
+            <div class="categoria-badges">
+              <span *ngIf="categoria.popular" class="badge badge-popular">🔥 Popular</span>
+              <span *ngIf="esCategoriaNueva(categoria)" class="badge badge-nuevo">🆕 Nueva</span>
+              <span class="badge badge-region">{{ categoria.region }}</span>
+            </div>
+
+            <!-- Imagen con Efecto -->
+            <div class="categoria-imagen-mejorada">
+              <img [src]="categoria.imagen" [alt]="categoria.nombre">
+              <div class="categoria-overlay-mejorada">
+                <div class="overlay-content">
+                  <span class="overlay-icon">👁️</span>
+                  <span class="overlay-text">Explorar</span>
+                </div>
+              </div>
+              <div class="categoria-gradient"></div>
+            </div>
+
+            <!-- Contenido de la Card -->
+            <div class="categoria-content">
+              <div class="categoria-header">
+                <h3 class="categoria-title">{{ categoria.nombre }}</h3>
+                <div class="categoria-rating">
+                  <span class="rating-stars">⭐</span>
+                  <span class="rating-value">{{ categoria.rating }}</span>
+                </div>
+              </div>
+
+              <p class="categoria-descripcion">{{ categoria.descripcionCorta }}</p>
+
+              <!-- Stats Mejorados -->
+              <div class="categoria-stats-mejorados">
+                <div class="stat-item">
+                  <div class="stat-icon">📦</div>
+                  <div class="stat-info">
+                    <span class="stat-number">{{ categoria.totalProductos }}</span>
+                    <span class="stat-label">Productos</span>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-icon">👨‍🎨</div>
+                  <div class="stat-info">
+                    <span class="stat-number">{{ categoria.artesanos }}</span>
+                    <span class="stat-label">Artesanos</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tags Mejorados -->
+              <div class="categoria-tags-mejorados">
+                <span *ngFor="let tag of categoria.tags" 
+                      class="tag-mejorado"
+                      [style.background]="getTagColor(tag)">
+                  {{ tag }}
+                </span>
+              </div>
+
+              <!-- Action Button -->
+              <button class="btn-explorar-categoria">
+                <span>Explorar Colección</span>
+                <span class="btn-arrow">→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paginación o Carga -->
+        <div *ngIf="categoriasFiltradas.length === 0" class="sin-resultados-mejorado">
+          <div class="sin-resultados-content">
+            <div class="sin-resultados-icon">🎨</div>
+            <h3>No encontramos categorías</h3>
+            <p>Prueba ajustando los filtros o <a (click)="limpiarFiltros()" class="link-reset">ver todas las categorías</a></p>
+          </div>
+        </div>
+
+        <!-- Botón Cargar Más -->
+        <div *ngIf="categoriasFiltradas.length > 0" class="cargar-mas-section">
+          <button class="btn-cargar-mas" (click)="cargarMasCategorias()">
+            <span>Cargar Más Categorías</span>
+            <span class="loading-dots" *ngIf="cargando">...</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Sección de Inspiración -->
+      <section class="inspiracion-section">
+        <div class="inspiracion-content">
+          <div class="inspiracion-text">
+            <h2>¿No encuentras lo que buscas?</h2>
+            <p>Nuestros artesanos están constantemente creando nuevas piezas. Contáctanos para pedidos especiales.</p>
+            <button class="btn-inspiracion" routerLink="/ayuda">
+              💬 Solicitar Artesanía Personalizada
+            </button>
+          </div>
+          <div class="inspiracion-visual">
+            <div class="inspiracion-item">✨</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

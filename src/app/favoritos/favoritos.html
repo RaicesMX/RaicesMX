@@ -1,0 +1,291 @@
+<div class="favoritos-container">
+<!-- Header (mismo estilo) -->
+<header class="header-marketplace">
+    <div class="header-content">
+        <div class="header-left">
+            <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-header">
+            <span class="logo-text">RaícesMX</span>
+            <span class="separator">|</span>
+            <span class="header-desc">Artesanías Mexicanas Auténticas</span>
+        </div>
+    <div class="header-center">
+        <input type="text" placeholder="Buscar en favoritos..." class="search-input">
+        <button class="btn-search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="white" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+        </button>
+    </div>
+        <nav class="header-right">
+            <a class="nav-link" routerLink="/marketplace">Inicio</a>
+            <a class="nav-link" routerLink="/categorias">Categorías</a>
+            <a class="nav-link" routerLink="/ofertas">Ofertas</a>
+            <a class="nav-link" routerLink="/ayuda">Ayuda</a>
+            <a class="nav-link active" routerLink="/favoritos">Favoritos</a>
+            <a class="nav-link cart-link" routerLink="/carrito">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+            <span class="cart-badge">3</span>
+        </a>
+        <a class="nav-link" routerLink="/perfil">Perfil</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Contenido principal de Favoritos -->
+<main class="favoritos-main">
+    <div class="favoritos-content">
+<!-- Hero Section de Favoritos -->
+    <section class="favoritos-hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="hero-accent">Tus Favoritos</span> ❤️
+            </h1>
+            <p class="hero-subtitle">
+                Guarda tus artesanías mexicanas favoritas y regresa cuando estés listo para comprar
+            </p>
+            <div class="hero-stats">
+        <div class="hero-stat">
+                <span class="stat-number">{{ productosFavoritos.length }}</span>
+                <span class="stat-label">Productos</span>
+            </div>
+                <div class="hero-stat">
+                <span class="stat-number">{{ obtenerTotalCategorias() }}</span>
+                <span class="stat-label">Categorías</span>
+                </div>
+            <div class="hero-stat">
+                <span class="stat-number">{{ calcularValorTotal() | currency }}</span>
+                <span class="stat-label">Valor Total</span>
+            </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-elements">
+                <div class="floating-item item-1">❤️</div>
+                <div class="floating-item item-2">⭐</div>
+                <div class="floating-item item-3">🎨</div>
+                <div class="floating-item item-4">✨</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Barra de acciones y filtros -->
+      <section class="acciones-favoritos">
+        <div class="acciones-container">
+          <div class="acciones-left">
+            <h2 class="acciones-title">
+              {{ productosFiltrados.length }} Productos Favoritos
+              <span *ngIf="filtroActivo" class="acciones-filtro">· Filtrados</span>
+            </h2>
+          </div>
+          
+          <div class="acciones-right">
+            <!-- Filtro por categoría -->
+            <div class="filtro-group">
+              <select [(ngModel)]="filtroCategoria" (change)="filtrarFavoritos()" class="filtro-select">
+                <option value="">Todas las categorías</option>
+                <option *ngFor="let cat of categoriasUnicas" [value]="cat">{{ cat }}</option>
+              </select>
+            </div>
+
+            <!-- Ordenamiento -->
+            <div class="filtro-group">
+              <select [(ngModel)]="ordenSeleccionado" (change)="ordenarFavoritos()" class="filtro-select">
+                <option value="reciente">Más recientes</option>
+                <option value="antiguo">Más antiguos</option>
+                <option value="precio-asc">Precio: Menor a Mayor</option>
+                <option value="precio-desc">Precio: Mayor a Menor</option>
+                <option value="nombre">Nombre A-Z</option>
+              </select>
+            </div>
+
+            <!-- Acciones masivas -->
+            <div class="acciones-masivas" *ngIf="productosFavoritos.length > 0">
+              <button class="btn-mover-todo" (click)="moverTodoAlCarrito()">
+                🛒 Mover Todo al Carrito
+              </button>
+              <button class="btn-limpiar" (click)="limpiarFavoritos()">
+                🗑️ Limpiar Favoritos
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Estado vacío -->
+      <section *ngIf="productosFavoritos.length === 0" class="favoritos-vacio">
+        <div class="vacio-content">
+          <div class="vacio-icon">❤️</div>
+          <h2 class="vacio-title">Tu lista de favoritos está vacía</h2>
+          <p class="vacio-desc">
+            Descubre artesanías únicas y guárdalas aquí para verlas después
+          </p>
+          <div class="vacio-actions">
+            <button class="btn-explorar" routerLink="/marketplace">
+              🎨 Explorar Productos
+            </button>
+            <button class="btn-ofertas" routerLink="/ofertas">
+              🏷️ Ver Ofertas Especiales
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Grid de productos favoritos -->
+      <section *ngIf="productosFavoritos.length > 0" class="favoritos-grid">
+        <div class="productos-favoritos">
+          <div *ngFor="let producto of productosFiltrados; let i = index" 
+               class="producto-favorito-card"
+               [class.en-oferta]="producto.oferta"
+               [class.agotado]="producto.stock === 0">
+            
+            <!-- Badges -->
+            <div class="producto-badges">
+              <span *ngIf="producto.oferta" class="badge badge-oferta">🏷️ {{ producto.descuento }}% OFF</span>
+              <span *ngIf="producto.stock === 0" class="badge badge-agotado">⏳ Agotado</span>
+              <span *ngIf="producto.nuevo" class="badge badge-nuevo">🆕 Nuevo</span>
+              <span class="badge badge-categoria">{{ producto.categoria }}</span>
+            </div>
+
+            <!-- Imagen del producto -->
+            <div class="producto-imagen">
+              <img [src]="producto.imagen" [alt]="producto.nombre">
+              <div class="producto-overlay">
+                <div class="overlay-actions">
+                  <button class="btn-action btn-ver" (click)="verProducto(producto)">
+                    👁️ Ver
+                  </button>
+                  <button class="btn-action btn-carrito" 
+                          (click)="agregarAlCarrito(producto)"
+                          [disabled]="producto.stock === 0">
+                    🛒 {{ producto.stock === 0 ? 'Agotado' : 'Carrito' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información del producto -->
+            <div class="producto-info">
+              <div class="producto-header">
+                <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+                <button class="btn-quitar-favorito" (click)="quitarDeFavoritos(i)">
+                  ❌
+                </button>
+              </div>
+
+              <p class="producto-descripcion">{{ producto.descripcion }}</p>
+
+              <div class="producto-artesano">
+                <span class="artesano-icon">👨‍🎨</span>
+                <span class="artesano-nombre">{{ producto.artesano }}</span>
+                <span class="artesano-region">· {{ producto.region }}</span>
+              </div>
+
+              <!-- Rating y reviews -->
+              <div class="producto-rating">
+                <div class="rating-stars">
+                  <span *ngFor="let star of [1,2,3,4,5]" 
+                        class="star" 
+                        [class.filled]="star <= producto.rating">⭐</span>
+                </div>
+                <span class="rating-value">({{ producto.reviews }})</span>
+              </div>
+
+              <!-- Precio y stock -->
+              <div class="producto-precio-stock">
+                <div class="precio-info">
+                  <span class="precio-actual" *ngIf="producto.oferta">
+                    {{ calcularPrecioOferta(producto) | currency }}
+                  </span>
+                  <span class="precio-original" [class.tachado]="producto.oferta">
+                    {{ producto.precio | currency }}
+                  </span>
+                </div>
+                <div class="stock-info">
+                  <span class="stock-text" [class.agotado]="producto.stock === 0">
+                    {{ producto.stock === 0 ? 'Agotado' : producto.stock + ' disponibles' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Fecha agregado -->
+              <div class="producto-fecha">
+                <span class="fecha-icon">📅</span>
+                <span class="fecha-text">Agregado {{ calcularTiempo(producto.fechaAgregado) }}</span>
+              </div>
+
+              <!-- Acciones rápidas -->
+              <div class="producto-acciones">
+                <button class="btn-rapido btn-comprar" 
+                        (click)="comprarAhora(producto)"
+                        [disabled]="producto.stock === 0">
+                  ⚡ Comprar Ahora
+                </button>
+                <button class="btn-rapido btn-compartir" (click)="compartirProducto(producto)">
+                  📤 Compartir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recomendaciones basadas en favoritos -->
+      <section *ngIf="productosFavoritos.length > 0" class="recomendaciones-section">
+        <div class="recomendaciones-header">
+          <h2>✨ Productos que te pueden gustar</h2>
+          <p>Basado en tus favoritos</p>
+        </div>
+        
+        <div class="recomendaciones-grid">
+          <div *ngFor="let recomendacion of productosRecomendados"  
+              class="recomendacion-card"
+              (click)="verProducto(recomendacion)">
+            
+            <div class="recomendacion-imagen">
+              <img [src]="recomendacion.imagen" [alt]="recomendacion.nombre">
+            </div>
+            
+            <div class="recomendacion-info">
+              <h4>{{ recomendacion.nombre }}</h4>
+              <p class="recomendacion-precio">{{ recomendacion.precio | currency }}</p>
+              <button class="btn-recomendacion" (click)="$event.stopPropagation(); agregarAFavoritos(recomendacion)">
+                ❤️ Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tips de compra -->
+      <section class="tips-section">
+        <div class="tips-content">
+          <h3>💡 Tips para tus favoritos</h3>
+          <div class="tips-grid">
+            <div class="tip-item">
+              <div class="tip-icon">🛒</div>
+              <div class="tip-text">
+                <strong>Múevelos al carrito</strong> cuando estés listo para comprar
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon">👀</div>
+              <div class="tip-text">
+                <strong>Revisa el stock</strong> regularmente, las artesanías son únicas
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon">💬</div>
+              <div class="tip-text">
+                <strong>Comparte con amigos</strong> para pedir opiniones
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
