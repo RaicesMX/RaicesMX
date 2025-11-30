@@ -9,6 +9,7 @@ import { CarritoComponent } from './carrito/carrito';
 import { CategoriasComponent } from './categorias/categorias';
 import { FavoritosComponent } from './favoritos/favoritos';
 import { OfertasComponent } from './ofertas/ofertas';
+import { AyudaComponent } from './ayuda/ayuda';
 
 
 export const routes: Routes = [
@@ -27,5 +28,6 @@ export const routes: Routes = [
   { path: 'categorias', component: CategoriasComponent },
   { path: 'favoritos', component: FavoritosComponent },
   { path: 'ofertas', component: OfertasComponent },
+  { path: 'ayuda', component: AyudaComponent},
   { path: '**', redirectTo: '' }
 ];
