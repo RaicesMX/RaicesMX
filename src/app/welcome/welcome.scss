@@ -278,15 +278,103 @@ $black: #000000;
 }
 
 /* RESPONSIVE */
-@media (max-width: 768px) {
-  .landing-content { padding: 120px 1.5rem 3rem; }
-  .titulo-landing { font-size: 2.8rem; }
-  .descripcion-landing { font-size: 1.2rem; }
-  .images-section { flex-direction: column; align-items: center; gap: 1.2rem; }
-  .img-card { width: 130px; height: 130px; }
+/* 🔥 RESPONSIVE REAL CORREGIDO PARA MÓVIL Y TABLET */
+
+/* Tablet */
+@media (max-width: 992px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.6rem;
+  }
+
+  .header-left {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .header-desc {
+    font-size: 0.85rem;
+    max-width: 90%;
+  }
+
+  .images-section {
+    gap: 1rem;
+  }
 }
 
+/* Móviles estándar */
+@media (max-width: 768px) {
+
+  .landing-content {
+    padding: 110px 1.2rem 2.5rem;
+  }
+
+  .titulo-landing {
+    font-size: 2.5rem;
+  }
+
+  .descripcion-landing {
+    font-size: 1.1rem;
+    padding: 0 0.4rem;
+  }
+
+  .images-section {
+    flex-direction: column !important;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .img-card {
+    width: 120px;
+    height: 120px;
+  }
+
+  .btn-explorar {
+    padding: 1rem 2.2rem;
+    font-size: 1.1rem;
+  }
+
+  /* Evitar scroll lateral */
+  .welcome-landing,
+  .franjas-doradas,
+  .particulas {
+    overflow: hidden !important;
+  }
+}
+
+/* Teléfonos pequeños */
 @media (max-width: 480px) {
-  .titulo-landing { font-size: 2.3rem; }
-  .btn-explorar { padding: 1rem 2.5rem; font-size: 1.1rem; }
+
+  .titulo-landing {
+    font-size: 2rem;
+  }
+
+  .logo-landing {
+    width: 100px;
+  }
+
+  .descripcion-landing {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .img-card {
+    width: 105px;
+    height: 105px;
+  }
+
+  .header-content {
+    gap: 0.4rem;
+  }
+
+  .header-desc {
+    display: none; /* Oculta texto largo en móvil */
+  }
+
+  .btn-unete {
+    padding: 0.6rem 1.4rem;
+    font-size: 0.85rem;
+  }
 }

@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../shared/components/header/header';
 
 @Component({
   selector: 'app-marketplace',
   templateUrl: './marketplace.html',
   styleUrls: ['./marketplace.scss'],
   standalone: true,
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule, HeaderComponent]
 })
 export class MarketplaceComponent {
-  itemsCarrito: number = 3;
+  cartItems: number = 3;
   
   productos = [
     {
@@ -53,7 +54,7 @@ export class MarketplaceComponent {
 
   // 🟦 Añade el método agregarAlCarrito
   agregarAlCarrito(producto: any) {
-    this.itemsCarrito++;
+    this.cartItems++;
     alert(`Agregado al carrito: ${producto.nombre}`);
   }
 

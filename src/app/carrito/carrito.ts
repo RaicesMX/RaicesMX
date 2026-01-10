@@ -31,7 +31,7 @@ export class CarritoComponent {
       descripcion: 'Colorida figura artesanal tallada en madera',
       precio: 450.00,
       cantidad: 1,
-      imagen: 'assets/images/alebrije.jpg',
+      imagen: 'assets/images/Alebrigue_Artesanal.jpg',
       categoria: 'Arte Popular',
       artesano: 'Taller Donají'
     },
@@ -41,7 +41,7 @@ export class CarritoComponent {
       descripcion: 'Manta tradicional con diseños ancestrales',
       precio: 320.00,
       cantidad: 2,
-      imagen: 'assets/images/textil-huichol.jpg',
+      imagen: 'assets/images/Textiles Huichole.jpg',
       categoria: 'Textiles',
       artesano: 'Comunidad Wixárica'
     },
@@ -51,7 +51,7 @@ export class CarritoComponent {
       descripcion: 'Jarrón artesanal con técnica tradicional',
       precio: 280.00,
       cantidad: 1,
-      imagen: 'assets/images/ceramica-talavera.jpg',
+      imagen: 'assets/images/Ceramica_Talavera.jpg',
       categoria: 'Cerámica',
       artesano: 'Alfareros de Puebla'
     }

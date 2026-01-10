@@ -757,3 +757,231 @@ $gray-light: #f8f9fa;
     flex-direction: column;
   }
 }
+/* ===================================================== */
+/* === MENÚ DE USUARIO DESPLEGABLE – OFICIAL 2025 === */
+/* ===================================================== */
+
+.user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.user-menu:hover {
+  background: rgba($gold, 0.1);
+}
+
+.avatar-header {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid $gold;
+  box-shadow: 0 0 0 3px rgba($gold, 0.15);
+  transition: all 0.3s ease;
+}
+
+.user-menu:hover .avatar-header {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 5px rgba($gold, 0.25);
+}
+
+.username-desktop {
+  font-weight: 600;
+  color: $vino;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+/* Dropdown */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: white;
+  min-width: 300px;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-15px);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 9999;
+}
+
+.dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Cabecera del dropdown (con foto y nombre) */
+.dropdown-header {
+  padding: 1.3rem 1.5rem;
+  background: linear-gradient(135deg, $vino, darken($vino, 12%));
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar-dropdown {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid $gold;
+}
+
+.user-info .user-name {
+  margin: 0 0 4px 0;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.user-info .user-email {
+  margin: 0;
+  font-size: 0.88rem;
+  opacity: 0.92;
+}
+
+/* Enlaces del menú */
+.dropdown-menu a {
+  display: block;
+  padding: 0.95rem 1.5rem;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dropdown-menu a:hover {
+  background: rgba($vino, 0.08);
+  color: $vino;
+  padding-left: 1.8rem;
+}
+
+.dropdown-menu hr {
+  margin: 0.4rem 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+.dropdown-menu .logout {
+  color: #e53e3e !important;
+  font-weight: 600;
+}
+
+.dropdown-menu .logout:hover {
+  background: rgba(#e53e3e, 0.1) !important;
+}
+
+/* RESPONSIVE DEL MENÚ DE USUARIO */
+@media (max-width: 992px) {
+  .username-desktop {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-right .nav-link:not(.cart-link):not(.user-menu *) {
+    display: none !important;
+  }
+  
+  .user-menu {
+    margin-left: auto;
+  }
+  
+  .dropdown-menu {
+    right: -20px;
+    min-width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dropdown-header {
+    padding: 1rem;
+  }
+  
+  .avatar-dropdown {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .dropdown-menu {
+    min-width: 260px;
+    right: -10px;
+  }
+}
+/* MENÚ HAMBURGUESA MÓVIL 2025 */
+.btn-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: $vino;
+    margin: 5px 0;
+    border-radius: 3px;
+    transition: 0.3s;
+  }
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 85%;
+  max-width: 320px;
+  height: 100vh;
+  background: white;
+  z-index: 9999;
+  transition: left 0.35s ease;
+  box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+  padding: 1.5rem;
+  overflow-y: auto;
+  &.open { left: 0; }
+  
+  a {
+    display: block;
+    padding: 1rem 0;
+    color: #333;
+    font-weight: 500;
+    border-bottom: 1px solid #eee;
+  }
+  hr { margin: 1rem 0; }
+  .logout { color: #e53e3e !important; }
+}
+
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid $gold;
+  margin-bottom: 1rem;
+  position: relative;
+  .avatar-mobile { width: 60px; height: 60px; border-radius: 50%; border: 3px solid $gold; }
+  .btn-close-menu {
+    position: absolute;
+    top: 0; right: 0;
+    background: none; border: none; font-size: 1.8rem; cursor: pointer;
+  }
+}
+
+/* MOSTRAR HAMBURGUESA EN MÓVIL */
+@media (max-width: 992px) {
+  .header-right .nav-link:not(.cart-link) { display: none !important; }
+  .btn-hamburger { display: block !important; }
+  .user-menu { display: none; } /* Ocultamos el avatar desktop en móvil */
+}

@@ -299,11 +299,94 @@ $glass-border: rgba(212, 175, 55, 0.45);
 }
 
 /* Responsive */
+/* Tablets (≤ 768px) */
 @media (max-width: 768px) {
-  .formulario-raiz {
-    padding: 3rem 2.2rem;
-    max-width: 92%;
+  .portal-ring {
+    width: 300px;
+    height: 300px;
+    opacity: 0.28;
   }
-  .titulo-raiz { font-size: 2rem; }
-  .logo-alebrije { width: 95px; }
+
+  .formulario-raiz {
+    padding: 2.8rem 2rem;
+    max-width: 88%;
+  }
+
+  .titulo-raiz {
+    font-size: 2rem;
+  }
+
+  .logo-alebrije {
+    width: 90px;
+  }
+}
+
+/* Móviles grandes (≤ 480px) */
+@media (max-width: 480px) {
+
+  .portal-ring {
+    width: 220px;
+    height: 220px;
+    opacity: 0.22;
+  }
+
+  .formulario-raiz {
+    padding: 2.2rem 1.6rem;
+    max-width: 92%;
+    border-radius: 22px;
+  }
+
+  .titulo-raiz {
+    font-size: 1.85rem;
+  }
+
+  .subtitulo-raiz {
+    font-size: 0.95rem;
+  }
+
+  .input-raiz {
+    padding: 0.95rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .btn-raiz {
+    padding: 1rem;
+    font-size: 1.05rem;
+    border-radius: 12px;
+  }
+
+  .logo-alebrije {
+    width: 80px;
+  }
+}
+
+/* Móviles pequeños (≤ 380px, Samsung A03, iPhone SE, etc.) */
+@media (max-width: 380px) {
+  .portal-ring {
+    width: 180px;
+    height: 180px;
+    opacity: 0.18;
+  }
+
+  .formulario-raiz {
+    padding: 1.8rem 1.3rem;
+    border-radius: 18px;
+  }
+
+  .titulo-raiz {
+    font-size: 1.65rem;
+  }
+
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-raiz {
+    padding: 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  .logo-alebrije {
+    width: 70px;
+  }
 }

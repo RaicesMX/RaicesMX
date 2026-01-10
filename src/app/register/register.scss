@@ -321,3 +321,62 @@ $glass-border: rgba(212, 175, 55, 0.55);
   }
   .titulo-raiz { font-size: 1.8rem; }
 }
+
+/* Nuevo responsive recomendado */
+@media (max-width: 480px) {
+  .form-registro {
+    padding: 2rem 1.6rem;
+  }
+
+  .titulo-raiz {
+    font-size: 1.6rem;
+  }
+
+  .subtitulo-raiz {
+    font-size: 0.85rem;
+  }
+
+  .logo-registro {
+    width: 60px;
+  }
+
+  .portal-ring {
+    width: 260px;
+    height: 260px;
+  }
+
+  .input-registro {
+    font-size: 0.9rem;
+    padding: 0.7rem 0.85rem;
+  }
+
+  .btn-registro {
+    padding: 0.85rem;
+    font-size: 1rem;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 380px) {
+  .form-registro {
+    padding: 1.8rem 1.4rem;
+    max-width: 100%;
+  }
+
+  .portal-ring {
+    width: 220px;
+    height: 220px;
+  }
+
+  .titulo-raiz {
+    font-size: 1.45rem;
+  }
+
+  .input-registro {
+    font-size: 0.85rem;
+  }
+
+  .btn-registro {
+    font-size: 0.95rem;
+  }
+}

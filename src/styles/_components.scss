@@ -1,0 +1,200 @@
+@import './variables';
+@import './colors';
+@import './typography';
+@import './mixins';
+@import './animations';
+
+// HEADER MARKETPLACE
+.header-marketplace {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba($color-white, 0.96);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba($color-secondary, 0.25);
+    padding: 0.9rem 2rem;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+  /* ¡NUEVO: LIMITAR ALTURA! */
+    max-height: 80px;
+    overflow: visible;  
+}
+
+.header-marketplace .header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center; /* ¡CRÍTICO! */
+    justify-content: space-between;
+    height: 100%;
+    max-height: 80px;
+}
+
+.header-marketplace .header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    
+    .logo-header {
+        width: 40px;
+        filter: drop-shadow(0 0 8px rgba($color-secondary, 0.4));
+        transition: transform $transition-normal;
+        
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+    
+    .logo-text {
+        font-weight: $font-weight-extrabold;
+        color: $color-primary;
+        font-size: 1.15rem;
+    }
+    
+    .separator {
+        color: $color-gray-400;
+    }
+    
+    .header-desc {
+        color: $color-gray-600;
+        font-size: $font-size-sm;
+    }
+}
+
+.header-marketplace .header-center {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 2rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.header-marketplace .search-input {
+    @include input-base;
+    border-radius: $border-radius-xl;
+}
+
+.header-marketplace .btn-search {
+    @include btn-primary;
+    padding: 0.6rem 1rem;
+    border-radius: $border-radius-xl;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: ripple 0.6s ease-out;
+    }
+}
+
+.header-marketplace .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    height: auto; /* O altura fija si es necesario */
+    max-height: 60px; /* Limitar altura máxima */
+}
+
+.header-marketplace .nav-link {
+    color: $color-gray-800;
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    transition: all $transition-normal;
+    padding: 0.5rem 0.8rem; /* Verificar que no sea excesivo */
+    border-radius: $border-radius-sm;
+    position: relative;
+    white-space: nowrap;
+  /* Asegurar altura normal */
+    line-height: 1.2;
+    height: auto;
+    display: inline-flex;
+    align-items: center;
+    
+    &:hover {
+        color: $color-primary;
+        background: rgba($color-primary, 0.05);
+        transform: translateY(-2px);
+        
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: $color-primary;
+            transition: all $transition-normal;
+            transform: translateX(-50%);
+        }
+    }
+    
+    &:hover::after {
+        width: 70%;
+    }
+    
+    &.active {
+        color: $color-primary;
+        background: rgba($color-primary, 0.1);
+        font-weight: $font-weight-semibold;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 70%;
+            height: 2px;
+            background: $color-primary;
+            transform: translateX(-50%);
+        }
+    }
+}
+
+.header-marketplace .cart-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    
+    &::after {
+        display: none;
+    }
+    
+    svg {
+        transition: transform $transition-normal;
+    }
+    
+    &:hover svg {
+        transform: scale(1.1);
+    }
+}
+
+.header-marketplace .cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: $color-secondary;
+    color: $color-white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: cartBadgePulse 2s infinite;
+}

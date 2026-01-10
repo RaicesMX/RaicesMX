@@ -1,23 +1,95 @@
-/* ====================================
-RESETEO GLOBAL - ELIMINA MARGEN BLANCO
-==================================== */
-*, *::before, *::after {
+// Importar todos los módulos
+@import './styles/variables';
+@import './styles/colors';
+@import './styles/typography';
+@import './styles/mixins';
+@import './styles/animations';
+@import './styles/components';
+@import './styles/utilities';
+@import './styles/responsive';
+
+// ===== RESET BÁSICO =====
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    overflow-y: auto;
+html {
+    font-size: 16px;
     scroll-behavior: smooth;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Opcional: fondo de respaldo */
 body {
-    background: #f8f8f8;
+    font-family: $font-family-secondary;
+    font-size: $font-size-base;
+    line-height: $line-height-normal;
+    color: $color-gray-700;
+    background-color: $color-gray-100;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: $font-family-primary;
+    font-weight: $font-weight-bold;
+    line-height: $line-height-tight;
+    color: $color-gray-900;
+}
+
+a {
+    color: $color-primary;
+    text-decoration: none;
+    transition: color $transition-fast;
+&:hover {
+    color: $color-primary-dark;
+    }
+}
+
+// Scroll personalizado
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: $color-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $color-primary;
+    border-radius: $border-radius-md;
+&:hover {
+    background: $color-primary-dark;
+    }
+}
+// Convertir variables SCSS a variables CSS para uso global
+:root {
+// Colores
+    --color-primary: #7A1A2C;
+    --color-primary-light: #8b1f36;
+    --color-primary-dark: #5a1321;
+    --color-secondary: #D4AF37;
+    --color-secondary-light: #e0b83d;
+    --color-secondary-dark: #b8942c;
+// Grises
+    --color-white: #FFFFFF;
+    --color-gray-50: #F9FAFB;
+    --color-gray-100: #F3F4F6;
+    --color-gray-200: #E5E7EB;
+    --color-gray-300: #D1D5DB;
+    --color-gray-400: #9CA3AF;
+    --color-gray-500: #6B7280;
+    --color-gray-600: #4B5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1F2937;
+    --color-gray-900: #111827;
+// Espaciados
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+// Bordes
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 20px;
+    --border-radius-xl: 50px;
 }

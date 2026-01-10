@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../shared/components/header/header';
 
 // Interface para las categorías
 interface Categoria {
@@ -22,117 +23,143 @@ interface Categoria {
 @Component({
   selector: 'app-categorias',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
   templateUrl: './categorias.html',
   styleUrls: ['./categorias.scss']
 })
 export class CategoriasComponent {
+  // ← AQUÍ ESTÁ LA LÍNEA QUE FALTABA (para el badge del carrito)
+  itemsCarrito: number = 3;   // Cambia este número cuando quieras: 0, 5, 12...
+
   // Lista completa de categorías
-  categorias: Categoria[] = [
-    {
-      id: 1,
-      nombre: 'Alebrijes',
-      descripcion: 'Coloridas figuras fantásticas talladas en madera, originarias de Oaxaca',
-      descripcionCorta: 'Figuras fantásticas de madera pintada a mano',
-      imagen: 'assets/images/categorias/alebrijes.jpg',
-      totalProductos: 45,
-      artesanos: 12,
-      region: 'Oaxaca',
-      rating: 4.8,
-      popular: true,
-      tags: ['Madera', 'Pintura', 'Fantástico'],
-      fechaCreacion: new Date('2024-01-15')
-    },
-    {
-      id: 2,
-      nombre: 'Textiles Huicholes',
-      descripcion: 'Tejidos tradicionales con diseños ancestrales y símbolos espirituales',
-      descripcionCorta: 'Tejidos con diseños ancestrales y espirituales',
-      imagen: 'assets/images/categorias/textiles-huicholes.jpg',
-      totalProductos: 32,
-      artesanos: 8,
-      region: 'Jalisco',
-      rating: 4.7,
-      popular: true,
-      tags: ['Tejido', 'Bordado', 'Espiritual'],
-      fechaCreacion: new Date('2024-02-20')
-    },
-    {
-      id: 3,
-      nombre: 'Cerámica de Talavera',
-      descripcion: 'Alfarería vidriada con diseños en azul cobalto sobre fondo blanco',
-      descripcionCorta: 'Alfarería vidriada con diseños en azul cobalto',
-      imagen: 'assets/images/categorias/ceramica-talavera.jpg',
-      totalProductos: 28,
-      artesanos: 6,
-      region: 'Puebla',
-      rating: 4.9,
-      popular: false,
-      tags: ['Barro', 'Vidriado', 'Tradicional'],
-      fechaCreacion: new Date('2023-12-10')
-    },
-    {
-      id: 4,
-      nombre: 'Platería Taxqueña',
-      descripcion: 'Joyería y objetos decorativos en plata con técnicas ancestrales',
-      descripcionCorta: 'Joyería y objetos decorativos en plata',
-      imagen: 'assets/images/categorias/plateria-taxqueña.jpg',
-      totalProductos: 23,
-      artesanos: 5,
-      region: 'Guerrero',
-      rating: 4.6,
-      popular: false,
-      tags: ['Plata', 'Joyería', 'Lujo'],
-      fechaCreacion: new Date('2024-01-08')
-    },
-    {
-      id: 5,
-      nombre: 'Barro Negro',
-      descripcion: 'Alfarería sin esmaltar con acabado negro metálico natural',
-      descripcionCorta: 'Alfarería con acabado negro metálico natural',
-      imagen: 'assets/images/categorias/barro-negro.jpg',
-      totalProductos: 19,
-      artesanos: 4,
-      region: 'Oaxaca',
-      rating: 4.5,
-      popular: true,
-      tags: ['Barro', 'Natural', 'Utilitario'],
-      fechaCreacion: new Date('2024-03-01')
-    },
-    {
-      id: 6,
-      nombre: 'Rebozo Mexicano',
-      descripcion: 'Mantas tradicionales tejidas en telar de cintura con diversos diseños',
-      descripcionCorta: 'Mantas tradicionales tejidas en telar de cintura',
-      imagen: 'assets/images/categorias/rebozo-mexicano.jpg',
-      totalProductos: 37,
-      artesanos: 9,
-      region: 'Michoacán',
-      rating: 4.7,
-      popular: false,
-      tags: ['Textil', 'Vestimenta', 'Tradicional'],
-      fechaCreacion: new Date('2023-11-15')
-    },
-    {
-      id: 7,
-      nombre: 'Arte Huichol',
-      descripcion: 'Cuadros y objetos decorativos con chaquira y estambre',
-      descripcionCorta: 'Arte con chaquira y estambre de colores vibrantes',
-      imagen: 'assets/images/categorias/arte-huichol.jpg',
-      totalProductos: 41,
-      artesanos: 11,
-      region: 'Nayarit',
-      rating: 4.8,
-      popular: true,
-      tags: ['Chaquira', 'Colorido', 'Espiritual'],
-      fechaCreacion: new Date('2024-02-28')
-    },
-    {
+  // Lista completa de categorías CORREGIDA
+categorias: Categoria[] = [
+  {
+    id: 1,
+    nombre: 'Alebrijes',
+    descripcion: 'Coloridas figuras fantásticas talladas en madera, originarias de Oaxaca',
+    descripcionCorta: 'Figuras fantásticas de madera pintada a mano',
+    // CORREGIR: Usar la ruta correcta según tus archivos
+    imagen: 'assets/images/Alebrijes.jpg',
+    totalProductos: 45,
+    artesanos: 12,
+    region: 'Oaxaca',
+    rating: 4.8,
+    popular: true,
+    tags: ['Madera', 'Pintura', 'Fantástico'],
+    fechaCreacion: new Date('2024-01-15')
+  },
+  {
+    id: 2,
+    nombre: 'Textiles Huicholes',
+    descripcion: 'Tejidos tradicionales con diseños ancestrales y símbolos espirituales',
+    descripcionCorta: 'Tejidos con diseños ancestrales y espirituales',
+    // CORREGIR: Tienes "Textiles Huichole.jpg" (en singular)
+    imagen: 'assets/images/Textiles Huichole.jpg',
+    totalProductos: 32,
+    artesanos: 8,
+    region: 'Jalisco',
+    rating: 4.7,
+    popular: true,
+    tags: ['Tejido', 'Bordado', 'Espiritual'],
+    fechaCreacion: new Date('2024-02-20')
+  },
+  {
+    id: 3,
+    nombre: 'Cerámica de Talavera',
+    descripcion: 'Alfarería vidriada con diseños en azul cobalto sobre fondo blanco',
+    descripcionCorta: 'Alfarería vidriada con diseños en azul cobalto',
+    // Tienes varias imágenes de Talavera, elige una:
+    imagen: 'assets/images/Ceramica_Talavera.jpg', // O 'assets/images/Jarrón_Talavera.jpg'
+    totalProductos: 28,
+    artesanos: 6,
+    region: 'Puebla',
+    rating: 4.9,
+    popular: false,
+    tags: ['Barro', 'Vidriado', 'Tradicional'],
+    fechaCreacion: new Date('2023-12-10')
+  },
+  {
+    id: 4,
+    nombre: 'Platería Taxqueña',
+    descripcion: 'Joyería y objetos decorativos en plata con técnicas ancestrales',
+    descripcionCorta: 'Joyería y objetos decorativos en plata',
+    // Tienes este archivo
+    imagen: 'assets/images/Plateria Taxqueña.jfif',
+    totalProductos: 23,
+    artesanos: 5,
+    region: 'Guerrero',
+    rating: 4.6,
+    popular: false,
+    tags: ['Plata', 'Joyería', 'Lujo'],
+    fechaCreacion: new Date('2024-01-08')
+  },
+  {
+    id: 5,
+    nombre: 'Barro Negro',
+    descripcion: 'Alfarería sin esmaltar con acabado negro metálico natural',
+    descripcionCorta: 'Alfarería con acabado negro metálico natural',
+    // Tienes este archivo
+    imagen: 'assets/images/Barro Negro.jfif',
+    totalProductos: 19,
+    artesanos: 4,
+    region: 'Oaxaca',
+    rating: 4.5,
+    popular: true,
+    tags: ['Barro', 'Natural', 'Utilitario'],
+    fechaCreacion: new Date('2024-03-01')
+  },
+  {
+    id: 6,
+    nombre: 'Rebozo Mexicano',
+    descripcion: 'Mantas tradicionales tejidas en telar de cintura con diversos diseños',
+    descripcionCorta: 'Mantas tradicionales tejidas en telar de cintura',
+    // Tienes este archivo
+    imagen: 'assets/images/Rebozo mexicano.jfif',
+    totalProductos: 37,
+    artesanos: 9,
+    region: 'Michoacán',
+    rating: 4.7,
+    popular: false,
+    tags: ['Textil', 'Vestimenta', 'Tradicional'],
+    fechaCreacion: new Date('2023-11-15')
+  },
+  {
+    id: 7,
+    nombre: 'Arte Huichol',
+    descripcion: 'Cuadros y objetos decorativos con chaquira y estambre',
+    descripcionCorta: 'Arte con chaquira y estambre de colores vibrantes',
+    // Tienes este archivo (nota el espacio en el nombre)
+    imagen: 'assets/images/Arte Huichol.jfif',
+    totalProductos: 41,
+    artesanos: 11,
+    region: 'Nayarit',
+    rating: 4.8,
+    popular: true,
+    tags: ['Chaquira', 'Colorido', 'Espiritual'],
+    fechaCreacion: new Date('2024-02-28')
+  },
+  {
+    id: 8,
+    nombre: 'Cobre Martillado',
+    descripcion: 'Objetos decorativos y utilitarios en cobre trabajado a mano',
+    descripcionCorta: 'Objetos en cobre trabajado artesanalmente',
+    // Tienes este archivo
+    imagen: 'assets/images/Cobre Martillado.jfif',
+    totalProductos: 15,
+    artesanos: 3,
+    region: 'Michoacán',
+    rating: 4.4,
+    popular: false,
+    tags: ['Cobre', 'Martillado', 'Decorativo'],
+    fechaCreacion: new Date('2023-10-20')
+  },
+  {
       id: 8,
       nombre: 'Cobre Martillado',
       descripcion: 'Objetos decorativos y utilitarios en cobre trabajado a mano',
       descripcionCorta: 'Objetos en cobre trabajado artesanalmente',
-      imagen: 'assets/images/categorias/cobre-martillado.jpg',
+      imagen: 'assets/images/Cobre Martillado1.jpg',
       totalProductos: 15,
       artesanos: 3,
       region: 'Michoacán',
@@ -184,28 +211,25 @@ export class CategoriasComponent {
     'Decorativo': 'rgba(16, 185, 129, 0.1)'
   };
 
-  // 🟦 Obtener categorías populares
+  // ──────── MÉTODOS (todo igual que tenías) ────────
   get categoriasPopulares(): Categoria[] {
     return this.categorias.filter(cat => cat.popular).slice(0, 3);
   }
 
-  // 🟦 Obtener total de productos
   obtenerTotalProductos(): number {
     return this.categorias.reduce((total, cat) => total + cat.totalProductos, 0);
   }
 
-  // 🟦 Obtener total de artesanos
   obtenerTotalArtesanos(): number {
     return this.categorias.reduce((total, cat) => total + cat.artesanos, 0);
   }
 
-  // 🟦 Verificar si hay filtros activos
   get filtroActivo(): boolean {
     return this.terminoBusqueda !== '' || 
-           this.filtroRegion !== '' || 
-           this.filtroRapido !== 'todos' ||
-           this.filtroRating > 0 ||
-           this.filtroArtesanos !== '';
+          this.filtroRegion !== '' || 
+          this.filtroRapido !== 'todos' ||
+          this.filtroRating > 0 ||
+          this.filtroArtesanos !== '';
   }
 
   // 🟦 Aplicar filtro rápido
@@ -343,4 +367,41 @@ export class CategoriasComponent {
     // Ejemplo de navegación (descomentar cuando tengas la ruta)
     // this.router.navigate(['/productos'], { queryParams: { categoria: categoria.id } });
   }
+    // === HEADER GLOBAL 2025 (igual que en las otras páginas) ===
+  esMovil = false;
+  menuAbierto = false;
+  menuMovilAbierto = false;
+
+  usuario = {
+    nombre: 'Juan Pérez Rodríguez',
+    email: 'juan.perez@email.com',
+    foto: null
+  };
+
+  ngOnInit() {
+    this.esMovil = window.innerWidth <= 992;
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.esMovil = window.innerWidth <= 992;
+    if (!this.esMovil) this.menuMovilAbierto = false;
+  }
+
+  toggleMenu() { this.menuAbierto = !this.menuAbierto; }
+  toggleMenuMovil() { this.menuMovilAbierto = !this.menuMovilAbierto; }
+
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: Event) {
+    if (! (event.target as HTMLElement).closest('.user-menu')) {
+      this.menuAbierto = false;
+    }
+  }
+
+  cerrarSesion() {
+    if (confirm('¿Cerrar sesión?')) {
+      alert('Sesión cerrada');
+    }
+  }
+
 }

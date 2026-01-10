@@ -1,0 +1,61 @@
+<footer class="app-footer">
+  <!-- Patrón sutil superior -->
+  <div class="footer-pattern-top"></div>
+
+  <div class="footer-container">
+    <!-- Marca y descripción -->
+    <div class="footer-brand">
+      <div class="footer-logo-wrapper">
+        <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-footer">
+        <div class="logo-text">RaícesMX</div>
+      </div>
+      <p class="footer-desc">
+        Preservamos el legado artesanal de México conectando maestros artesanos con amantes de la cultura auténtica.
+      </p>
+      <div class="footer-social-icons">
+        <a href="#" aria-label="Instagram"><svg><!-- Icono IG --></svg></a>
+        <a href="#" aria-label="Facebook"><svg><!-- Icono FB --></svg></a>
+        <a href="#" aria-label="TikTok"><svg><!-- Icono TikTok --></svg></a>
+        <a href="#" aria-label="Pinterest"><svg><!-- Icono Pinterest --></svg></a>
+      </div>
+    </div>
+
+    <!-- Categorías populares -->
+    <div class="footer-section">
+      <h4 class="footer-title">Categorías Populares</h4>
+      <ul class="footer-links-list">
+        <li><a routerLink="/categorias/talavera">Talavera Poblana</a></li>
+        <li><a routerLink="/categorias/alebrijes">Alebrijes</a></li>
+        <li><a routerLink="/categorias/textiles">Textiles Oaxaqueños</a></li>
+        <li><a routerLink="/categorias/barro-negro">Barro Negro</a></li>
+        <li><a routerLink="/categorias/plateria">Platería</a></li>
+      </ul>
+    </div>
+
+    <!-- Servicio al cliente -->
+    <div class="footer-section">
+      <h4 class="footer-title">Atención al Cliente</h4>
+      <ul class="footer-links-list">
+        <li><a routerLink="/ayuda">Centro de Ayuda</a></li>
+        <li><a routerLink="/envios">Envíos y Entregas</a></li>
+        <li><a routerLink="/devoluciones">Devoluciones</a></li>
+        <li><a routerLink="/contacto">Contáctanos</a></li>
+        <li><a routerLink="/pagos">Métodos de Pago</a></li>
+      </ul>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="footer-section footer-newsletter">
+      <h4 class="footer-title">Suscríbete</h4>
+      <p class="newsletter-desc">Recibe ofertas exclusivas y nuevas artesanías</p>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Tu correo electrónico" class="newsletter-input">
+        <button type="submit" class="newsletter-btn">Suscribir</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© {{ currentYear }} RaícesMX – Artesanías Mexicanas Auténticas. Todos los derechos reservados.</p>
+  </div>
+</footer>

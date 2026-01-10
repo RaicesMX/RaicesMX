@@ -1,345 +1,25 @@
-@import '../welcome/welcome.scss';
-$gold: #D4AF37;
-$vino: #7A1A2C;
-$white: #FFFFFF;
-$black: #000000;
-$gray-light: #f8f9fa;
+// 1. PRIMERO: Todos los @use (deben ir primero)
+@use '../../styles/colors' as colors;
+@use '../../styles/mixins' as mixins;
+@use '../../styles/variables' as vars;
+
+// 2. LUEGO: Variables locales si las necesitas (pero mejor usar globales)
+// $gold: #D4AF37;  // Ya está en colors.$color-secondary
+// $vino: #7A1A2C;  // Ya está en colors.$color-primary
+// $white: #FFFFFF; // Ya está en colors.$color-white
+// $black: #000000; // Ya está en colors.$color-black
+$gray-light: #f8f9fa; // Variable local específica
+
+// 3. ELIMINAR este import o reubicarlo SI es necesario
+//@import '../welcome/welcome.scss';
 
 /* === CONTENEDOR === */
 .marketplace-container {
   min-height: auto;
   font-family: 'Montserrat', sans-serif;
-  background: $gray-light;
+  background: $gray-light; // Variable local
   overflow-y: auto;
-}
-
-/* === HEADER MEJORADO === */
-.header-marketplace {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba($gold, 0.25);
-  padding: 0.9rem 2rem;
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
-}
-
-.header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.header-left { 
-  display: flex; 
-  align-items: center; 
-  gap: 0.8rem; 
-  font-weight: 600; 
-  
-  &:hover {
-    cursor: pointer;
-    .logo-header {
-      transform: scale(1.05);
-    }
-  }
-}
-
-.logo-header { 
-  width: 40px; 
-  filter: drop-shadow(0 0 8px rgba($gold, 0.4)); 
-  transition: transform 0.3s ease;
-}
-
-.logo-text { 
-  font-weight: 800; 
-  color: $vino; 
-  font-size: 1.15rem; 
-}
-
-.separator { 
-  color: #a0aec0; 
-}
-
-.header-desc { 
-  color: #4a5568; 
-  font-size: 0.9rem; 
-}
-
-.header-center { 
-  display: flex; 
-  gap: 0.5rem; 
-  flex: 1; 
-  max-width: 400px; 
-  margin: 0 2rem; 
-}
-
-.search-input { 
-  padding: 0.6rem 1.5rem; 
-  border: 1px solid #e2e8f0; 
-  border-radius: 50px; 
-  width: 100%; 
-  font-size: 0.9rem;
-  background: #f8fafc;
-  transition: all 0.3s ease;
-  
-  &:focus { 
-    outline: none; 
-    border-color: $vino; 
-    background: white;
-    box-shadow: 0 0 0 3px rgba($vino, 0.1);
-  } 
-  
-  &::placeholder {
-    color: #94a3b8;
-  }
-}
-
-.btn-search { 
-  background: linear-gradient(135deg, $vino, darken($vino, 10%)); 
-  color: white; 
-  border: none; 
-  padding: 0.6rem 1.2rem; 
-  border-radius: 50px; 
-  cursor: pointer; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  
-  &:hover {
-    background: linear-gradient(135deg, lighten($vino, 5%), $vino);
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba($vino, 0.3);
-    
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      animation: ripple 0.6s ease-out;
-    }
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-.header-right { 
-  display: flex; 
-  align-items: center; 
-  gap: 1rem; 
-}
-
-.nav-link { 
-    color: #2d3748; 
-    text-decoration: none; 
-    font-weight: 500; 
-    font-size: 0.9rem; 
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0.5rem 0.8rem;
-    border-radius: 8px;
-    position: relative;
-    white-space: nowrap;
-    
-    /* ESTADO NORMAL Y HOVER - CORREGIDO */
-    &:hover { 
-        color: $vino; 
-        background: rgba($vino, 0.05);
-        transform: translateY(-2px);
-    }
-    
-    /* Pseudo-elemento after para el subrayado */
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 50%;
-        width: 0;
-        height: 2px;
-        background: $vino;
-        transition: all 0.3s ease;
-        transform: translateX(-50%);
-    }
-    
-    /* Subrayado al hover - CORREGIDO */
-    &:hover::after {
-        width: 70%;
-    }
-    
-    /* ESTADO ACTIVO - CORREGIDO */
-    &.active {
-        color: $vino;
-        background: rgba($vino, 0.1);
-        font-weight: 600;
-        transform: none;
-        
-        &::after {
-            width: 70%;
-        }
-        
-        &:hover {
-            color: $vino;
-            background: rgba($vino, 0.1);
-            transform: none;
-        }
-    }
-}
-
-/* Estilos específicos para el ícono del carrito */
-.cart-link {
-  position: relative;
-  display: flex;
-  align-items: center;
-  
-  &::after {
-    display: none; /* Remove underline for icon */
-  }
-  
-  &:hover {
-    background: rgba($gold, 0.1);
-    
-    svg {
-      transform: scale(1.1);
-    }
-  }
-  
-  svg {
-    transition: transform 0.3s ease;
-  }
-}
-
-.cart-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: $gold;
-  color: white;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: pulse 2s infinite;
-}
-
-/* Animación de pulso para el badge del carrito */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba($gold, 0.7);
-  }
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 5px rgba($gold, 0);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba($gold, 0);
-  }
-}
-
-/* Ripple effect animation */
-@keyframes ripple {
-  0% {
-    width: 0;
-    height: 0;
-    opacity: 0.5;
-  }
-  100% {
-    width: 200%;
-    height: 200%;
-    opacity: 0;
-  }
-}
-
-/* Responsive header mejorado */
-@media (max-width: 992px) {
-  .header-content { 
-    flex-direction: column; 
-    align-items: stretch; 
-    gap: 0.8rem;
-  }
-  
-  .header-center { 
-    order: 3; 
-    width: 100%; 
-    margin: 0.5rem 0; 
-  }
-  
-  .header-right { 
-    order: 2; 
-    justify-content: center;
-    gap: 0.8rem;
-  }
-  
-  .nav-link {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-marketplace {
-    padding: 0.7rem 1rem;
-  }
-  
-  .header-left {
-    gap: 0.5rem;
-  }
-  
-  .logo-text {
-    font-size: 1rem;
-  }
-  
-  .header-desc {
-    font-size: 0.8rem;
-  }
-  
-  .header-right {
-    gap: 0.5rem;
-  }
-  
-  .nav-link {
-    padding: 0.3rem 0.5rem;
-    font-size: 0.8rem;
-  }
-  
-  .search-input {
-    padding: 0.5rem 1rem;
-  }
-  
-  .btn-search {
-    padding: 0.5rem 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-desc {
-    display: none; /* Ocultar descripción en móviles muy pequeños */
-  }
-  
-  .separator {
-    display: none;
-  }
+   padding-top: 0; /* O el mismo padding que view-product */
 }
 
 /* === HERO === */
@@ -356,28 +36,77 @@ $gray-light: #f8f9fa;
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, $vino 0%, darken($vino, 12%) 100%), url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1350') center/cover;
+  // Usar variables globales
+  background: linear-gradient(135deg, colors.$color-primary 0%, darken(colors.$color-primary, 12%) 100%), url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1350') center/cover;
   filter: brightness(0.9);
 }
 
-.hero-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.3); }
+.hero-overlay { 
+  position: absolute; 
+  inset: 0; 
+  background: rgba(0, 0, 0, 0.3); 
+}
 
-.franjas-doradas { @extend .franjas-doradas; }
-.franja { @extend .franja; }
-.f1 { @extend .f1; } .f2 { @extend .f2; } .f3 { @extend .f3; }
+// ELIMINAR estos @extend si no existen las clases o crear las clases aquí
+// .franjas-doradas { @extend .franjas-doradas; }
+// .franja { @extend .franja; }
+// .f1 { @extend .f1; } .f2 { @extend .f2; } .f3 { @extend .f3; }
+
+// CREAR las franjas aquí mismo si las necesitas
+.franjas-doradas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.franja {
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    colors.$color-secondary, 
+    transparent);
+  opacity: 0.6;
+}
+
+.f1 { 
+  top: 20%; 
+  animation: float 8s infinite ease-in-out; 
+}
+
+.f2 { 
+  top: 50%; 
+  animation: float 10s infinite ease-in-out reverse; 
+}
+
+.f3 { 
+  top: 80%; 
+  animation: float 12s infinite ease-in-out; 
+}
+
+@keyframes float {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
 
 .hero-content {
   position: relative;
   z-index: 10;
   text-align: center;
-  color: $white;
+  color: colors.$color-white;
 }
 
 .hero-title {
   font-size: 3.5rem;
   font-weight: 900;
   margin-bottom: 1rem;
-  .dorado { color: $gold; text-shadow: 0 0 18px rgba($gold, 0.7); }
+  
+  .dorado { 
+    color: colors.$color-secondary; 
+    text-shadow: 0 0 18px rgba(colors.$color-secondary, 0.7); 
+  }
 }
 
 .hero-subtitle {
@@ -388,15 +117,18 @@ $gray-light: #f8f9fa;
 /* === PRODUCTOS === */
 .productos-section {
   padding: 6rem 2rem 8rem;
-  background: $white;
+  background: colors.$color-white;
 }
 
-.container { max-width: 1400px; margin: 0 auto; }
+.container { 
+  max-width: 1400px; 
+  margin: 0 auto; 
+}
 
 .section-title {
   text-align: center;
   font-size: 2.6rem;
-  color: $vino;
+  color: colors.$color-primary;
   margin-bottom: 3.5rem;
   font-weight: 800;
 }
@@ -408,17 +140,17 @@ $gray-light: #f8f9fa;
 }
 
 .producto-card {
-  background: white;
+  background: colors.$color-white;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   transition: all 0.4s ease;
-  border: 1px solid rgba($gold, 0.15);
+  border: 1px solid rgba(colors.$color-secondary, 0.15);
 
   &:hover {
     transform: translateY(-12px);
-    box-shadow: 0 20px 50px rgba($gold, 0.2);
-    border-color: $gold;
+    box-shadow: 0 20px 50px rgba(colors.$color-secondary, 0.2);
+    border-color: colors.$color-secondary;
   }
 }
 
@@ -450,13 +182,13 @@ $gray-light: #f8f9fa;
 .producto-nombre {
   font-size: 1.25rem;
   font-weight: 700;
-  color: $vino;
+  color: colors.$color-primary;
   margin-bottom: 0.5rem;
 }
 
 .producto-precio {
   font-size: 1.5rem;
-  color: $gold;
+  color: colors.$color-secondary;
   font-weight: 700;
   margin-bottom: 1rem;
 }
@@ -469,7 +201,7 @@ $gray-light: #f8f9fa;
 }
 
 .link-ver {
-  color: $vino;
+  color: colors.$color-primary;
   font-weight: 600;
   text-decoration: none;
   font-size: 0.9rem;
@@ -477,14 +209,14 @@ $gray-light: #f8f9fa;
   
   &:hover { 
     text-decoration: underline;
-    color: darken($vino, 10%);
+    color: darken(colors.$color-primary, 10%);
     transform: translateX(5px);
   }
 }
 
 .btn-agregar {
-  background: linear-gradient(135deg, $vino, darken($vino, 10%));
-  color: white;
+  background: linear-gradient(135deg, colors.$color-primary, darken(colors.$color-primary, 10%));
+  color: colors.$color-white;
   border: none;
   padding: 0.6rem 1.2rem;
   border-radius: 50px;
@@ -496,9 +228,9 @@ $gray-light: #f8f9fa;
   overflow: hidden;
   
   &:hover { 
-    background: linear-gradient(135deg, lighten($vino, 5%), $vino);
+    background: linear-gradient(135deg, lighten(colors.$color-primary, 5%), colors.$color-primary);
     transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba($vino, 0.3);
+    box-shadow: 0 5px 15px rgba(colors.$color-primary, 0.3);
     
     &::after {
       content: '';
@@ -517,8 +249,8 @@ $gray-light: #f8f9fa;
 
 /* === FOOTER === */
 .footer-marketplace {
-  background: $vino;
-  color: $white;
+  background: colors.$color-primary;
+  color: colors.$color-white;
   text-align: center;
   padding: 2rem;
   font-size: 0.95rem;
@@ -526,15 +258,14 @@ $gray-light: #f8f9fa;
 }
 
 /* === RESPONSIVE === */
-@media (max-width: 992px) {
-  .header-content { flex-direction: column; align-items: stretch; }
-  .header-center { order: 3; width: 100%; margin: 1rem 0; }
-  .header-right { order: 2; justify-content: center; }
-}
-
 @media (max-width: 768px) {
-  .hero-title { font-size: 2.8rem; }
-  .hero-subtitle { font-size: 1.2rem; }
+  .hero-title { 
+    font-size: 2.8rem; 
+  }
+  
+  .hero-subtitle { 
+    font-size: 1.2rem; 
+  }
   
   .productos-section {
     padding: 4rem 1rem 6rem;
@@ -555,4 +286,18 @@ $gray-light: #f8f9fa;
 .productos-section,
 .hero-section {
   margin-top: 100px;
+}
+
+// Añadir la animación ripple si la necesitas
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+  }
+  100% {
+    width: 200%;
+    height: 200%;
+    opacity: 0;
+  }
 }
