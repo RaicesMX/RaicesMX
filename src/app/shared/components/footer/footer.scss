@@ -1,40 +1,30 @@
 @import '../../../../styles/mixins';
-@import '../../../../styles/variables';  
-@import '../../../../styles/colors';    
+@import '../../../../styles/variables';
+@import '../../../../styles/colors';
+
 .app-footer {
-  background: linear-gradient(to bottom, var(--color-primary-dark), #0f0f1a); // Vino profundo a negro más elegante
+  // Volvemos al gradiente elegante con difuminación
+  background: linear-gradient(to bottom, var(--color-primary-dark), #0f0f1a); 
   color: var(--color-gray-300);
-  padding: var(--spacing-xl) 0 var(--spacing-lg);
+  padding: 60px 0 30px; // Reducimos un poco el padding excesivo
   position: relative;
   overflow: hidden;
-}
-
-.footer-pattern-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 8px;
-  background: linear-gradient(90deg, transparent, var(--color-secondary), transparent);
-  opacity: 0.4;
 }
 
 .footer-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--spacing-lg); // Espacio lateral base
+  padding: 0 40px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--spacing-lg);
+  // Usamos columnas más equilibradas para evitar que el logo empuje todo
+  grid-template-columns: 1.2fr 0.8fr 0.8fr 1.2fr; 
+  gap: 40px;
+  position: relative;
+  z-index: 2; // Asegura que el texto esté sobre cualquier efecto de fondo
 
-  // Más espacio en pantallas medianas y pequeñas
-  @media (max-width: 992px) {
-    padding: 0 var(--spacing-md);
-    gap: var(--spacing-md);
-  }
-
-  @media (max-width: 480px) {
-    padding: 0 var(--spacing-sm);
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
   }
 }
 
@@ -42,178 +32,81 @@
   .footer-logo-wrapper {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: var(--spacing-md);
+    gap: 12px;
+    margin-bottom: 20px;
 
     .logo-footer {
-      height: 60px;
-      filter: drop-shadow(0 0 12px rgba(var(--color-secondary), 0.5));
+      height: 45px; // Tamaño controlado para que no sea gigante
+      width: auto;
+      filter: drop-shadow(0 0 8px rgba(var(--color-secondary), 0.3));
     }
 
     .logo-text {
-      font-size: 2rem;
+      font-size: 1.6rem; // Un poco más pequeño que el anterior
       font-weight: 800;
-      background: linear-gradient(90deg, var(--color-secondary), var(--color-secondary-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--color-secondary);
     }
   }
 
   .footer-desc {
-    line-height: 1.7;
-    margin-bottom: var(--spacing-md);
-    max-width: 320px;
-  }
-
-  .footer-social-icons {
-    display: flex;
-    gap: 1.2rem;
-    margin-top: var(--spacing-sm);
-
-    a {
-      color: var(--color-gray-400);
-      font-size: 1.6rem;
-      transition: all 0.4s ease;
-
-      &:hover {
-        color: var(--color-secondary);
-        transform: translateY(-5px) scale(1.1);
-      }
-    }
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 280px; // Evita que el texto se estire mucho
   }
 }
 
+// Estilo para los títulos de sección (Soporte, Esencia, etc)
 .footer-section {
-  h4.footer-title {
-    font-size: 1.3rem;
-    font-weight: 700;
+  .footer-title {
     color: var(--color-secondary);
-    margin-bottom: var(--spacing-md);
-    position: relative;
-    display: inline-block;
-
-    &::after {
-      content: '';
-      display: block;
-      width: 60px;
-      height: 3px;
-      background: linear-gradient(90deg, var(--color-secondary), transparent);
-      margin-top: 10px;
-      border-radius: 2px;
-    }
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   .footer-links-list {
     list-style: none;
     padding: 0;
-    margin: 0;
-
-    li a {
-      color: var(--color-gray-400);
-      text-decoration: none;
-      display: block;
-      padding: 0.65rem 0;
-      transition: all 0.3s ease;
-
-      &:hover {
-        color: var(--color-secondary);
-        padding-left: 12px;
+    
+    li {
+      margin-bottom: 10px;
+      a {
+        color: var(--color-gray-400);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+        &:hover {
+          color: var(--color-secondary-light);
+        }
       }
     }
   }
 }
 
 .footer-newsletter {
-  .newsletter-desc {
-    font-size: 0.95rem;
-    margin-bottom: var(--spacing-sm);
-    color: var(--color-gray-400);
+  .newsletter-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 15px;
+    border-radius: 4px;
+    color: white;
+    width: 100%;
+    margin-bottom: 10px;
   }
 
-  .newsletter-form {
-    display: flex;
-    gap: 0.8rem;
-    margin-top: var(--spacing-sm);
-
-    .newsletter-input {
-      flex: 1;
-      padding: 0.9rem 1.2rem;
-      border: 1px solid var(--color-gray-600);
-      border-radius: var(--border-radius-md);
-      background: rgba(255, 255, 255, 0.08);
-      color: white;
-      font-size: 1rem;
-
-      &::placeholder {
-        color: var(--color-gray-500);
-      }
-
-      &:focus {
-        outline: none;
-        border-color: var(--color-secondary);
-        box-shadow: 0 0 0 3px rgba(var(--color-secondary), 0.2);
-      }
-    }
-
-    .newsletter-btn {
-      @include btn-secondary; // Ahora funciona porque importamos _mixins.scss
-      padding: 0.9rem 1.8rem;
-      font-size: 0.95rem;
-      white-space: nowrap;
-    }
+  .newsletter-btn {
+    @include btn-secondary;
+    width: 100%;
+    padding: 10px;
   }
 }
 
 .footer-bottom {
-  margin-top: var(--spacing-xl);
-  padding-top: var(--spacing-lg);
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   text-align: center;
-  border-top: 1px solid rgba(var(--color-secondary), 0.15);
-
-  p {
-    color: var(--color-gray-500);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-}
-
-// Responsivo mejorado
-@media (max-width: 768px) {
-  .footer-container {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .footer-brand .footer-logo-wrapper {
-    justify-content: center;
-  }
-
-  .footer-section h4.footer-title::after {
-    margin: 10px auto 0;
-  }
-
-  .newsletter-form {
-    flex-direction: column;
-    align-items: stretch;
-
-    .newsletter-input,
-    .newsletter-btn {
-      width: 100%;
-    }
-
-    .newsletter-btn {
-      margin-top: var(--spacing-xs);
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .footer-brand .footer-desc {
-    max-width: none;
-  }
-
-  .footer-social-icons {
-    justify-content: center;
-  }
+  font-size: 0.8rem;
+  color: var(--color-gray-500);
 }
