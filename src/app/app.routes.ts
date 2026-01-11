@@ -1,4 +1,7 @@
 import { Routes } from '@angular/router';
+import { MainLayout } from './shared/layouts/main-layout/main-layout';
+
+//Importación de Components
 import { WelcomeComponent } from './welcome/welcome';
 import { LoginComponent } from './login/login';
 import { RegisterComponent } from './register/register';
@@ -13,21 +16,32 @@ import { AyudaComponent } from './ayuda/ayuda';
 
 
 export const routes: Routes = [
+  
+  // === Grupo 1: Ruta sin HEADER y FOOTER ===
   { path: '', component: WelcomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'recuperar', component: RecuperarComponent }, // Añade esta ruta
+  { path: 'recuperar', component: RecuperarComponent },
+
+ // --- GRUPO 2: RUTAS CON HEADER Y FOOTER (Envueltas en el Layout) ---
   {
-    path: 'marketplace',
-    loadComponent: () =>
-      import('./marketplace/marketplace').then(m => m.MarketplaceComponent)
+    path: '',
+    component: MainLayout,
+    children: [
+      {
+        path: 'marketplace',
+        loadComponent: () => import('./marketplace/marketplace').then(m => m.MarketplaceComponent)
+      },
+      { path: 'producto/:id', component: ViewProductComponent },
+      { path: 'perfil', component: PerfilComponent },
+      { path: 'carrito', component: CarritoComponent },
+      { path: 'categorias', component: CategoriasComponent },
+      { path: 'favoritos', component: FavoritosComponent },
+      { path: 'ofertas', component: OfertasComponent },
+      { path: 'ayuda', component: AyudaComponent },
+    ]
   },
-  { path: 'producto/:id', component: ViewProductComponent },
-  { path: 'perfil', component: PerfilComponent },
-  {path: 'carrito', component: CarritoComponent},
-  { path: 'categorias', component: CategoriasComponent },
-  { path: 'favoritos', component: FavoritosComponent },
-  { path: 'ofertas', component: OfertasComponent },
-  { path: 'ayuda', component: AyudaComponent},
+
+  // Redirección por defecto si la ruta no existe
   { path: '**', redirectTo: '' }
 ];
