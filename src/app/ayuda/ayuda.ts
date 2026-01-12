@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -34,6 +34,8 @@ interface MensajeContacto {
   styleUrls: ['./ayuda.scss']
 })
 export class AyudaComponent implements OnInit {
+  @ViewChild('busquedaRapida', { static: true }) busquedaRapida!: ElementRef;
+  
   // Propiedades para búsqueda
   terminoBusqueda: string = '';
   resultadosBusqueda: PreguntaFrecuente[] = [];
@@ -152,8 +154,20 @@ export class AyudaComponent implements OnInit {
 
   enviando: boolean = false;
 
+  // Para responsive
+  esMovil: boolean = false;
+
   ngOnInit(): void {
-    // Inicializar cualquier dato necesario
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize(): void {
+    this.esMovil = window.innerWidth <= 768;
   }
 
   // Calcular el total de preguntas
@@ -177,28 +191,41 @@ export class AyudaComponent implements OnInit {
           pregunta.pregunta.toLowerCase().includes(termino) ||
           pregunta.respuesta.toLowerCase().includes(termino)
         ) {
-          this.resultadosBusqueda.push({ ...pregunta });
+          this.resultadosBusqueda.push({ ...pregunta, abierta: true });
         }
       });
     });
   }
 
   // Filtrar por categoría específica
-  filtrarPorCategoria(categoria: string): void {
+  filtrarPorCategoria(categoriaTipo: string): void {
     this.terminoBusqueda = '';
     this.resultadosBusqueda = [];
     
     // Abrir la categoría correspondiente
     const catIndex = this.categoriasAyuda.findIndex(cat => 
-      cat.preguntas.some(p => p.categoria === categoria)
+      cat.preguntas.some(p => p.categoria === categoriaTipo)
     );
     
     if (catIndex !== -1) {
+      // Cerrar todas las categorías primero
+      this.categoriasAyuda.forEach(cat => cat.abierta = false);
+      
+      // Abrir la categoría seleccionada
       this.categoriasAyuda[catIndex].abierta = true;
+      
+      // Abrir todas las preguntas de esta categoría
+      this.categoriasAyuda[catIndex].preguntas.forEach(p => p.abierta = true);
+      
       // Scroll a la categoría
       setTimeout(() => {
-        const element = document.querySelector('.categoria-preguntas:nth-child(' + (catIndex + 1) + ')');
-        element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const element = document.querySelectorAll('.categoria-preguntas')[catIndex];
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }
       }, 100);
     }
   }
@@ -206,6 +233,11 @@ export class AyudaComponent implements OnInit {
   // Alternar visibilidad de categoría
   toggleCategoria(categoria: CategoriaAyuda): void {
     categoria.abierta = !categoria.abierta;
+    
+    // Si se cierra la categoría, cerrar todas sus preguntas
+    if (!categoria.abierta) {
+      categoria.preguntas.forEach(p => p.abierta = false);
+    }
   }
 
   // Alternar visibilidad de pregunta
@@ -217,48 +249,95 @@ export class AyudaComponent implements OnInit {
   marcarUtil(pregunta: PreguntaFrecuente): void {
     pregunta.util = !pregunta.util;
     
+    // Mostrar notificación
+    this.mostrarNotificacion(
+      pregunta.util 
+        ? '¡Gracias por tu feedback! Marcaste esta pregunta como útil.' 
+        : 'Feedback actualizado.'
+    );
+    
     // Aquí podrías enviar esta información a tu backend
     console.log(`Pregunta ${pregunta.id} marcada como ${pregunta.util ? 'útil' : 'no útil'}`);
   }
 
+  // Mostrar notificación
+  private mostrarNotificacion(mensaje: string): void {
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.textContent = mensaje;
+    
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #7A1A2C;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      z-index: 9999;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      animation: slideIn 0.3s ease;
+      max-width: 300px;
+      font-weight: 500;
+      font-family: 'Montserrat', sans-serif;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }, 3000);
+  }
+
   // Compartir pregunta
   compartirPregunta(pregunta: PreguntaFrecuente): void {
+    const texto = `📋 Pregunta: ${pregunta.pregunta}\n\n💡 Respuesta: ${pregunta.respuesta}\n\nCompartido desde RaícesMX Centro de Ayuda`;
+    const url = window.location.href;
+    
     if (navigator.share) {
       navigator.share({
         title: pregunta.pregunta,
-        text: pregunta.respuesta,
-        url: window.location.href
+        text: texto,
+        url: url
       }).catch(error => console.log('Error sharing:', error));
     } else {
       // Fallback para navegadores que no soportan Web Share API
-      const texto = `${pregunta.pregunta}\n\n${pregunta.respuesta}\n\nCompartido desde RaícesMX`;
-      navigator.clipboard.writeText(texto).then(() => {
-        alert('Pregunta copiada al portapapeles');
+      navigator.clipboard.writeText(`${texto}\n\n${url}`).then(() => {
+        this.mostrarNotificacion('📋 Pregunta copiada al portapapeles');
       }).catch(() => {
         // Fallback más básico
         const textArea = document.createElement('textarea');
-        textArea.value = texto;
+        textArea.value = `${texto}\n\n${url}`;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
-        alert('Pregunta copiada al portapapeles');
+        this.mostrarNotificacion('📋 Pregunta copiada al portapapeles');
       });
     }
   }
 
   // Métodos de contacto
   iniciarChat(): void {
-    alert('Iniciando chat en vivo... El servicio de chat estará disponible pronto.');
+    this.mostrarNotificacion('💬 Iniciando chat en vivo... El servicio estará disponible pronto.');
     // Aquí integrarías con tu servicio de chat en vivo
   }
 
   abrirEmail(): void {
-    window.location.href = 'mailto:soporte@raicesmx.com';
+    const subject = 'Consulta - Centro de Ayuda RaícesMX';
+    const body = `Hola equipo de RaícesMX,\n\nMe gustaría hacer la siguiente consulta:\n\n`;
+    window.location.href = `mailto:soporte@raicesmx.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
   llamarSoporte(): void {
-    window.location.href = 'tel:+525512345678';
+    if (confirm('¿Deseas llamar al soporte de RaícesMX?')) {
+      window.location.href = 'tel:+525512345678';
+    }
   }
 
   // Enviar mensaje de contacto
@@ -269,7 +348,7 @@ export class AyudaComponent implements OnInit {
       // Simular envío del formulario
       setTimeout(() => {
         console.log('Mensaje enviado:', this.mensajeContacto);
-        alert('¡Mensaje enviado con éxito! Te contactaremos pronto.');
+        this.mostrarNotificacion('✅ ¡Mensaje enviado con éxito! Te contactaremos pronto.');
         
         // Resetear formulario
         this.mensajeContacto = {
@@ -286,28 +365,28 @@ export class AyudaComponent implements OnInit {
 
   // Validar formulario de contacto
   private validarFormularioContacto(): boolean {
+    const errores: string[] = [];
+    
     if (!this.mensajeContacto.nombre.trim()) {
-      alert('Por favor ingresa tu nombre');
-      return false;
+      errores.push('Por favor ingresa tu nombre');
     }
     
     if (!this.mensajeContacto.email.trim()) {
-      alert('Por favor ingresa tu email');
-      return false;
-    }
-    
-    if (!this.validarEmail(this.mensajeContacto.email)) {
-      alert('Por favor ingresa un email válido');
-      return false;
+      errores.push('Por favor ingresa tu email');
+    } else if (!this.validarEmail(this.mensajeContacto.email)) {
+      errores.push('Por favor ingresa un email válido');
     }
     
     if (!this.mensajeContacto.asunto) {
-      alert('Por favor selecciona un asunto');
-      return false;
+      errores.push('Por favor selecciona un asunto');
     }
     
     if (!this.mensajeContacto.mensaje.trim()) {
-      alert('Por favor ingresa tu mensaje');
+      errores.push('Por favor ingresa tu mensaje');
+    }
+    
+    if (errores.length > 0) {
+      alert(errores.join('\n'));
       return false;
     }
     
@@ -322,17 +401,39 @@ export class AyudaComponent implements OnInit {
 
   // Métodos para recursos adicionales
   verGuias(): void {
-    alert('Redirigiendo a guías de compra...');
+    this.mostrarNotificacion('📚 Redirigiendo a guías de compra...');
     // Navegar a página de guías
   }
 
   verTutoriales(): void {
-    alert('Redirigiendo a video tutoriales...');
+    this.mostrarNotificacion('🎥 Redirigiendo a video tutoriales...');
     // Navegar a página de tutoriales
   }
 
   verPoliticas(): void {
-    alert('Redirigiendo a políticas y términos...');
+    this.mostrarNotificacion('📋 Redirigiendo a políticas y términos...');
     // Navegar a página de políticas
+  }
+  scrollToSeccion(seccionId: string): void {
+    console.log('Scrolling to:', seccionId); // Para debug
+    
+    if (seccionId === 'busqueda-rapida') {
+      // Usando ViewChild
+      if (this.busquedaRapida && this.busquedaRapida.nativeElement) {
+        this.busquedaRapida.nativeElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      } else {
+        // Fallback por si ViewChild no funciona
+        const element = document.querySelector('.busqueda-rapida');
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }
+      }
+    }
   }
 }
