@@ -15,12 +15,18 @@
 
   <form (ngSubmit)="onSubmit()" class="form-registro">
     <div class="form-header">
-      <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-registro">
-      <h1 class="titulo-raiz">
-        <span class="vino">Raíces</span><span class="dorado">MX</span>
-      </h1>
+      <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-registro" />
+      <h1 class="titulo-raiz"><span class="vino">Raíces</span><span class="dorado">MX</span></h1>
       <p class="subtitulo-raiz">Únete a nuestra comunidad</p>
     </div>
+
+    <!-- Mensaje de error -->
+    @if (errorMessage) {
+    <div class="error-message">
+      <span class="error-icon">⚠️</span>
+      {{ errorMessage }}
+    </div>
+    }
 
     <div class="inputs-grid">
       <!-- Nombre -->
@@ -32,6 +38,7 @@
           [(ngModel)]="nombre"
           name="nombre"
           required
+          [disabled]="isLoading"
           class="input-registro"
         />
       </div>
@@ -45,6 +52,7 @@
           [(ngModel)]="apellido"
           name="apellido"
           required
+          [disabled]="isLoading"
           class="input-registro"
         />
       </div>
@@ -60,6 +68,7 @@
             name="email"
             required
             email
+            [disabled]="isLoading"
             class="input-registro"
           />
         </div>
@@ -71,25 +80,25 @@
         <div class="input-wrapper password-wrapper">
           <input
             [type]="showPassword ? 'text' : 'password'"
-            placeholder="Mínimo 8 caracteres"
+            placeholder="Mínimo 6 caracteres"
             [(ngModel)]="password"
             name="password"
             required
-            minlength="8"
+            minlength="6"
+            [disabled]="isLoading"
             class="input-registro"
           />
           <button
             type="button"
             class="toggle-password"
             (click)="togglePassword()"
+            [disabled]="isLoading"
             [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
           >
             <span class="icon-eye"></span>
           </button>
         </div>
-        <p class="password-hint">
-          Debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo.
-        </p>
+        <p class="password-hint">Debe tener al menos 6 caracteres.</p>
       </div>
 
       <!-- Confirmar -->
@@ -102,12 +111,14 @@
             [(ngModel)]="confirmPassword"
             name="confirmPassword"
             required
+            [disabled]="isLoading"
             class="input-registro"
           />
           <button
             type="button"
             class="toggle-password"
             (click)="toggleConfirm()"
+            [disabled]="isLoading"
             [attr.aria-label]="showConfirm ? 'Ocultar' : 'Mostrar'"
           >
             <span class="icon-eye"></span>
@@ -116,13 +127,16 @@
       </div>
     </div>
 
-    <button type="submit" class="btn-registro">
+    <button type="submit" class="btn-registro" [disabled]="isLoading">
+      @if (isLoading) {
+      <span class="loading-spinner"></span>
+      <span>Creando cuenta...</span>
+      } @else {
       <span>Crear Cuenta</span>
+      }
       <div class="btn-ripple"></div>
     </button>
 
-    <p class="link-login">
-      ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a>
-    </p>
+    <p class="link-login">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
   </form>
 </div>
