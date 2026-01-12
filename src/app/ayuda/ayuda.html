@@ -1,233 +1,323 @@
 <div class="ayuda-container">
-<!-- Contenido principal -->
-  <main class="ayuda-main">
-    <div class="ayuda-content">
-      
-      <!-- Hero Section -->
-      <section class="ayuda-hero">
-        <div class="hero-content">
-          <div class="hero-text">
-            <h1 class="hero-title">
-              <span class="hero-accent">Centro de Ayuda</span> ❓
-            </h1>
-            <p class="hero-subtitle">
-              Estamos aquí para ayudarte. Encuentra respuestas rápidas a tus preguntas.
-            </p>
-            <div class="hero-stats">
-              <div class="hero-stat">
-                <span class="stat-number">{{ categoriasAyuda.length }}</span>
-                <span class="stat-label">Categorías</span>
-              </div>
-              <div class="hero-stat">
-                <span class="stat-number">{{ totalPreguntas }}</span>
-                <span class="stat-label">Preguntas</span>
-              </div>
-              <div class="hero-stat">
-                <span class="stat-number">24/7</span>
-                <span class="stat-label">Soporte</span>
-              </div>
-            </div>
-          </div>
-          <div class="hero-visual">
-            <div class="floating-elements">
-              <div class="floating-item item-1">❓</div>
-              <div class="floating-item item-2">💬</div>
-              <div class="floating-item item-3">📞</div>
-              <div class="floating-item item-4">✨</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Búsqueda rápida -->
-      <section class="busqueda-rapida">
-        <div class="busqueda-container">
-          <h2>¿En qué podemos ayudarte?</h2>
-          <div class="busqueda-grid">
-            <div class="busqueda-card" (click)="filtrarPorCategoria('pedidos')">
-              <div class="card-icon">📦</div>
-              <h3>Pedidos y Envíos</h3>
-              <p>Seguimiento, tiempos de entrega y políticas de envío</p>
-            </div>
-            <div class="busqueda-card" (click)="filtrarPorCategoria('pagos')">
-              <div class="card-icon">💳</div>
-              <h3>Pagos y Facturación</h3>
-              <p>Métodos de pago, facturas y reembolsos</p>
-            </div>
-            <div class="busqueda-card" (click)="filtrarPorCategoria('devoluciones')">
-              <div class="card-icon">🔄</div>
-              <h3>Devoluciones</h3>
-              <p>Políticas de cambio y garantías de productos</p>
-            </div>
-            <div class="busqueda-card" (click)="filtrarPorCategoria('cuenta')">
-              <div class="card-icon">👤</div>
-              <h3>Mi Cuenta</h3>
-              <p>Gestión de perfil, contraseña y preferencias</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Resultados de búsqueda -->
-      <section *ngIf="terminoBusqueda && resultadosBusqueda.length > 0" class="resultados-busqueda">
-        <div class="resultados-container">
-          <h2>Resultados para "{{ terminoBusqueda }}"</h2>
-          <div class="resultados-list">
-            <div *ngFor="let resultado of resultadosBusqueda" class="resultado-item">
-              <h4 (click)="togglePregunta(resultado)">{{ resultado.pregunta }}</h4>
-              <div *ngIf="resultado.abierta" class="respuesta">
-                <p>{{ resultado.respuesta }}</p>
-                <div class="respuesta-actions">
-                  <button class="btn-util" (click)="marcarUtil(resultado)">
-                    👍 {{ resultado.util ? 'Útil' : '¿Te resultó útil?' }}
-                  </button>
-                  <button class="btn-compartir" (click)="compartirPregunta(resultado)">
-                    📤 Compartir
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Preguntas Frecuentes -->
-      <section class="preguntas-frecuentes">
-        <div class="preguntas-container">
-          <h2>Preguntas Frecuentes</h2>
+  <!-- HERO SECTION -->
+  <section class="ayuda-hero">
+    <div class="hero-content-wrapper">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            <span class="hero-line-1">Centro de</span>
+            <span class="hero-line-2">
+              <span class="text-ayuda">Ayuda</span>
+              <span class="text-centro">Centro</span>
+              <span class="hero-icon">❓</span>
+            </span>
+          </h1>
           
-          <div *ngFor="let categoria of categoriasAyuda" class="categoria-preguntas">
-            <h3 class="categoria-titulo" (click)="toggleCategoria(categoria)">
-              {{ categoria.nombre }}
-              <span class="categoria-icon">{{ categoria.abierta ? '−' : '+' }}</span>
-            </h3>
-            
-            <div *ngIf="categoria.abierta" class="preguntas-list">
-              <div *ngFor="let pregunta of categoria.preguntas" class="pregunta-item">
-                <div class="pregunta-header" (click)="togglePregunta(pregunta)">
-                  <h4>{{ pregunta.pregunta }}</h4>
-                  <span class="pregunta-icon">{{ pregunta.abierta ? '−' : '+' }}</span>
-                </div>
-                <div *ngIf="pregunta.abierta" class="pregunta-respuesta">
-                  <p>{{ pregunta.respuesta }}</p>
-                  <div class="pregunta-actions">
-                    <button class="btn-util" (click)="marcarUtil(pregunta)">
-                      👍 {{ pregunta.util ? 'Útil' : '¿Te resultó útil?' }}
-                    </button>
-                    <button class="btn-compartir" (click)="compartirPregunta(pregunta)">
-                      📤 Compartir
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Contacto Directo -->
-      <section class="contacto-directo">
-        <div class="contacto-container">
-          <div class="contacto-info">
-            <h2>¿No encontraste lo que buscabas?</h2>
-            <p>Nuestro equipo de soporte está listo para ayudarte personalmente</p>
-            
-            <div class="contacto-metodos">
-              <div class="metodo-contacto">
-                <div class="metodo-icon">💬</div>
-                <div class="metodo-info">
-                  <h4>Chat en Vivo</h4>
-                  <p>Disponible 24/7</p>
-                  <button class="btn-contacto" (click)="iniciarChat()">Iniciar Chat</button>
-                </div>
-              </div>
-              
-              <div class="metodo-contacto">
-                <div class="metodo-icon">📧</div>
-                <div class="metodo-info">
-                  <h4>Correo Electrónico</h4>
-                  <p>Respuesta en 24 horas</p>
-                  <button class="btn-contacto" (click)="abrirEmail()">soporte&#64;raicesmx.com</button>
-                </div>
-              </div>
-              
-              <div class="metodo-contacto">
-                <div class="metodo-icon">📞</div>
-                <div class="metodo-info">
-                  <h4>Teléfono</h4>
-                  <p>Lun-Vie 9:00-18:00</p>
-                  <button class="btn-contacto" (click)="llamarSoporte()">+52 55 1234 5678</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <p class="hero-subtitle">
+            Estamos aquí para ayudarte. Encuentra respuestas rápidas a tus preguntas.
+          </p>
           
-          <div class="contacto-formulario">
-            <h3>Envíanos un mensaje</h3>
-            <form (ngSubmit)="enviarMensaje()" class="formulario-contacto">
-              <div class="form-group">
-                <label>Nombre completo *</label>
-                <input type="text" [(ngModel)]="mensajeContacto.nombre" name="nombre" required class="form-input">
-              </div>
-              
-              <div class="form-group">
-                <label>Correo electrónico *</label>
-                <input type="email" [(ngModel)]="mensajeContacto.email" name="email" required class="form-input">
-              </div>
-              
-              <div class="form-group">
-                <label>Asunto *</label>
-                <select [(ngModel)]="mensajeContacto.asunto" name="asunto" required class="form-select">
-                  <option value="">Selecciona un asunto</option>
-                  <option value="pedido">Problema con mi pedido</option>
-                  <option value="pago">Consulta sobre pago</option>
-                  <option value="producto">Información de producto</option>
-                  <option value="devolucion">Solicitud de devolución</option>
-                  <option value="otro">Otro</option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label>Mensaje *</label>
-                <textarea [(ngModel)]="mensajeContacto.mensaje" name="mensaje" required class="form-textarea" placeholder="Describe tu consulta en detalle..."></textarea>
-              </div>
-              
-              <button type="submit" class="btn-enviar" [disabled]="enviando">
-                {{ enviando ? 'Enviando...' : '📤 Enviar Mensaje' }}
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      <!-- Recursos Adicionales -->
-      <section class="recursos-adicionales">
-        <div class="recursos-container">
-          <h2>Recursos Adicionales</h2>
-          <div class="recursos-grid">
-            <div class="recurso-card">
-              <div class="recurso-icon">📚</div>
-              <h3>Guías de Compra</h3>
-              <p>Aprende a elegir la artesanía perfecta para ti</p>
-              <button class="btn-recurso" (click)="verGuias()">Ver Guías</button>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="stat-number">{{ categoriasAyuda.length }}</span>
+              <span class="stat-label">Categorías</span>
             </div>
-            
-            <div class="recurso-card">
-              <div class="recurso-icon">🎥</div>
-              <h3>Video Tutoriales</h3>
-              <p>Aprende sobre el cuidado de artesanías mexicanas</p>
-              <button class="btn-recurso" (click)="verTutoriales()">Ver Videos</button>
+            <div class="hero-stat">
+              <span class="stat-number">{{ totalPreguntas }}</span>
+              <span class="stat-label">Preguntas</span>
             </div>
-            
-            <div class="recurso-card">
-              <div class="recurso-icon">📋</div>
-              <h3>Políticas y Términos</h3>
-              <p>Conoce nuestras políticas de servicio</p>
-              <button class="btn-recurso" (click)="verPoliticas()">Ver Políticas</button>
+            <div class="hero-stat">
+              <span class="stat-number">24/7</span>
+              <span class="stat-label">Soporte</span>
             </div>
           </div>
         </div>
-      </section>
+        
+        <div class="hero-visual">
+          <div class="floating-elements">
+            <div class="floating-item item-1">❓</div>
+            <div class="floating-item item-2">💬</div>
+            <div class="floating-item item-3">📞</div>
+            <div class="floating-item item-4">✨</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </main>
+    
+    <!-- MOVER scroll-indicator FUERA del hero-content-wrapper -->
+    <div class="scroll-indicator" (click)="scrollToSeccion('busqueda-rapida')">
+      <div class="arrow"></div>
+    </div>
+  </section>
+
+  <!-- EL RESTO DEL HTML SIGUE IGUAL... -->
+
+  <!-- BÚSQUEDA RÁPIDA -->
+  <section class="busqueda-rapida">
+    <div class="busqueda-container">
+      <h2>¿En qué podemos ayudarte?</h2>
+      
+      <div class="busqueda-grid">
+        <div class="busqueda-card" (click)="filtrarPorCategoria('pedidos')">
+          <div class="card-icon">📦</div>
+          <h3>Pedidos y Envíos</h3>
+          <p>Seguimiento, tiempos de entrega y políticas de envío</p>
+        </div>
+        
+        <div class="busqueda-card" (click)="filtrarPorCategoria('pagos')">
+          <div class="card-icon">💳</div>
+          <h3>Pagos y Facturación</h3>
+          <p>Métodos de pago, facturas y reembolsos</p>
+        </div>
+        
+        <div class="busqueda-card" (click)="filtrarPorCategoria('devoluciones')">
+          <div class="card-icon">🔄</div>
+          <h3>Devoluciones</h3>
+          <p>Políticas de cambio y garantías de productos</p>
+        </div>
+        
+        <div class="busqueda-card" (click)="filtrarPorCategoria('cuenta')">
+          <div class="card-icon">👤</div>
+          <h3>Mi Cuenta</h3>
+          <p>Gestión de perfil, contraseña y preferencias</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BARRA DE BÚSQUEDA -->
+  <section class="barra-busqueda">
+    <div class="busqueda-input-container">
+      <div class="input-group">
+        <input 
+          type="text" 
+          [(ngModel)]="terminoBusqueda" 
+          (keyup.enter)="filtrarContenido()"
+          placeholder="Buscar en preguntas frecuentes..." 
+          class="busqueda-input"
+        >
+        <button class="btn-buscar" (click)="filtrarContenido()">
+          🔍 Buscar
+        </button>
+      </div>
+      <p class="busqueda-hint">
+        Escribe tu pregunta o palabra clave y presiona Enter
+      </p>
+    </div>
+  </section>
+
+  <!-- RESULTADOS DE BÚSQUEDA -->
+  <section *ngIf="terminoBusqueda && resultadosBusqueda.length > 0" class="resultados-busqueda">
+    <div class="resultados-container">
+      <h2>Resultados para "{{ terminoBusqueda }}"</h2>
+      <div class="resultados-list">
+        <div *ngFor="let resultado of resultadosBusqueda" class="resultado-item">
+          <h4 (click)="togglePregunta(resultado)">
+            {{ resultado.pregunta }}
+            <span class="resultado-categoria">
+              {{ resultado.categoria | titlecase }}
+            </span>
+          </h4>
+          <div *ngIf="resultado.abierta" class="respuesta">
+            <p>{{ resultado.respuesta }}</p>
+            <div class="respuesta-actions">
+              <button class="btn-util" (click)="marcarUtil(resultado)">
+                👍 {{ resultado.util ? 'Útil' : '¿Te resultó útil?' }}
+              </button>
+              <button class="btn-compartir" (click)="compartirPregunta(resultado)">
+                📤 Compartir
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="resultadosBusqueda.length === 0" class="sin-resultados">
+        <p>No encontramos resultados para "{{ terminoBusqueda }}"</p>
+        <button class="btn-limpiar" (click)="terminoBusqueda = ''; resultadosBusqueda = []">
+          Limpiar búsqueda
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREGUNTAS FRECUENTES -->
+  <section class="preguntas-frecuentes">
+    <div class="preguntas-container">
+      <h2>Preguntas Frecuentes</h2>
+      
+      <div *ngFor="let categoria of categoriasAyuda; let i = index" class="categoria-preguntas">
+        <h3 class="categoria-titulo" (click)="toggleCategoria(categoria)">
+          {{ categoria.nombre }}
+          <span class="categoria-icon">{{ categoria.abierta ? '−' : '+' }}</span>
+        </h3>
+        
+        <div *ngIf="categoria.abierta" class="preguntas-list">
+          <div *ngFor="let pregunta of categoria.preguntas" class="pregunta-item">
+            <div class="pregunta-header" (click)="togglePregunta(pregunta)">
+              <h4>{{ pregunta.pregunta }}</h4>
+              <span class="pregunta-icon">{{ pregunta.abierta ? '−' : '+' }}</span>
+            </div>
+            <div *ngIf="pregunta.abierta" class="pregunta-respuesta">
+              <p>{{ pregunta.respuesta }}</p>
+              <div class="pregunta-actions">
+                <button class="btn-util" (click)="marcarUtil(pregunta)">
+                  👍 {{ pregunta.util ? 'Útil' : '¿Te resultó útil?' }}
+                </button>
+                <button class="btn-compartir" (click)="compartirPregunta(pregunta)">
+                  📤 Compartir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO DIRECTO -->
+  <section class="contacto-directo">
+    <div class="contacto-container">
+      <div class="contacto-info">
+        <h2>¿No encontraste lo que buscabas?</h2>
+        <p>Nuestro equipo de soporte está listo para ayudarte personalmente</p>
+        
+        <div class="contacto-metodos">
+          <div class="metodo-contacto">
+            <div class="metodo-icon">💬</div>
+            <div class="metodo-info">
+              <h4>Chat en Vivo</h4>
+              <p>Disponible 24/7</p>
+              <button class="btn-contacto" (click)="iniciarChat()">
+                Iniciar Chat
+              </button>
+            </div>
+          </div>
+          
+          <div class="metodo-contacto">
+            <div class="metodo-icon">📧</div>
+            <div class="metodo-info">
+              <h4>Correo Electrónico</h4>
+              <p>Respuesta en 24 horas</p>
+              <button class="btn-contacto" (click)="abrirEmail()">
+                soporte&#64;raicesmx.com
+              </button>
+            </div>
+          </div>
+          
+          <div class="metodo-contacto">
+            <div class="metodo-icon">📞</div>
+            <div class="metodo-info">
+              <h4>Teléfono</h4>
+              <p>Lun-Vie 9:00-18:00</p>
+              <button class="btn-contacto" (click)="llamarSoporte()">
+                +52 55 1234 5678
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="contacto-formulario">
+        <h3>Envíanos un mensaje</h3>
+        <form (ngSubmit)="enviarMensaje()" class="formulario-contacto">
+          <div class="form-group">
+            <label for="nombre">Nombre completo *</label>
+            <input 
+              type="text" 
+              id="nombre"
+              [(ngModel)]="mensajeContacto.nombre" 
+              name="nombre" 
+              required 
+              class="form-input"
+              placeholder="Tu nombre completo"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Correo electrónico *</label>
+            <input 
+              type="email" 
+              id="email"
+              [(ngModel)]="mensajeContacto.email" 
+              name="email" 
+              required 
+              class="form-input"
+              placeholder="tu@email.com"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="asunto">Asunto *</label>
+            <select 
+              id="asunto"
+              [(ngModel)]="mensajeContacto.asunto" 
+              name="asunto" 
+              required 
+              class="form-select"
+            >
+              <option value="">Selecciona un asunto</option>
+              <option value="pedido">Problema con mi pedido</option>
+              <option value="pago">Consulta sobre pago</option>
+              <option value="producto">Información de producto</option>
+              <option value="devolucion">Solicitud de devolución</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="mensaje">Mensaje *</label>
+            <textarea 
+              id="mensaje"
+              [(ngModel)]="mensajeContacto.mensaje" 
+              name="mensaje" 
+              required 
+              class="form-textarea" 
+              placeholder="Describe tu consulta en detalle..."
+              rows="4"
+            ></textarea>
+          </div>
+          
+          <button type="submit" class="btn-enviar" [disabled]="enviando">
+            {{ enviando ? 'Enviando...' : '📤 Enviar Mensaje' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECURSOS ADICIONALES -->
+  <section class="recursos-adicionales">
+    <div class="recursos-container">
+      <h2>Recursos Adicionales</h2>
+      <div class="recursos-grid">
+        <div class="recurso-card">
+          <div class="recurso-icon">📚</div>
+          <h3>Guías de Compra</h3>
+          <p>Aprende a elegir la artesanía perfecta para ti</p>
+          <button class="btn-recurso" (click)="verGuias()">
+            Ver Guías
+          </button>
+        </div>
+        
+        <div class="recurso-card">
+          <div class="recurso-icon">🎥</div>
+          <h3>Video Tutoriales</h3>
+          <p>Aprende sobre el cuidado de artesanías mexicanas</p>
+          <button class="btn-recurso" (click)="verTutoriales()">
+            Ver Videos
+          </button>
+        </div>
+        
+        <div class="recurso-card">
+          <div class="recurso-icon">📋</div>
+          <h3>Políticas y Términos</h3>
+          <p>Conoce nuestras políticas de servicio</p>
+          <button class="btn-recurso" (click)="verPoliticas()">
+            Ver Políticas
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

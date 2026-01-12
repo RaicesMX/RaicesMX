@@ -1,294 +1,302 @@
 <div class="ofertas-container">
-  <!-- Contenido principal -->
-  <main class="ofertas-main">
-    <div class="ofertas-content">
-      
-      <!-- Hero Section -->
-      <section class="ofertas-hero">
-        <div class="hero-content">
-          <div class="hero-text">
-            <h1 class="hero-title">
-              <span class="hero-accent">Ofertas Especiales</span> 🏷️
-            </h1>
-            <p class="hero-subtitle">
-              Descubre descuentos exclusivos en artesanías mexicanas. ¡Tiempo limitado!
-            </p>
-            <div class="hero-stats">
-              <div class="hero-stat">
-                <span class="stat-number">{{ ofertas.length }}</span>
-                <span class="stat-label">Ofertas Activas</span>
-              </div>
-              <div class="hero-stat">
-                <span class="stat-number">{{ calcularAhorroTotal() | currency }}</span>
-                <span class="stat-label">Ahorro Total</span>
-              </div>
-              <div class="hero-stat">
-                <span class="stat-number">{{ obtenerTiempoRestante() }}</span>
-                <span class="stat-label">Tiempo Restante</span>
-              </div>
+  <!-- HERO SECTION -->
+  <section class="ofertas-hero">
+    <div class="mexican-pattern"></div>
+    
+    <div class="hero-content-wrapper">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            <span class="hero-line-1">Descuentos</span>
+            <span class="hero-line-2">
+              <span class="text-especiales">Especiales</span>
+              <span class="text-ofertas">Ofertas</span>
+            </span>
+          </h1>
+          
+          <p class="hero-subtitle">
+            Aprovecha nuestras mejores ofertas en artesanías mexicanas. ¡Tiempo limitado!
+          </p>
+          
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="stat-number">{{ obtenerTotalOfertas() }}</span>
+              <span class="stat-label">Ofertas</span>
             </div>
-          </div>
-          <div class="hero-visual">
-            <div class="floating-elements">
-              <div class="floating-item item-1">🔥</div>
-              <div class="floating-item item-2">💰</div>
-              <div class="floating-item item-3">⚡</div>
-              <div class="floating-item item-4">🎯</div>
+            <div class="hero-stat">
+              <span class="stat-number">{{ obtenerOfertasActivas() }}</span>
+              <span class="stat-label">Activas</span>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Banner de Oferta Destacada -->
-      <section *ngIf="ofertaDestacada" class="oferta-destacada">
-        <div class="destacada-content">
-          <div class="destacada-info">
-            <div class="destacada-badge">OFERTA DESTACADA</div>
-            <h2 class="destacada-title">{{ ofertaDestacada.nombre }}</h2>
-            <p class="destacada-desc">{{ ofertaDestacada.descripcion }}</p>
-            <div class="destacada-precio">
-              <span class="precio-oferta">{{ calcularPrecioOferta(ofertaDestacada) | currency }}</span>
-              <span class="precio-original">{{ ofertaDestacada.precio | currency }}</span>
-              <span class="descuento-badge">-{{ ofertaDestacada.descuento }}%</span>
+            <div class="hero-stat">
+              <span class="stat-number">{{ calcularAhorroTotal() | currency:'MXN':'symbol' }}</span>
+              <span class="stat-label">Ahorro Total</span>
             </div>
-            <div class="destacada-timer">
-              <div class="timer-label">Termina en:</div>
-              <div class="timer-display">
-                <span class="timer-item">
-                  <span class="timer-number">{{ ofertaDestacada.tiempoRestante?.dias || 0 }}</span>
-                  <span class="timer-label">Días</span>
-                </span>
-                <span class="timer-separator">:</span>
-                <span class="timer-item">
-                  <span class="timer-number">{{ ofertaDestacada.tiempoRestante?.horas || 0 }}</span>
-                  <span class="timer-label">Horas</span>
-                </span>
-                <span class="timer-separator">:</span>
-                <span class="timer-item">
-                  <span class="timer-number">{{ ofertaDestacada.tiempoRestante?.minutos || 0 }}</span>
-                  <span class="timer-label">Min</span>
-                </span>
-              </div>
-            </div>
-            <div class="destacada-actions">
-              <button class="btn-comprar-ahora" (click)="comprarAhora(ofertaDestacada)">
-                ⚡ Comprar Ahora
-              </button>
-              <button class="btn-ver-detalles" (click)="verDetalles(ofertaDestacada)">
-                👁️ Ver Detalles
-              </button>
-            </div>
-          </div>
-          <div class="destacada-imagen">
-            <img [src]="ofertaDestacada.imagen" [alt]="ofertaDestacada.nombre">
-          </div>
-        </div>
-      </section>
-
-      <!-- Filtros y Ordenamiento -->
-      <section class="filtros-ofertas">
-        <div class="filtros-container">
-          <div class="filtros-left">
-            <h2 class="filtros-title">
-              {{ ofertasFiltradas.length }} Ofertas Disponibles
-            </h2>
           </div>
           
-          <div class="filtros-right">
-            <div class="filtro-group">
-              <select [(ngModel)]="filtroCategoria" (change)="filtrarOfertas()" class="filtro-select">
-                <option value="">Todas las categorías</option>
-                <option *ngFor="let cat of categoriasUnicas" [value]="cat">{{ cat }}</option>
-              </select>
-            </div>
-
-            <div class="filtro-group">
-              <select [(ngModel)]="ordenSeleccionado" (change)="ordenarOfertas()" class="filtro-select">
-                <option value="descuento">Mayor Descuento</option>
-                <option value="precio">Menor Precio</option>
-                <option value="nuevo">Más Recientes</option>
-                <option value="popular">Más Populares</option>
-                <option value="tiempo">Poco Tiempo</option>
-              </select>
-            </div>
-
-            <div class="filtro-group">
-              <select [(ngModel)]="filtroDescuento" (change)="filtrarOfertas()" class="filtro-select">
-                <option value="">Cualquier descuento</option>
-                <option value="10">10%+ descuento</option>
-                <option value="20">20%+ descuento</option>
-                <option value="30">30%+ descuento</option>
-                <option value="50">50%+ descuento</option>
-              </select>
-            </div>
+          <div class="hero-cta">
+            <button class="btn-explorar" (click)="scrollToOfertas()">
+              <span class="btn-icon">🔥</span>
+              <span class="btn-text">Ver Ofertas</span>
+            </button>
           </div>
         </div>
-      </section>
+        
+        <div class="hero-decoration">
+        <div class="decoration-item">🏺</div> <!-- Cerámica -->
+        <div class="decoration-item">🧵</div> <!-- Textil -->
+        <div class="decoration-item">🎨</div> <!-- Arte -->
+        </div>
+      </div>
+    </div>
+    
+    <div class="scroll-indicator" (click)="scrollToOfertas()">
+      <div class="arrow"></div>
+    </div>
+  </section>
 
-      <!-- Grid de Ofertas -->
-      <section class="ofertas-grid">
-        <div class="grid-ofertas">
-          <div *ngFor="let oferta of ofertasFiltradas; let i = index" 
-               class="oferta-card"
-               [class.destacada]="oferta.destacada"
-               [class.ultimas-unidades]="oferta.stock <= 5 && oferta.stock > 0"
-               [class.agotado]="oferta.stock === 0">
+  <!-- FILTROS RÁPIDOS -->
+  <section class="filtros-section">
+    <div class="container">
+      <div class="filtros-grid">
+        <!-- Filtros rápidos -->
+        <div class="filtro-card" 
+            [class.active]="filtroRapido === 'todas'"
+            (click)="aplicarFiltroRapido('todas')">
+          <div class="filtro-icon">🎯</div>
+          <div class="filtro-content">
+            <h4>Todas</h4>
+            <p>Todas las ofertas</p>
+          </div>
+        </div>
+        
+        <div class="filtro-card" 
+            [class.active]="filtroRapido === 'destacadas'"
+            (click)="aplicarFiltroRapido('destacadas')">
+          <div class="filtro-icon">🏆</div> <!-- Trofeo en lugar de fuego -->
+          <div class="filtro-content">
+            <h4>Destacadas</h4>
+            <p>Ofertas especiales</p>
+          </div>
+        </div>
+        
+        <div class="filtro-card"
+            [class.active]="filtroRapido === 'exclusivas'"
+            (click)="aplicarFiltroRapido('exclusivas')">
+          <div class="filtro-icon">⭐</div>
+          <div class="filtro-content">
+            <h4>Exclusivas</h4>
+            <p>Solo en RaícesMX</p>
+          </div>
+        </div>
+        
+        <!-- Dropdown de categorías -->
+        <div class="filtro-card dropdown-filtro">
+          <div class="filtro-icon">🏺</div>
+          <div class="filtro-content">
+            <select [(ngModel)]="filtroCategoria" (change)="filtrarOfertas()" class="categoria-select">
+              <option value="">Todas las categorías</option>
+              <option *ngFor="let categoria of categoriasUnicas" [value]="categoria">
+                {{ categoria }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Controles adicionales -->
+      <div class="filtros-footer">
+        <div class="ordenamiento">
+          <label for="ordenSelect">Ordenar por:</label>
+            <select id="ordenSelect" [(ngModel)]="ordenSeleccionado" (change)="ordenarOfertas()" class="orden-select">
+            <option value="descuento">Mayor descuento</option>
+            <option value="precio">Menor precio</option>
+            <option value="popular">Más populares</option>
+            <option value="nuevo">Más recientes</option>
+          </select>
+        </div>
+        
+        <button class="btn-filtros-avanzados" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+          {{ mostrarFiltrosAvanzados ? 'Menos filtros' : 'Más filtros' }}
+        </button>
+        
+        <button class="btn-limpiar" (click)="limpiarFiltros()" *ngIf="filtroActivo">
+          🗑️ Limpiar filtros
+        </button>
+      </div>
+      
+      <!-- Filtros avanzados -->
+      <div class="filtros-avanzados" *ngIf="mostrarFiltrosAvanzados">
+        <div class="filtro-avanzado">
+          <div role="group" aria-labelledby="descuentoLabel">
+              <div id="descuentoLabel" class="sr-only">Descuento mínimo</div>
+              <div class="descuento-options">
+        <button *ngFor="let desc of ['10', '20', '30', '40', '50']"
+                class="descuento-btn"
+                [class.active]="filtroDescuento === desc"
+                (click)="filtroDescuento = filtroDescuento === desc ? '' : desc; filtrarOfertas()"
+                type="button">
+            {{ desc }}%+
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN DE OFERTAS -->
+  <section class="ofertas-section" id="ofertas" #ofertasSection>
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Nuestras Ofertas</h2>
+        <div class="resultados-count">
+          <span class="count-number">{{ ofertasFiltradas.length }}</span>
+          <span class="count-text">
+            {{ ofertasFiltradas.length === 1 ? 'oferta' : 'ofertas' }}
+          </span>
+        </div>
+      </div>
+      
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="cargando">
+        <div class="spinner"></div>
+        <p>Cargando ofertas...</p>
+      </div>
+      
+      <!-- Grid de ofertas -->
+      <div class="ofertas-grid" *ngIf="!cargando">
+        <div class="oferta-card" *ngFor="let oferta of ofertasFiltradas">
+          
+          <!-- Imagen con fallback -->
+          <div class="oferta-imagen">
+            <img 
+              [src]="oferta.imagen" 
+              [alt]="oferta.nombre"
+              (error)="onImgError($event, oferta)"
+              (load)="onImgLoad(oferta)"
+              loading="lazy"
+            />
             
             <!-- Badges -->
             <div class="oferta-badges">
               <span class="badge badge-descuento">-{{ oferta.descuento }}%</span>
-              <span *ngIf="oferta.destacada" class="badge badge-destacada">🔥 Destacada</span>
-              <span *ngIf="oferta.stock <= 5 && oferta.stock > 0" class="badge badge-stock">⏳ Últimas {{ oferta.stock }}</span>
-              <span *ngIf="oferta.stock === 0" class="badge badge-agotado">😔 Agotado</span>
-              <span *ngIf="oferta.exclusivo" class="badge badge-exclusivo">⭐ Exclusivo</span>
+              <span class="badge badge-destacada" *ngIf="oferta.destacada">🔥 Destacada</span>
+              <span class="badge badge-exclusiva" *ngIf="oferta.exclusivo">⭐ Exclusiva</span>
+              <span class="badge badge-agotado" *ngIf="oferta.stock === 0">😔 Agotado</span>
+              <span class="badge badge-stock" *ngIf="oferta.stock <= 5 && oferta.stock > 0">⏳ Últimas {{ oferta.stock }}</span>
             </div>
-
-            <!-- Timer de oferta -->
-            <div class="oferta-timer">
+            
+            <!-- Timer -->
+            <div class="oferta-timer" *ngIf="oferta.tiempoRestante && oferta.stock > 0">
               <div class="timer-progress">
                 <div class="progress-bar" [style.width]="calcularProgresoTiempo(oferta) + '%'"></div>
               </div>
               <div class="timer-text">
-                ⏰ {{ oferta.tiempoRestante?.dias }}d {{ oferta.tiempoRestante?.horas }}h
-              </div>
-            </div>
-
-            <!-- Imagen -->
-            <div class="oferta-imagen">
-              <img [src]="oferta.imagen" [alt]="oferta.nombre">
-              <div class="oferta-overlay">
-                <div class="overlay-actions">
-                  <button class="btn-action btn-ver" (click)="verDetalles(oferta)">
-                    👁️ Ver
-                  </button>
-                  <button class="btn-action btn-favorito" (click)="toggleFavorito(oferta)">
-                    {{ oferta.enFavoritos ? '❤️' : '🤍' }}
-                  </button>
-                  <button class="btn-action btn-carrito" 
-                          (click)="agregarAlCarrito(oferta)"
-                          [disabled]="oferta.stock === 0">
-                    🛒 {{ oferta.stock === 0 ? 'Agotado' : 'Carrito' }}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Información -->
-            <div class="oferta-info">
-              <div class="oferta-header">
-                <h3 class="oferta-nombre">{{ oferta.nombre }}</h3>
-                <div class="oferta-rating">
-                  <span class="rating-stars">⭐</span>
-                  <span class="rating-value">{{ oferta.rating }}</span>
-                </div>
-              </div>
-
-              <p class="oferta-descripcion">{{ oferta.descripcionCorta }}</p>
-
-              <div class="oferta-artesano">
-                <span class="artesano-icon">👨‍🎨</span>
-                <span class="artesano-nombre">{{ oferta.artesano }}</span>
-                <span class="artesano-region">· {{ oferta.region }}</span>
-              </div>
-
-              <!-- Precios -->
-              <div class="oferta-precios">
-                <div class="precio-oferta">{{ calcularPrecioOferta(oferta) | currency }}</div>
-                <div class="precio-original">{{ oferta.precio | currency }}</div>
-                <div class="ahorro">Ahorras {{ calcularAhorro(oferta) | currency }}</div>
-              </div>
-
-              <!-- Stock y vendidos -->
-              <div class="oferta-stats">
-                <div class="stat">
-                  <span class="stat-icon">📦</span>
-                  <span class="stat-text">{{ oferta.stock }} disponibles</span>
-                </div>
-                <div class="stat">
-                  <span class="stat-icon">🛒</span>
-                  <span class="stat-text">{{ oferta.vendidos }} vendidos</span>
-                </div>
-              </div>
-
-              <!-- Barra de progreso de ventas -->
-              <div *ngIf="oferta.vendidos > 0" class="ventas-progress">
-                <div class="progress-bar" [style.width]="calcularProgresoVentas(oferta) + '%'"></div>
-                <div class="progress-text">
-                  {{ oferta.vendidos }} personas ya compraron
-                </div>
-              </div>
-
-              <!-- Acciones -->
-              <div class="oferta-actions">
-                <button class="btn-comprar" 
-                        (click)="comprarAhora(oferta)"
-                        [disabled]="oferta.stock === 0">
-                  ⚡ Comprar Ahora
-                </button>
-                <button class="btn-compartir" (click)="compartirOferta(oferta)">
-                  📤 Compartir
-                </button>
+                ⏰ {{ oferta.tiempoRestante.dias }}d {{ oferta.tiempoRestante.horas }}h
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Sin resultados -->
-        <div *ngIf="ofertasFiltradas.length === 0" class="sin-ofertas">
-          <div class="sin-ofertas-content">
-            <div class="sin-ofertas-icon">🏷️</div>
-            <h3>No hay ofertas disponibles</h3>
-            <p>Revisa más tarde o explora nuestros productos regulares</p>
-            <button class="btn-explorar" routerLink="/marketplace">
-              🎨 Explorar Productos
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Sección de Ofertas Flash -->
-      <section *ngIf="ofertasFlash.length > 0" class="ofertas-flash">
-        <div class="flash-header">
-          <h2>⚡ Ofertas Flash</h2>
-          <p>Descuentos por tiempo limitado - ¡No te quedes sin ellos!</p>
-          <div class="flash-timer">
-            <span class="flash-timer-text">Termina en: {{ ofertasFlash[0].tiempoRestante?.horas }}h {{ ofertasFlash[0].tiempoRestante?.minutos }}m</span>
-          </div>
-        </div>
-        
-        <div class="flash-grid">
-          <div *ngFor="let oferta of ofertasFlash" class="flash-card">
-            <div class="flash-badge">FLASH</div>
-            <div class="flash-imagen">
-              <img [src]="oferta.imagen" [alt]="oferta.nombre">
+          
+          <!-- Contenido -->
+          <div class="oferta-content">
+            <h3 class="oferta-nombre">{{ oferta.nombre }}</h3>
+            
+            <p class="oferta-descripcion">{{ oferta.descripcionCorta }}</p>
+            
+            <!-- Artesano y región -->
+            <div class="oferta-artesano">
+              <span class="artesano-icon">👨‍🎨</span>
+              <span class="artesano-nombre">{{ oferta.artesano }}</span>
+              <span class="artesano-region">· {{ oferta.region }}</span>
             </div>
-            <div class="flash-info">
-              <h4>{{ oferta.nombre }}</h4>
-              <div class="flash-precio">
-                <span class="precio-actual">{{ calcularPrecioOferta(oferta) | currency }}</span>
-                <span class="precio-original">{{ oferta.precio | currency }}</span>
+            
+            <!-- Stats -->
+            <div class="oferta-stats">
+              <div class="stat">
+                <span class="stat-icon">⭐</span>
+                <span class="stat-value">{{ oferta.rating }}</span>
+                <span class="stat-label">Rating</span>
               </div>
-              <button class="btn-flash" (click)="comprarAhora(oferta)">
-                🎯 Obtener Oferta
+              <div class="stat">
+                <span class="stat-icon">📦</span>
+                <span class="stat-value">{{ oferta.stock }}</span>
+                <span class="stat-label">Stock</span>
+              </div>
+              <div class="stat">
+                <span class="stat-icon">🛒</span>
+                <span class="stat-value">{{ oferta.vendidos }}</span>
+                <span class="stat-label">Vendidos</span>
+              </div>
+            </div>
+            
+            <!-- Precios -->
+            <div class="oferta-precios">
+              <div class="precio-oferta">
+                {{ calcularPrecioOferta(oferta) | currency:'MXN':'symbol' }}
+              </div>
+              <div class="precio-original">
+                {{ oferta.precio | currency:'MXN':'symbol' }}
+              </div>
+              <div class="ahorro">
+                Ahorras {{ calcularAhorro(oferta) | currency:'MXN':'symbol' }}
+              </div>
+            </div>
+            
+            <!-- Acciones -->
+            <div class="oferta-actions">
+              <button class="btn-agregar-carrito" 
+                      (click)="agregarAlCarrito(oferta)"
+                      [disabled]="oferta.stock === 0">
+                <span *ngIf="oferta.stock > 0">🛒 Agregar</span>
+                <span *ngIf="oferta.stock === 0">😔 Agotado</span>
+              </button>
+              
+              <button class="btn-comprar-ahora" 
+                      (click)="comprarAhora(oferta)"
+                      [disabled]="oferta.stock === 0">
+                <span *ngIf="oferta.stock > 0">⚡ Comprar</span>
+                <span *ngIf="oferta.stock === 0">No disponible</span>
+              </button>
+              
+              <button class="btn-favorito" (click)="toggleFavorito(oferta)">
+                {{ oferta.enFavoritos ? '❤️' : '🤍' }}
               </button>
             </div>
           </div>
         </div>
-      </section>
-
-      <!-- Newsletter Ofertas -->
-      <section class="newsletter-ofertas">
-        <div class="newsletter-content">
-          <div class="newsletter-text">
-            <h3>💌 No te pierdas ninguna oferta</h3>
-            <p>Suscríbete y recibe las mejores ofertas de artesanías mexicanas directamente en tu email</p>
-          </div>
-          <div class="newsletter-form">
-            <input type="email" placeholder="tu@email.com" class="newsletter-input">
-            <button class="btn-newsletter">Suscribirme</button>
-          </div>
-        </div>
-      </section>
+      </div>
+      
+      <!-- Sin resultados -->
+      <div class="no-resultados" *ngIf="!cargando && ofertasFiltradas.length === 0">
+        <div class="no-resultados-icon">🔍</div>
+        <h3>No encontramos ofertas</h3>
+        <p>Prueba con otros filtros o revisa más tarde</p>
+        <button class="btn-limpiar" (click)="limpiarFiltros()">
+          Ver todas las ofertas
+        </button>
+      </div>
     </div>
-  </main>
+  </section>
+
+  <!-- INFORMACIÓN ADICIONAL -->
+  <section class="info-section">
+    <div class="container">
+      <h2 class="info-title">¿Cómo funcionan nuestras ofertas?</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-icon">⏰</div>
+          <h3>Tiempo Limitado</h3>
+          <p>Cada oferta tiene una duración específica</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🏆</div>
+          <h3>Calidad Garantizada</h3>
+          <p>Misma calidad que nuestros productos regulares</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">📦</div>
+          <h3>Envío Gratis</h3>
+          <p>En ofertas especiales sobre $500 MXN</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

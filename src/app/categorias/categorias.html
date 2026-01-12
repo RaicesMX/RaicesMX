@@ -1,284 +1,263 @@
 <div class="categorias-container">
-  <!-- Contenido principal MEJORADO -->
-  <main class="categorias-main">
-    <div class="categorias-content">
+  <!-- HERO SECTION -->
+  <section class="categorias-hero">
+    <div class="mexican-pattern"></div>
+    
+    <div class="hero-content-wrapper">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            <span class="hero-line-1">Tradiciones</span>
+            <span class="hero-line-2">
+              <span class="text-mexicanas">Mexicanas</span>
+              <span class="text-categorias">Categorías</span>
+            </span>
+          </h1>
+          
+          <p class="hero-subtitle">
+            Explora nuestras categorías artesanales y conecta con tradiciones centenarias
+          </p>
+          
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="stat-number">{{ categorias.length }}</span>
+              <span class="stat-label">Categorías</span>
+            </div>
+            <div class="hero-stat">
+              <span class="stat-number">{{ obtenerTotalArtesanos() }}+</span>
+              <span class="stat-label">Artesanos</span>
+            </div>
+            <div class="hero-stat">
+              <span class="stat-number">{{ obtenerTotalProductos() }}+</span>
+              <span class="stat-label">Productos</span>
+            </div>
+          </div>
+          
+          <div class="hero-cta">
+            <button class="btn-explorar" (click)="scrollToCategorias()">
+              <span class="btn-icon">🔍</span>
+              <span class="btn-text">Explorar Categorías</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="hero-decoration">
+          <div class="decoration-item">🏺</div>
+          <div class="decoration-item">🧵</div>
+          <div class="decoration-item">🎨</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="scroll-indicator" (click)="scrollToCategorias()">
+      <div class="arrow"></div>
+    </div>
+  </section>
+
+  <!-- FILTROS UTILES -->
+  <section class="filtros-section">
+    <div class="container">
+      <div class="filtros-grid">
+        <!-- Filtros rápidos -->
+        <div class="filtro-card" 
+            [class.active]="filtroRapido === 'todos'"
+            (click)="aplicarFiltroRapido('todos')">
+          <div class="filtro-icon">🎯</div>
+          <div class="filtro-content">
+            <h4>Todas</h4>
+            <p>Todas las categorías</p>
+          </div>
+        </div>
+        
+        <div class="filtro-card"
+            [class.active]="filtroRapido === 'populares'"
+            (click)="aplicarFiltroRapido('populares')">
+          <div class="filtro-icon">🔥</div>
+          <div class="filtro-content">
+            <h4>Populares</h4>
+            <p>Lo más buscado</p>
+          </div>
+        </div>
+        
+        <div class="filtro-card"
+            [class.active]="filtroRapido === 'nuevos'"
+            (click)="aplicarFiltroRapido('nuevos')">
+          <div class="filtro-icon">🆕</div>
+          <div class="filtro-content">
+            <h4>Nuevos</h4>
+            <p>Últimas categorías</p>
+          </div>
+        </div>
+        
+        <!-- Dropdown de regiones -->
+        <div class="filtro-card dropdown-filtro">
+          <div class="filtro-icon">📍</div>
+          <div class="filtro-content">
+            <select [(ngModel)]="filtroRegion" (change)="filtrarCategorias()" class="region-select">
+              <option value="">Todas las regiones</option>
+              <option *ngFor="let region of regiones" [value]="region">
+                {{ region }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
       
-      <!-- Hero Section Mejorada -->
-      <section class="categorias-hero">
-        <div class="hero-content">
-          <div class="hero-text">
-            <h1 class="hero-title">
-              <span class="hero-accent">Descubre</span> el Alma de México
-            </h1>
-            <p class="hero-subtitle">
-              Explora nuestras categorías artesanales y conecta con tradiciones centenarias
-            </p>
-            <div class="hero-stats">
-              <div class="hero-stat">
-                <span class="stat-number">{{ categorias.length }}+</span>
-                <span class="stat-label">Técnicas</span>
-              </div>
-              <div class="hero-stat">
-                <span class="stat-number">{{ obtenerTotalArtesanos() }}+</span>
-                <span class="stat-label">Artesanos</span>
-              </div>
-              <div class="hero-stat">
-                <span class="stat-number">{{ obtenerTotalProductos() }}+</span>
+      <!-- Controles adicionales -->
+      <div class="filtros-footer">
+        <div class="ordenamiento">
+          <label>Ordenar por:</label>
+          <select [(ngModel)]="ordenSeleccionado" (change)="ordenarCategorias()" class="orden-select">
+            <option value="nombre">Nombre A-Z</option>
+            <option value="popularidad">Más populares</option>
+            <option value="productos">Más productos</option>
+            <option value="nuevos">Más recientes</option>
+          </select>
+        </div>
+        
+        <button class="btn-filtros-avanzados" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+          {{ mostrarFiltrosAvanzados ? 'Menos filtros' : 'Más filtros' }}
+        </button>
+        
+        <button class="btn-limpiar" (click)="limpiarFiltros()" *ngIf="filtroActivo">
+          🗑️ Limpiar filtros
+        </button>
+      </div>
+      
+      <!-- Filtros avanzados -->
+      <div class="filtros-avanzados" *ngIf="mostrarFiltrosAvanzados">
+        <div class="filtro-avanzado">
+          <label>⭐ Rating mínimo</label>
+          <div class="rating-options">
+            <button *ngFor="let rating of [4, 3, 2, 1]"
+                    class="rating-btn"
+                    [class.active]="filtroRating === rating"
+                    (click)="filtroRating = filtroRating === rating ? 0 : rating; filtrarCategorias()">
+              {{ rating }}+ ⭐
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE CATEGORÍAS -->
+  <section class="categorias-section" id="categorias" #categoriasSection>
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Nuestras Categorías</h2>
+        <div class="resultados-count">
+          <span class="count-number">{{ categoriasFiltradas.length }}</span>
+          <span class="count-text">
+            {{ categoriasFiltradas.length === 1 ? 'categoría' : 'categorías' }}
+          </span>
+        </div>
+      </div>
+      
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="cargando">
+        <div class="spinner"></div>
+        <p>Cargando categorías...</p>
+      </div>
+      
+      <!-- Grid de categorías -->
+      <div class="categorias-grid" *ngIf="!cargando">
+        <div class="categoria-card" *ngFor="let categoria of categoriasFiltradas">
+          
+          <!-- Imagen con fallback -->
+          <div class="categoria-imagen">
+            <img 
+              [src]="categoria.imagen" 
+              [alt]="categoria.nombre"
+              (error)="onImgError($event, categoria)"
+              (load)="onImgLoad(categoria)"
+              loading="lazy"
+            />
+            
+            <!-- Badges -->
+            <div class="categoria-badges">
+              <span class="badge badge-region">{{ categoria.region }}</span>
+              <span class="badge badge-popular" *ngIf="categoria.popular">🔥</span>
+              <span class="badge badge-nuevo" *ngIf="esCategoriaNueva(categoria)">🆕</span>
+            </div>
+          </div>
+          
+          <!-- Contenido -->
+          <div class="categoria-content">
+            <h3 class="categoria-nombre">{{ categoria.nombre }}</h3>
+            
+            <p class="categoria-descripcion">{{ categoria.descripcionCorta }}</p>
+            
+            <!-- Stats -->
+            <div class="categoria-stats">
+              <div class="stat">
+                <span class="stat-icon">📦</span>
+                <span class="stat-value">{{ categoria.totalProductos }}</span>
                 <span class="stat-label">Productos</span>
               </div>
-            </div>
-          </div>
-          <div class="hero-visual">
-            <div class="floating-elements">
-              <div class="floating-item item-1">🎨</div>
-              <div class="floating-item item-2">🧵</div>
-              <div class="floating-item item-3">🏺</div>
-              <div class="floating-item item-4">✨</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Filtros Mejorados con Pestañas -->
-      <section class="filtros-mejorados">
-        <div class="filtros-container">
-          <!-- Pestañas de Filtro Rápidas -->
-          <div class="filtro-tabs">
-            <button class="tab-filtro" 
-                    [class.active]="filtroRapido === 'todos'"
-                    (click)="aplicarFiltroRapido('todos')">
-              🎯 Todos
-            </button>
-            <button class="tab-filtro" 
-                    [class.active]="filtroRapido === 'populares'"
-                    (click)="aplicarFiltroRapido('populares')">
-              🔥 Populares
-            </button>
-            <button class="tab-filtro" 
-                    [class.active]="filtroRapido === 'nuevos'"
-                    (click)="aplicarFiltroRapido('nuevos')">
-              🆕 Nuevos
-            </button>
-          </div>
-
-          <!-- Barra de Búsqueda y Filtros Avanzados -->
-          <div class="filtros-avanzados">
-            <div class="search-box">
-              <div class="search-icon">🔍</div>
-              <input 
-                type="text" 
-                placeholder="Buscar categorías, técnicas, regiones..." 
-                [(ngModel)]="terminoBusqueda"
-                (input)="filtrarCategorias()"
-                class="search-input-avanzado"
-              >
-              <div class="search-actions">
-                @if (terminoBusqueda) {
-                  <button class="btn-clear" (click)="limpiarBusqueda()">
-                    ✕
-                  </button>
-                }
+              <div class="stat">
+                <span class="stat-icon">👨‍🎨</span>
+                <span class="stat-value">{{ categoria.artesanos }}</span>
+                <span class="stat-label">Artesanos</span>
+              </div>
+              <div class="stat">
+                <span class="stat-icon">⭐</span>
+                <span class="stat-value">{{ categoria.rating }}</span>
+                <span class="stat-label">Rating</span>
               </div>
             </div>
-
-            <div class="filtros-group">
-              <div class="filtro-dropdown">
-                <label>📍 Región</label>
-                <select [(ngModel)]="filtroRegion" (change)="filtrarCategorias()" class="dropdown-select">
-                  <option value="">Todas las regiones</option>
-                  @for (region of regiones; track region) {
-                    <option [value]="region">{{ region }}</option>
-                  }
-                </select>
-              </div>
-
-              <div class="filtro-dropdown">
-                <label>📊 Ordenar por</label>
-                <select [(ngModel)]="ordenSeleccionado" (change)="ordenarCategorias()" class="dropdown-select">
-                  <option value="nombre">Nombre A-Z</option>
-                  <option value="popularidad">Más populares</option>
-                  <option value="productos">Más productos</option>
-                  <option value="nuevos">Más recientes</option>
-                </select>
-              </div>
-
-              <button class="btn-filtros-toggle" (click)="toggleFiltrosAvanzados()">
-                🎚️ {{ mostrarFiltrosAvanzados ? 'Menos' : 'Más' }} Filtros
-              </button>
-            </div>
-
-            <!-- Filtros Avanzados Desplegables -->
-            @if (mostrarFiltrosAvanzados) {
-              <div class="filtros-avanzados-content">
-                <div class="filtros-avanzados-grid">
-                  <div class="filtro-avanzado">
-                    <label>⭐ Rating Mínimo</label>
-                    <div class="rating-filtro">
-                      @for (star of [4, 3, 2, 1]; track star) {
-                        <button class="btn-rating"
-                                [class.active]="filtroRating === star"
-                                (click)="filtroRating = filtroRating === star ? 0 : star">
-                          {{ star }}+ ⭐
-                        </button>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="filtro-avanzado">
-                    <label>👨‍🎨 Artesanos</label>
-                    <select [(ngModel)]="filtroArtesanos" (change)="filtrarCategorias()" class="dropdown-select">
-                      <option value="">Cualquier cantidad</option>
-                      <option value="5">5+ artesanos</option>
-                      <option value="10">10+ artesanos</option>
-                      <option value="15">15+ artesanos</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      </section>
-
-      <!-- Grid de Categorías Mejorado -->
-      <section class="categorias-grid-mejorado">
-        <!-- Indicador de Resultados -->
-        <div class="resultados-info">
-          <h2 class="resultados-title">
-            {{ categoriasFiltradas.length }} Categorías
-            @if (filtroActivo) {
-              <span class="resultados-filtro">
-                · Filtradas
+            
+            <!-- Tags -->
+            <div class="categoria-tags">
+              <span *ngFor="let tag of categoria.tags" 
+                    class="tag"
+                    [style.background]="getTagColor(tag)">
+                {{ tag }}
               </span>
-            }
-          </h2>
-          @if (filtroActivo) {
-            <button class="btn-reset-filtros"
-                    (click)="limpiarFiltros()">
-              🗑️ Limpiar Filtros
-            </button>
-          }
-        </div>
-
-        <!-- Grid Mejorado -->
-        <div class="grid-categorias">
-          @for (categoria of categoriasFiltradas; track categoria.id; let i = $index) {
-            <div class="categoria-card-mejorada"
-                 [class.featured]="categoria.popular"
-                 (click)="verCategoria(categoria)">
-              
-              <!-- Badge de Estado -->
-              <div class="categoria-badges">
-                @if (categoria.popular) {
-                  <span class="badge badge-popular">🔥 Popular</span>
-                }
-                @if (esCategoriaNueva(categoria)) {
-                  <span class="badge badge-nuevo">🆕 Nueva</span>
-                }
-                <span class="badge badge-region">{{ categoria.region }}</span>
-              </div>
-
-            <!-- Imagen con Efecto -->
-            <div class="categoria-imagen-mejorada">
-              <img [src]="categoria.imagen" [alt]="categoria.nombre">
-              <div class="categoria-overlay-mejorada">
-                <div class="overlay-content">
-                  <span class="overlay-icon">👁️</span>
-                  <span class="overlay-text">Explorar</span>
-                </div>
-              </div>
-              <div class="categoria-gradient"></div>
             </div>
-
-            <!-- Contenido de la Card -->
-            <div class="categoria-content">
-              <div class="categoria-header">
-                <h3 class="categoria-title">{{ categoria.nombre }}</h3>
-                <div class="categoria-rating">
-                  <span class="rating-stars">⭐</span>
-                  <span class="rating-value">{{ categoria.rating }}</span>
-                </div>
-              </div>
-
-              <p class="categoria-descripcion">{{ categoria.descripcionCorta }}</p>
-
-              <!-- Stats Mejorados -->
-              <div class="categoria-stats-mejorados">
-                <div class="stat-item">
-                  <div class="stat-icon">📦</div>
-                  <div class="stat-info">
-                    <span class="stat-number">{{ categoria.totalProductos }}</span>
-                    <span class="stat-label">Productos</span>
-                  </div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-icon">👨‍🎨</div>
-                  <div class="stat-info">
-                    <span class="stat-number">{{ categoria.artesanos }}</span>
-                    <span class="stat-label">Artesanos</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tags Mejorados -->
-              <div class="categoria-tags-mejorados">
-                @for (tag of categoria.tags; track tag) {
-                  <span class="tag-mejorado"
-                        [style.background]="getTagColor(tag)">
-                    {{ tag }}
-                  </span>
-                }
-              </div>
-
-              <!-- Action Button -->
-              <button class="btn-explorar-categoria">
-                <span>Explorar Colección</span>
-                <span class="btn-arrow">→</span>
-              </button>
-            </div>
-          </div>
-          }
-        </div>
-
-        <!-- Paginación o Carga -->
-        @if (categoriasFiltradas.length === 0) {
-          <div class="sin-resultados-mejorado">
-            <div class="sin-resultados-content">
-              <div class="sin-resultados-icon">🎨</div>
-              <h3>No encontramos categorías</h3>
-              <p>Prueba ajustando los filtros o <a (click)="limpiarFiltros()" class="link-reset">ver todas las categorías</a></p>
-            </div>
-          </div>
-        }
-
-        <!-- Botón Cargar Más -->
-        @if (categoriasFiltradas.length > 0) {
-          <div class="cargar-mas-section">
-            <button class="btn-cargar-mas" (click)="cargarMasCategorias()">
-              <span>Cargar Más Categorías</span>
-              @if (cargando) {
-                <span class="loading-dots">...</span>
-              }
+            
+            <!-- Botón de acción -->
+            <button class="btn-explorar-categoria" (click)="verCategoria(categoria)">
+              <span>Explorar Categoría</span>
+              <span class="btn-arrow">→</span>
             </button>
           </div>
-        }
-      </section>
-
-      <!-- Sección de Inspiración -->
-      <section class="inspiracion-section">
-        <div class="inspiracion-content">
-          <div class="inspiracion-text">
-            <h2>¿No encuentras lo que buscas?</h2>
-            <p>Nuestros artesanos están constantemente creando nuevas piezas. Contáctanos para pedidos especiales.</p>
-            <button class="btn-inspiracion" routerLink="/ayuda">
-              💬 Solicitar Artesanía Personalizada
-            </button>
-          </div>
-          <div class="inspiracion-visual">
-            <div class="inspiracion-item">✨</div>
-          </div>
         </div>
-      </section>
+      </div>
+      
+      <!-- Sin resultados -->
+      <div class="no-resultados" *ngIf="!cargando && categoriasFiltradas.length === 0">
+        <div class="no-resultados-icon">🔍</div>
+        <h3>No encontramos categorías</h3>
+        <p>Prueba con otros filtros</p>
+        <button class="btn-limpiar" (click)="limpiarFiltros()">
+          Ver todas las categorías
+        </button>
+      </div>
     </div>
-  </main>
+  </section>
+
+  <!-- INFORMACIÓN ADICIONAL -->
+  <section class="info-section">
+    <div class="container">
+      <h2 class="info-title">Explora la Artesanía Mexicana</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-icon">👨‍🎨</div>
+          <h3>Artesanos Expertos</h3>
+          <p>Trabajamos con maestros artesanos certificados</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🏆</div>
+          <h3>Calidad Garantizada</h3>
+          <p>Cada pieza es única y auténtica</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🚚</div>
+          <h3>Envío Nacional</h3>
+          <p>Llevamos la artesanía a todo México</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
