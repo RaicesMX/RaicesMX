@@ -11,6 +11,11 @@ import { AuthService } from '../service/auth.service';
  * Permite a los usuarios existentes iniciar sesión en RaícesMX.
  * Maneja el auto-completado del email cuando viene desde el registro.
  * Usa cookies HTTP-Only para máxima seguridad del token JWT.
+ *
+ * Seguridad:
+ * - Sanitiza el email antes de enviar al backend
+ * - Usa cookies HTTP-Only para el token JWT
+ * - Valida campos antes de enviar
  */
 @Component({
   selector: 'app-login',
@@ -61,6 +66,11 @@ export class LoginComponent implements OnInit {
     /**
      * Si viene desde registro, auto-completa el email
      * y muestra mensaje de bienvenida
+     *
+     * NOTA: Usamos el email original (no sanitizado) aquí porque:
+     * - Angular sanitizará automáticamente en el template
+     * - Queremos mostrar exactamente lo que el usuario escribió
+     * - La sanitización se hace al enviar, no al mostrar
      */
     if (state?.fromRegister && state?.email) {
       this.email = state.email;
@@ -85,14 +95,50 @@ export class LoginComponent implements OnInit {
   }
 
   /**
+   * Sanitiza input del usuario antes de enviar al backend
+   *
+   * Protección XSS: Escapa caracteres HTML peligrosos
+   * que podrían ejecutar scripts maliciosos.
+   *
+   * IMPORTANTE: Esta función es idéntica a la de RegisterComponent
+   * para mantener consistencia en la sanitización.
+   *
+   * Conversiones:
+   * - & → &amp; (debe ir primero)
+   * - < → &lt; (previene <script>)
+   * - > → &gt; (previene </script>)
+   * - " → &quot; (previene atributos HTML)
+   * - ' → &#x27; (previene atributos HTML)
+   * - / → &#x2F; (previene cierre de tags)
+   *
+   * @param input String a sanitizar
+   * @returns String sanitizado y sin espacios extras
+   *
+   * @example
+   * sanitizeInput("user@example.com<script>")
+   * // Retorna: "user@example.com&lt;script&gt;"
+   */
+  sanitizeInput(input: string): string {
+    return input
+      .replace(/&/g, '&amp;') // Debe ir primero
+      .replace(/</g, '&lt;') // Escapa
+      .replace(/>/g, '&gt;') // Escapa >
+      .replace(/"/g, '&quot;') // Escapa "
+      .replace(/'/g, '&#x27;') // Escapa '
+      .replace(/\//g, '&#x2F;') // Escapa /
+      .trim(); // Remueve espacios
+  }
+
+  /**
    * Maneja el envío del formulario de login
    *
    * Flujo:
    * 1. Valida que los campos no estén vacíos
-   * 2. Llama al AuthService.login() que hace la petición HTTP
-   * 3. El backend establece una cookie HTTP-Only con el token JWT
-   * 4. Redirige al marketplace si el login es exitoso
-   * 5. Muestra error si las credenciales son incorrectas
+   * 2. Sanitiza el email para prevenir XSS
+   * 3. Llama al AuthService.login() que hace la petición HTTP
+   * 4. El backend establece una cookie HTTP-Only con el token JWT
+   * 5. Redirige al marketplace si el login es exitoso
+   * 6. Muestra error si las credenciales son incorrectas
    */
   onSubmit() {
     // Validación: campos vacíos
@@ -107,6 +153,22 @@ export class LoginComponent implements OnInit {
     this.successMessage = '';
 
     /**
+     * Sanitiza el email antes de enviar
+     *
+     * IMPORTANTE: La contraseña NO se sanitiza porque:
+     * - No se muestra en la UI (siempre está oculta)
+     * - Puede contener caracteres especiales legítimos
+     * - Se compara con el hash en el backend
+     * - No se renderiza en HTML
+     *
+     * El email SÍ se sanitiza porque:
+     * - Podría mostrarse en mensajes de error
+     * - Previene inyección de scripts en logs
+     * - Es una buena práctica sanitizar antes de enviar
+     */
+    const sanitizedEmail = this.sanitizeInput(this.email);
+
+    /**
      * Llama al servicio de autenticación
      *
      * AuthService.login() hace una petición POST a /auth/login
@@ -114,8 +176,8 @@ export class LoginComponent implements OnInit {
      */
     this.authService
       .login({
-        email: this.email,
-        password: this.password,
+        email: sanitizedEmail, // ← Email sanitizado
+        password: this.password, // ← Contraseña sin sanitizar
       })
       .subscribe({
         /**
@@ -142,9 +204,10 @@ export class LoginComponent implements OnInit {
          * Maneja errores de autenticación
          *
          * Posibles errores:
-         * - 401: Credenciales incorrectas
+         * - 401: Credenciales incorrectas (email o password inválidos)
+         * - 400: Datos mal formateados
          * - 500: Error del servidor
-         * - Network error: Sin conexión
+         * - Network error: Sin conexión al backend
          */
         error: (error) => {
           console.error('❌ Error en login:', error);
@@ -154,6 +217,8 @@ export class LoginComponent implements OnInit {
            *
            * Usa el mensaje del backend si está disponible,
            * o un mensaje genérico como fallback
+           *
+           * NOTA: No revelamos si el email existe o no por seguridad
            */
           this.errorMessage = error.error?.message || 'Email o contraseña incorrectos';
           this.isLoading = false;
