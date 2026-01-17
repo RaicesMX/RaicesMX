@@ -1,0 +1,720 @@
+@use '../../styles/variables' as vars;
+@use '../../styles/colors' as colors;
+@use '../../styles/typography' as typo;
+@use '../../styles/mixins' as mixins;
+@use '../../styles/animations' as anim;
+
+.publicar-producto-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 vars.$spacing-md;
+
+  .form-header {
+    text-align: center;
+    margin-bottom: vars.$spacing-xl;
+
+    h1 {
+      color: colors.$color-primary;
+      font-family: typo.$font-family-primary;
+      font-size: typo.$font-size-3xl;
+      font-weight: typo.$font-weight-bold;
+      margin-bottom: vars.$spacing-xs;
+    }
+
+    p {
+      color: colors.$color-gray-600;
+      font-family: typo.$font-family-secondary;
+      font-size: typo.$font-size-sm;
+    }
+  }
+}
+
+.producto-form {
+  background: colors.$color-white;
+  border-radius: vars.$border-radius-lg;
+  box-shadow: vars.$shadow-md;
+  overflow: hidden;
+  transition: all vars.$transition-normal;
+  padding: vars.$spacing-xl;
+  margin-bottom: vars.$spacing-lg;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: vars.$shadow-lg;
+  }
+
+  @include mixins.respond-to(md) {
+    padding: vars.$spacing-lg;
+  }
+
+  @include mixins.respond-to(sm) {
+    padding: vars.$spacing-md;
+  }
+}
+
+.form-section {
+  margin-bottom: vars.$spacing-xl;
+  padding-bottom: vars.$spacing-lg;
+  border-bottom: 1px solid colors.$color-gray-200;
+
+  &:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  h2 {
+    color: colors.$color-primary;
+    font-family: typo.$font-family-primary;
+    font-size: typo.$font-size-xl;
+    font-weight: typo.$font-weight-semibold;
+    margin-bottom: vars.$spacing-md;
+    padding-bottom: vars.$spacing-xs;
+    border-bottom: 2px solid colors.$color-secondary;
+  }
+}
+
+.form-group {
+  margin-bottom: vars.$spacing-md;
+
+  .form-label {
+    font-family: typo.$font-family-secondary;
+    font-size: typo.$font-size-base;
+    font-weight: typo.$font-weight-semibold;
+    color: colors.$color-gray-800;
+    margin-bottom: vars.$spacing-xs;
+    display: block;
+
+    &::after {
+      content: ' *';
+      color: colors.$color-error;
+      opacity: 0.8;
+    }
+  }
+}
+
+.input-base {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid colors.$color-gray-300;
+  border-radius: vars.$border-radius-md;
+  font-family: typo.$font-family-secondary;
+  font-size: typo.$font-size-base;
+  color: colors.$color-gray-700;
+  background: colors.$color-white;
+  transition: all vars.$transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: colors.$color-primary;
+    box-shadow: 0 0 0 3px rgba(colors.$color-primary, 0.1);
+  }
+
+  &::placeholder {
+    color: colors.$color-gray-400;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: vars.$spacing-md;
+
+  @include mixins.respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-with-icon {
+  position: relative;
+
+  .input-icon {
+    position: absolute;
+    left: vars.$spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    color: colors.$color-gray-500;
+    font-weight: typo.$font-weight-semibold;
+  }
+
+  .input-base {
+    padding-left: 2.5rem;
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: vars.$spacing-xs;
+  cursor: pointer;
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: vars.$spacing-xs;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      width: auto;
+      margin-right: vars.$spacing-xs;
+      cursor: pointer;
+    }
+
+    span {
+      font-family: typo.$font-family-secondary;
+      font-size: typo.$font-size-base;
+      color: colors.$color-gray-700;
+    }
+
+    a {
+      color: colors.$color-primary;
+      text-decoration: none;
+      font-weight: typo.$font-weight-semibold;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.imagenes-section {
+  .imagenes-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: vars.$spacing-md;
+    margin-bottom: vars.$spacing-md;
+
+    @include mixins.respond-to(sm) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include mixins.respond-to(xs) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+.imagen-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: vars.$border-radius-lg;
+  overflow: hidden;
+  border: 2px solid colors.$color-gray-200;
+  transition: all vars.$transition-normal;
+
+  &:hover {
+    border-color: colors.$color-primary;
+    transform: translateY(-2px);
+  }
+
+  &.principal {
+    border-color: colors.$color-secondary;
+    border-width: 3px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .imagen-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, transparent 30%);
+    padding: vars.$spacing-xs;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .badge-principal {
+    background: colors.$color-secondary;
+    color: colors.$color-white;
+    font-size: typo.$font-size-xs;
+    padding: 0.25rem 0.5rem;
+    border-radius: vars.$border-radius-sm;
+    font-weight: typo.$font-weight-bold;
+  }
+
+  .btn-eliminar {
+    background: colors.$color-error;
+    color: colors.$color-white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all vars.$transition-fast;
+    font-size: typo.$font-size-sm;
+
+    &:hover {
+      background: darken(colors.$color-error, 10%);
+      transform: scale(1.1);
+    }
+  }
+}
+
+.upload-box {
+  aspect-ratio: 1;
+  border: 2px dashed colors.$color-gray-300;
+  border-radius: vars.$border-radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all vars.$transition-normal;
+  background: colors.$color-gray-50;
+
+  &:hover {
+    border-color: colors.$color-primary;
+    background: rgba(colors.$color-primary, 0.05);
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .upload-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    text-align: center;
+    padding: vars.$spacing-md;
+    width: 100%;
+    height: 100%;
+
+    .upload-icon {
+      font-size: 2.5rem;
+      color: colors.$color-primary;
+      margin-bottom: vars.$spacing-sm;
+    }
+
+    span {
+      font-family: typo.$font-family-secondary;
+      font-size: typo.$font-size-base;
+      font-weight: typo.$font-weight-medium;
+      color: colors.$color-gray-700;
+      margin-bottom: vars.$spacing-xs;
+    }
+
+    small {
+      font-family: typo.$font-family-secondary;
+      font-size: typo.$font-size-sm;
+      color: colors.$color-gray-500;
+    }
+  }
+}
+
+.char-counter {
+  text-align: right;
+  font-family: typo.$font-family-secondary;
+  font-size: typo.$font-size-sm;
+  color: colors.$color-gray-500;
+  margin-top: vars.$spacing-xs;
+}
+
+.error-message {
+  font-family: typo.$font-family-secondary;
+  font-size: typo.$font-size-sm;
+  color: colors.$color-error;
+  margin-top: vars.$spacing-xs;
+  display: flex;
+  align-items: center;
+  gap: vars.$spacing-xs;
+
+  &::before {
+    content: '⚠';
+    font-size: typo.$font-size-sm;
+  }
+}
+
+.info-box {
+  border: 1px solid colors.$color-gray-200;
+  background: colors.$color-gray-50;
+}
+
+.terms-section {
+  background: colors.$color-gray-50;
+  padding: vars.$spacing-md;
+  border-radius: vars.$border-radius-md;
+  border: 1px solid colors.$color-gray-200;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: vars.$spacing-md;
+  margin-top: vars.$spacing-xl;
+  padding-top: vars.$spacing-lg;
+  border-top: 1px solid colors.$color-gray-200;
+
+  @include mixins.respond-to(sm) {
+    flex-direction: column;
+  }
+}
+
+.btn-primary, .btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: vars.$spacing-xs;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: vars.$border-radius-xl;
+  font-family: typo.$font-family-primary;
+  font-weight: typo.$font-weight-semibold;
+  font-size: typo.$font-size-base;
+  cursor: pointer;
+  transition: all vars.$transition-normal;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  min-width: 200px;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  @include mixins.respond-to(sm) {
+    width: 100%;
+  }
+
+  i {
+    margin-right: vars.$spacing-xs;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, colors.$color-primary, colors.$color-primary-dark);
+  color: colors.$color-white;
+  box-shadow: vars.$shadow-md;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, colors.$color-primary-light, colors.$color-primary);
+    box-shadow: vars.$shadow-lg;
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: colors.$color-primary;
+  border: 2px solid colors.$color-primary;
+
+  &:hover:not(:disabled) {
+    background: rgba(colors.$color-primary, 0.1);
+  }
+}
+
+.help-section {
+  border: 1px solid colors.$color-secondary-light;
+  background: rgba(colors.$color-secondary, 0.05);
+
+  ul {
+    padding-left: vars.$spacing-lg;
+    margin: 0;
+
+    li {
+      margin-bottom: vars.$spacing-xs;
+      color: colors.$color-gray-600;
+      font-family: typo.$font-family-secondary;
+      font-size: typo.$font-size-sm;
+    }
+  }
+}
+
+// Estilos específicos para el mapa
+.mapa-container {
+  border: 2px solid colors.$color-gray-200;
+  border-radius: vars.$border-radius-lg;
+  padding: vars.$spacing-md;
+  background: colors.$color-gray-50;
+}
+
+.mapa-controls {
+  display: flex;
+  gap: vars.$spacing-sm;
+  flex-wrap: wrap;
+
+  @include mixins.respond-to(sm) {
+    flex-direction: column;
+  }
+}
+
+.btn-mapa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: vars.$spacing-xs;
+  padding: 0.5rem 1rem;
+  border: 2px solid colors.$color-primary;
+  border-radius: vars.$border-radius-md;
+  font-family: typo.$font-family-secondary;
+  font-size: typo.$font-size-sm;
+  color: colors.$color-primary;
+  background: transparent;
+  cursor: pointer;
+  transition: all vars.$transition-fast;
+  min-width: auto;
+
+  &:hover {
+    background: rgba(colors.$color-primary, 0.1);
+  }
+
+  i {
+    margin-right: vars.$spacing-xs;
+  }
+}
+
+.mapa-preview {
+  position: relative;
+  height: 200px;
+  border-radius: vars.$border-radius-md;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: vars.$spacing-md;
+}
+
+.mapa-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, colors.$color-gray-100, colors.$color-gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: all vars.$transition-normal;
+
+  &:hover {
+    background: linear-gradient(135deg, colors.$color-gray-200, colors.$color-gray-300);
+    transform: scale(1.01);
+  }
+}
+
+.mapa-overlay {
+  text-align: center;
+  padding: vars.$spacing-md;
+
+  i {
+    font-size: 3rem;
+    color: colors.$color-primary;
+    margin-bottom: vars.$spacing-sm;
+  }
+
+  p {
+    font-family: typo.$font-family-secondary;
+    font-weight: typo.$font-weight-medium;
+    color: colors.$color-gray-700;
+    margin-bottom: vars.$spacing-xs;
+  }
+}
+
+.mapa-interactivo {
+  height: 400px;
+  border-radius: vars.$border-radius-md;
+  overflow: hidden;
+  margin-bottom: vars.$spacing-md;
+  border: 2px solid colors.$color-gray-300;
+}
+
+.mapa-simulado {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(45deg, #a5d6a7, #81c784, #4caf50);
+}
+
+.mapa-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.mapa-row {
+  display: flex;
+  flex: 1;
+}
+
+.mapa-cell {
+  flex: 1;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all vars.$transition-fast;
+  position: relative;
+
+  &:hover {
+    background: rgba(colors.$color-primary, 0.2);
+  }
+
+  &.selected {
+    background: rgba(colors.$color-primary, 0.3);
+  }
+}
+
+.mapa-marker {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 2rem;
+  animation: fadeIn 0.5s ease;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  z-index: 10;
+}
+
+.mapa-instructions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(colors.$color-white, 0.9);
+  padding: vars.$spacing-sm;
+  border-top: 1px solid colors.$color-gray-200;
+
+  p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: vars.$spacing-xs;
+
+    i {
+      font-size: typo.$font-size-sm;
+    }
+  }
+}
+
+.instrucciones-mapa {
+  border-left: 3px solid colors.$color-primary;
+}
+
+// Validaciones
+.ng-valid:not(form) {
+  border-color: colors.$color-success !important;
+}
+
+.ng-invalid.ng-touched:not(form) {
+  border-color: colors.$color-error !important;
+}
+
+// Responsive adicional
+@include mixins.respond-to(sm) {
+  .publicar-producto-container {
+    padding: 0 vars.$spacing-sm;
+    margin: 1rem auto;
+  }
+
+  .form-group {
+    margin-bottom: vars.$spacing-sm;
+  }
+
+  .form-section {
+    margin-bottom: vars.$spacing-lg;
+    padding-bottom: vars.$spacing-md;
+  }
+}
+
+// Clases de utilidad
+.d-flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.mt-1 {
+  margin-top: vars.$spacing-xs;
+}
+
+.mt-2 {
+  margin-top: vars.$spacing-sm;
+}
+
+.mt-3 {
+  margin-top: vars.$spacing-md;
+}
+
+.mt-4 {
+  margin-top: vars.$spacing-lg;
+}
+
+.mb-2 {
+  margin-bottom: vars.$spacing-sm;
+}
+
+.mb-3 {
+  margin-bottom: vars.$spacing-md;
+}
+
+.p-2 {
+  padding: vars.$spacing-sm;
+}
+
+.p-3 {
+  padding: vars.$spacing-md;
+}
+
+.bg-light {
+  background-color: colors.$color-gray-100;
+}
+
+.rounded-md {
+  border-radius: vars.$border-radius-md;
+}
+
+.text-bold {
+  font-weight: typo.$font-weight-bold;
+}
+
+.text-primary {
+  color: colors.$color-primary;
+}
+
+.text-caption {
+  font-family: typo.$font-family-secondary;
+  font-size: typo.$font-size-sm;
+  color: colors.$color-gray-500;
+}
+
+.text-subtitle {
+  font-family: typo.$font-family-primary;
+  font-size: typo.$font-size-xl;
+  font-weight: typo.$font-weight-semibold;
+  color: colors.$color-primary;
+}
+
+.text-body {
+  font-family: typo.$font-family-secondary;
+  font-size: typo.$font-size-base;
+  color: colors.$color-gray-700;
+}
+
+.text-success {
+  color: colors.$color-success;
+}

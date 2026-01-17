@@ -1,0 +1,397 @@
+<div class="publicar-producto-container animate-fade-in">
+  <div class="form-header">
+    <h1 class="text-title">Publicar Producto en RaícesMX</h1>
+    <p class="text-caption">Comparte tus productos artesanales y tradicionales con nuestra comunidad</p>
+  </div>
+
+  <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="producto-form card-base">
+    
+    <!-- Sección 1: Título e Imágenes (Orden modificado) -->
+    <div class="form-section">
+      <h2 class="text-subtitle">1. Información Básica</h2>
+      
+      <div class="form-group">
+        <label for="titulo" class="form-label">Título del producto *</label>
+        <input 
+          type="text" 
+          id="titulo" 
+          formControlName="titulo" 
+          class="input-base"
+          placeholder="Ej: Jarro de barro negro de Oaxaca artesanal"
+        >
+        <div *ngIf="productoForm.get('titulo')?.invalid && productoForm.get('titulo')?.touched" class="error-message">
+          <span *ngIf="productoForm.get('titulo')?.errors?.['required']">El título es requerido</span>
+          <span *ngIf="productoForm.get('titulo')?.errors?.['minlength']">Mínimo 10 caracteres</span>
+          <span *ngIf="productoForm.get('titulo')?.errors?.['maxlength']">Máximo 100 caracteres</span>
+        </div>
+      </div>
+
+      <!-- Imágenes del Producto -->
+      <div class="form-group">
+        <div class="form-label">Imágenes del Producto *</div>
+        <p class="text-caption mb-3">Sube fotos de alta calidad. La primera imagen será la principal.</p>
+        
+        <div class="imagenes-section">
+          <div class="imagenes-preview">
+            <div *ngFor="let imagen of imagenesPrevisualizacion; let i = index" class="imagen-item">
+              <img [src]="imagen" alt="Previsualización" [class.principal]="i === 0">
+              <div class="imagen-overlay">
+                <span *ngIf="i === 0" class="badge-principal">Principal</span>
+                <button type="button" class="btn-eliminar" (click)="removeImage(i)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div *ngIf="imagenesPrevisualizacion.length < 5" class="upload-box">
+              <input 
+                type="file" 
+                id="imagenes" 
+                multiple 
+                accept="image/*" 
+                (change)="onFileSelected($event)"
+              >
+              <label for="imagenes" class="upload-label">
+                <div class="upload-icon">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <span>Agregar imágenes</span>
+                <small class="text-caption">Máximo 5 imágenes (5MB c/u)</small>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="archivosImagenes.length === 0 && productoForm.get('imagenes')?.touched" class="error-message">
+          Debes subir al menos una imagen
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección 2: Descripción y Categoría -->
+    <div class="form-section">
+      <h2 class="text-subtitle">2. Detalles del Producto</h2>
+
+      <div class="form-group">
+        <label for="descripcion" class="form-label">Descripción detallada *</label>
+        <textarea 
+          id="descripcion" 
+          formControlName="descripcion" 
+          class="input-base"
+          rows="6"
+          placeholder="Describe tu producto detalladamente: materiales usados, técnicas artesanales, historia, medidas, cuidados, etc."
+        ></textarea>
+        <div class="char-counter">{{ productoForm.get('descripcion')?.value?.length || 0 }}/2000</div>
+        <div *ngIf="productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched" class="error-message">
+          <span *ngIf="productoForm.get('descripcion')?.errors?.['required']">La descripción es requerida</span>
+          <span *ngIf="productoForm.get('descripcion')?.errors?.['minlength']">Mínimo 50 caracteres para una buena descripción</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="categoria" class="form-label">Categoría *</label>
+          <select id="categoria" formControlName="categoria" class="input-base">
+            <option value="" disabled selected>Selecciona una categoría</option>
+            <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+          </select>
+          <div *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched" class="error-message">
+            Selecciona una categoría
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="stock" class="form-label">Cantidad disponible *</label>
+          <input 
+            type="number" 
+            id="stock" 
+            formControlName="stock" 
+            class="input-base"
+            min="1"
+            max="999"
+          >
+          <div *ngIf="productoForm.get('stock')?.invalid && productoForm.get('stock')?.touched" class="error-message">
+            <span *ngIf="productoForm.get('stock')?.errors?.['required']">La cantidad es requerida</span>
+            <span *ngIf="productoForm.get('stock')?.errors?.['min']">Mínimo 1 unidad</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección 3: Precio -->
+    <div class="form-section">
+      <h2 class="text-subtitle">3. Precio</h2>
+      
+      <div class="form-group">
+        <label for="precio" class="form-label">Precio (MXN) *</label>
+        <div class="input-with-icon">
+          <span class="input-icon">$</span>
+          <input 
+            type="text" 
+            id="precio" 
+            formControlName="precio" 
+            class="input-base"
+            (blur)="formatPrice($event)"
+            placeholder="0.00"
+          >
+        </div>
+        <div *ngIf="productoForm.get('precio')?.invalid && productoForm.get('precio')?.touched" class="error-message">
+          <span *ngIf="productoForm.get('precio')?.errors?.['required']">El precio es requerido</span>
+          <span *ngIf="productoForm.get('precio')?.errors?.['min']">El precio mínimo es $1 MXN</span>
+        </div>
+      </div>
+
+      <!-- Información de comisión -->
+      <div class="info-box bg-light p-3 rounded-md mt-3" *ngIf="productoForm.get('precio')?.value">
+        <div class="d-flex justify-between align-center">
+          <span class="text-caption">Comisión de RaícesMX (5%):</span>
+          <span class="text-bold">${{ formatNumber(calcularComision()) }} MXN</span>
+        </div>
+        <div class="d-flex justify-between align-center mt-1">
+          <span class="text-subtitle">Ganancia neta estimada:</span>
+          <span class="text-bold text-primary">${{ formatNumber(calcularPrecioTotal()) }} MXN</span>
+        </div>
+      </div>
+
+      <div class="form-row mt-3">
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="envioDisponible">
+            <span class="text-body">Ofrecer envío a domicilio</span>
+          </label>
+        </div>
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="envioNacional">
+            <span class="text-body">Envío a todo México</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección 4: Ubicación con Mapa -->
+    <div class="form-section">
+      <h2 class="text-subtitle">4. Ubicación</h2>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="estado" class="form-label">Estado *</label>
+          <select id="estado" formControlName="estado" class="input-base">
+            <option value="" disabled selected>Selecciona tu estado</option>
+            <option *ngFor="let estado of estadosMexico" [value]="estado">{{ estado }}</option>
+          </select>
+          <div *ngIf="productoForm.get('estado')?.invalid && productoForm.get('estado')?.touched" class="error-message">
+            Selecciona tu estado
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="ciudad" class="form-label">Ciudad/Municipio *</label>
+          <input 
+            type="text" 
+            id="ciudad" 
+            formControlName="ciudad" 
+            class="input-base"
+            placeholder="Ej: Oaxaca de Juárez"
+          >
+          <div *ngIf="productoForm.get('ciudad')?.invalid && productoForm.get('ciudad')?.touched" class="error-message">
+            La ciudad es requerida
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="colonia" class="form-label">Colonia *</label>
+          <input 
+            type="text" 
+            id="colonia" 
+            formControlName="colonia" 
+            class="input-base"
+            placeholder="Ej: Centro Histórico"
+          >
+          <div *ngIf="productoForm.get('colonia')?.invalid && productoForm.get('colonia')?.touched" class="error-message">
+            La colonia es requerida
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="codigoPostal" class="form-label">Código Postal *</label>
+          <input 
+            type="text" 
+            id="codigoPostal" 
+            formControlName="codigoPostal" 
+            class="input-base"
+            placeholder="5 dígitos"
+            maxlength="5"
+          >
+          <div *ngIf="productoForm.get('codigoPostal')?.invalid && productoForm.get('codigoPostal')?.touched" class="error-message">
+            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['required']">El código postal es requerido</span>
+            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['pattern']">Ingresa 5 dígitos válidos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mapa para seleccionar ubicación -->
+      <div class="form-group">
+        <div class="form-label">Selecciona ubicación en el mapa *</div>
+        
+        <div class="mapa-container">
+          <!-- Controles del mapa -->
+          <div class="mapa-controls mb-2">
+            <button type="button" class="btn-mapa" (click)="usarUbicacionActual()">
+              <i class="fas fa-location-arrow"></i> Usar mi ubicación actual
+            </button>
+            <button type="button" class="btn-mapa" (click)="toggleMapa()">
+              <i class="fas" [class.fa-expand]="!mostrarMapa" [class.fa-compress]="mostrarMapa"></i> 
+              {{ mostrarMapa ? 'Ocultar mapa' : 'Mostrar mapa completo' }}
+            </button>
+          </div>
+
+          <!-- Previsualización del mapa estático -->
+          <div class="mapa-preview" *ngIf="!mostrarMapa">
+            <div class="mapa-placeholder" (click)="toggleMapa()">
+              <div class="mapa-overlay">
+                <i class="fas fa-map-marker-alt"></i>
+                <p>Haz clic para seleccionar la ubicación en el mapa</p>
+                <small class="text-caption" *ngIf="ubicacionSeleccionada">
+                  Lat: {{ ubicacionSeleccionada.lat | number:'1.4-4' }}, Lng: {{ ubicacionSeleccionada.lng | number:'1.4-4' }}
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mapa interactivo (simulado) -->
+          <div class="mapa-interactivo" *ngIf="mostrarMapa">
+            <div class="mapa-simulado">
+              <div class="mapa-grid">
+                <!-- Simulación de mapa con cuadrícula -->
+                <div *ngFor="let row of [0,1,2,3,4]; let i = index" class="mapa-row">
+                  <div *ngFor="let col of [0,1,2,3,4]; let j = index" 
+                       class="mapa-cell" 
+                       [class.selected]="esCeldaSeleccionada(i, j)"
+                       (click)="seleccionarEnMapa(i, j)">
+                  </div>
+                </div>
+                
+                <!-- Marcador -->
+                <div class="mapa-marker" *ngIf="celdaSeleccionada" 
+                     [style.top.%]="(celdaSeleccionada.row / 5 * 100)"
+                     [style.left.%]="(celdaSeleccionada.col / 5 * 100)">
+                  <i class="fas fa-map-marker-alt text-primary"></i>
+                </div>
+              </div>
+              
+              <div class="mapa-instructions">
+                <p class="text-caption"><i class="fas fa-mouse-pointer"></i> Haz clic en el mapa para seleccionar la ubicación exacta</p>
+                <p class="text-caption" *ngIf="ubicacionSeleccionada">
+                  <i class="fas fa-check-circle text-success"></i> 
+                  Ubicación seleccionada: 
+                  Lat {{ ubicacionSeleccionada.lat | number:'1.6-6' }}, 
+                  Lng {{ ubicacionSeleccionada.lng | number:'1.6-6' }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instrucciones -->
+          <div class="instrucciones-mapa mt-2 p-2 bg-light rounded-md">
+            <p class="text-caption mb-1">
+              <i class="fas fa-info-circle text-primary"></i> 
+              La ubicación en el mapa ayuda a los compradores a conocer la zona de entrega
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información de contacto -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="contacto" class="form-label">Teléfono de contacto *</label>
+          <input 
+            type="tel" 
+            id="contacto" 
+            formControlName="contacto" 
+            class="input-base"
+            placeholder="10 dígitos"
+          >
+          <div *ngIf="productoForm.get('contacto')?.invalid && productoForm.get('contacto')?.touched" class="error-message">
+            <span *ngIf="productoForm.get('contacto')?.errors?.['required']">El teléfono es requerido</span>
+            <span *ngIf="productoForm.get('contacto')?.errors?.['pattern']">Ingresa 10 dígitos válidos</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Correo electrónico *</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="input-base"
+            placeholder="ejemplo@email.com"
+          >
+          <div *ngIf="productoForm.get('email')?.invalid && productoForm.get('email')?.touched" class="error-message">
+            <span *ngIf="productoForm.get('email')?.errors?.['required']">El email es requerido</span>
+            <span *ngIf="productoForm.get('email')?.errors?.['email']">Ingresa un email válido</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección 5: Términos y Condiciones -->
+    <div class="form-section terms-section">
+      <h2 class="text-subtitle">5. Términos y Condiciones</h2>
+      
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="terminos" required>
+          <span class="text-body">
+            Acepto los 
+            <a href="/terminos" target="_blank" class="text-primary">Términos y Condiciones</a> 
+            y la 
+            <a href="/privacidad" target="_blank" class="text-primary">Política de Privacidad</a> 
+            de RaícesMX *
+          </span>
+        </label>
+      </div>
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="autenticidad" required>
+          <span class="text-body">
+            Certifico que este producto es auténtico y hecho en México, siguiendo técnicas tradicionales *
+          </span>
+        </label>
+      </div>
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="responsabilidad" required>
+          <span class="text-body">
+            Me responsabilizo de la veracidad de la información proporcionada y de la calidad del producto *
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="form-actions">
+      <button type="button" class="btn-outline" (click)="navigateToMarketplace()">
+        <i class="fas fa-times"></i> Cancelar
+      </button>
+      <button type="submit" class="btn-primary" [disabled]="productoForm.invalid || archivosImagenes.length === 0 || !ubicacionSeleccionada">
+        <i class="fas fa-upload"></i> Publicar Producto
+      </button>
+    </div>
+  </form>
+
+  <!-- Información de ayuda -->
+  <div class="help-section mt-4 p-3 bg-light rounded-md">
+    <h3 class="text-subtitle mb-2">📝 Consejos para una buena publicación:</h3>
+    <ul class="text-caption">
+      <li>Usa fotos bien iluminadas y desde diferentes ángulos</li>
+      <li>Describe bien los materiales y técnicas artesanales</li>
+      <li>Menciona las medidas exactas del producto</li>
+      <li>Se específico en la ubicación para facilitar entregas</li>
+      <li>Se honesto sobre el estado y disponibilidad del producto</li>
+      <li>Responde rápidamente a las consultas de los compradores</li>
+    </ul>
+  </div>
+</div>
