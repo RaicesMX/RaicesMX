@@ -1,191 +1,372 @@
 <div class="perfil-container">
-<!-- Contenido principal del perfil como Dashboard -->
-<main class="perfil-main">
-    <div class="perfil-content">  
-<!-- Banner de bienvenida -->
-<section class="bienvenida-section">
-    <div class="bienvenida-content">
-        <h1>¡Hola, {{ usuario.nombre.split(' ')[0] }}! 👋</h1>
-        <p>Gestiona tu cuenta y preferencias desde aquí</p>
-    </div>
-        <div class="estadisticas-rapidas">
-            <div class="estadistica">
-                <span class="numero">5</span>
-                <span class="label">Pedidos</span>
+  <main class="perfil-main">
+    <div class="perfil-content">
+      
+      <!-- Banner superior -->
+      <section class="banner-superior">
+        <div class="banner-content">
+          <div class="bienvenida">
+            <h1>¡Hola, {{ usuario.nombre.split(' ')[0] }}!</h1>
+            <p class="bienvenida-subtitle">Gestiona tu cuenta desde el panel de control</p>
+          </div>
+          
+          <div class="acciones-rapidas">
+            <button class="btn-accion btn-accion-primary" [routerLink]="['/publicar_producto']">
+              <i class="icon-publish">📦</i>
+              <span>Publicar Producto</span>
+            </button>
+            <button class="btn-accion btn-accion-secondary" [routerLink]="['/historial-compras']">
+              <i class="icon-history">🛒</i>
+              <span>Historial de Compras</span>
+            </button>
+            <!-- ELIMINADO: Botón Cerrar Sesión del banner -->
+          </div>
+        </div>
+        
+        <!-- Tarjetas de estadísticas -->
+        <div class="estadisticas-grid">
+          <div class="estadistica-card">
+            <div class="estadistica-icon estadistica-icon-1">
+              <i class="icon-package">📦</i>
             </div>
-        <div class="estadistica">
-            <span class="numero">12</span>
-            <span class="label">Favoritos</span>
+            <div class="estadistica-info">
+              <span class="numero">5</span>
+              <span class="label">Pedidos Activos</span>
+            </div>
+          </div>
+          
+          <div class="estadistica-card">
+            <div class="estadistica-icon estadistica-icon-2">
+              <i class="icon-star">⭐</i>
+            </div>
+            <div class="estadistica-info">
+              <span class="numero">12</span>
+              <span class="label">Favoritos</span>
+            </div>
+          </div>
+          
+          <div class="estadistica-card">
+            <div class="estadistica-icon estadistica-icon-3">
+              <i class="icon-box">🎁</i>
+            </div>
+            <div class="estadistica-info">
+              <span class="numero">3</span>
+              <span class="label">Productos Publicados</span>
+            </div>
+          </div>
+          
+          <div class="estadistica-card">
+            <div class="estadistica-icon estadistica-icon-4">
+              <i class="icon-credit-card">💳</i>
+            </div>
+            <div class="estadistica-info">
+              <span class="numero">2</span>
+              <span class="label">Métodos de Pago</span>
+            </div>
+          </div>
         </div>
-        <div class="estadistica">
-            <span class="numero">2</span>
-            <span class="label">Direcciones</span>
-        </div>
-    </div>
-</section>
+      </section>
 
-<!-- Panel de control con pestañas -->
-<div class="dashboard-panel">
-<!-- Navegación por pestañas -->
-    <nav class="tab-navigation">
-        <button class="tab-btn" 
-                [class.active]="tabActiva === 'informacion'" 
-                (click)="cambiarTab('informacion')">
-                    📋 Información Personal
-        </button>
-        <button class="tab-btn" 
-                [class.active]="tabActiva === 'direcciones'" 
-                (click)="cambiarTab('direcciones')">
-                📍 Direcciones
-        </button>
-        <button class="tab-btn" 
-                [class.active]="tabActiva === 'privacidad'" 
-                (click)="cambiarTab('privacidad')">
-                🔒 Privacidad y Seguridad
-        </button>
-    </nav>
-<!-- Contenido de las pestañas -->
-        <div class="tab-content">
-<!-- Pestaña: Información Personal -->
+      <!-- Panel principal con pestañas -->
+      <div class="panel-principal">
+        <!-- Navegación por pestañas mejorada -->
+        <nav class="tabs-navigation">
+          <button class="tab-btn" 
+                  [class.active]="tabActiva === 'informacion'" 
+                  (click)="cambiarTab('informacion')">
+            <i class="icon-user">👤</i>
+            Información Personal
+          </button>
+          <button class="tab-btn" 
+                  [class.active]="tabActiva === 'direcciones'" 
+                  (click)="cambiarTab('direcciones')">
+            <i class="icon-location">📍</i>
+            Direcciones
+          </button>
+          <button class="tab-btn" 
+                  [class.active]="tabActiva === 'productos'" 
+                  (click)="cambiarTab('productos')">
+            <i class="icon-package">📦</i>
+            Mis Productos
+          </button>
+          <button class="tab-btn" 
+                  [class.active]="tabActiva === 'seguridad'" 
+                  (click)="cambiarTab('seguridad')">
+            <i class="icon-shield">🛡️</i>
+            Seguridad
+          </button>
+        </nav>
+
+        <!-- Contenido de pestañas -->
+        <div class="tabs-content">
+          <!-- Pestaña: Información Personal -->
           <div *ngIf="tabActiva === 'informacion'" class="tab-pane">
             <div class="pane-header">
-                <h2>Información Personal</h2>
-                <button class="btn-editar" (click)="toggleEdicion()">
-                    {{ editando ? 'Cancelar' : 'Editar Información' }}
+              <h2><i class="icon-user">👤</i> Información Personal</h2>
+              <div class="pane-acciones">
+                <button class="btn-secundario" (click)="cerrarSesion()">
+                  <i class="icon-logout">🚪</i> Cerrar Sesión
                 </button>
+                <button class="btn-editar" (click)="toggleEdicion()">
+                  {{ editando ? 'Cancelar' : 'Editar Perfil' }}
+                </button>
+              </div>
             </div>
 
-<div class="formulario-perfil">
-    <div class="form-row">
-        <div class="form-group">
-            <label>Nombre completo *</label>
-            <div *ngIf="!editando" class="info-value">{{ usuario.nombre }}</div>
-            <input *ngIf="editando" type="text" [(ngModel)]="usuarioEditado.nombre" class="form-input">
-        </div>
-        <div class="form-group">
-            <label>CURP *</label>
-            <div *ngIf="!editando" class="info-value">{{ usuario.curp }}</div>
-                <input *ngIf="editando" type="text" [(ngModel)]="usuarioEditado.curp" class="form-input" 
-                placeholder="ABCD123456HEMLMN09" maxlength="18">
-        </div>
-        </div>
-
-<div class="form-row">
-    <div class="form-group">
-        <label>Correo electrónico *</label>
-            <div *ngIf="!editando" class="info-value">{{ usuario.email }}</div>
-                <input *ngIf="editando" type="email" [(ngModel)]="usuarioEditado.email" class="form-input">
-    </div>
-    <div class="form-group">
-        <label>Teléfono *</label>
-            <div *ngIf="!editando" class="info-value">{{ usuario.telefono }}</div>
-                <input *ngIf="editando" type="tel" [(ngModel)]="usuarioEditado.telefono" class="form-input">
-    </div>
-</div>
-
-<div class="form-group">
-    <label>Fecha de nacimiento</label>
-        <div *ngIf="!editando" class="info-value">{{ usuario.fechaNacimiento | date:'longDate' }}</div>
-    <input *ngIf="editando" type="date" [(ngModel)]="usuarioEditado.fechaNacimiento" class="form-input">
-</div>
-
-<!-- Botón guardar en modo edición -->
-<div *ngIf="editando" class="acciones-formulario">
-            <button class="btn-guardar" (click)="guardarCambios()">Guardar Cambios</button>
-            <button class="btn-cancelar" (click)="toggleEdicion()">Cancelar</button>
-        </div>
-    </div>
-</div>
-
-<!-- Pestaña: Direcciones -->
-    <div *ngIf="tabActiva === 'direcciones'" class="tab-pane">
-        <div class="pane-header">
-            <h2>Mis Direcciones</h2>
-            <button class="btn-primary" (click)="agregarDireccion()">
-            ＋ Agregar Dirección
-        </button>
-    </div>
-
-<div class="direcciones-list">
-    <div *ngFor="let direccion of direcciones; let i = index" class="direccion-card">
-        <div class="direccion-header">
-            <h3>{{ direccion.nombre }}</h3>
-                <span *ngIf="direccion.principal" class="badge-principal">Principal</span>
-            </div>
-                
-            <div class="direccion-info">
-                <p><strong>Dirección:</strong> {{ direccion.calle }}, {{ direccion.colonia }}</p>
-                <p><strong>Ciudad:</strong> {{ direccion.ciudad }}, {{ direccion.estado }}</p>
-                <p><strong>C.P.:</strong> {{ direccion.codigoPostal }}</p>
-                <p><strong>Entre calles:</strong> {{ direccion.entreCalles }}</p>
-                <p><strong>Instrucciones:</strong> {{ direccion.instrucciones }}</p>
-            </div>
-
-            <div class="direccion-acciones">
-                <button class="btn-secundario" (click)="editarDireccion(i)">Editar</button>
-                    <button *ngIf="!direccion.principal" class="btn-secundario" (click)="establecerPrincipal(i)">
-                        Establecer como principal
-                    </button>
-                <button class="btn-eliminar" (click)="eliminarDireccion(i)">Eliminar</button>
+            <div class="formulario-perfil">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="nombre">Nombre completo *</label>
+                  <div *ngIf="!editando" class="info-display">{{ usuario.nombre }}</div>
+                  <input *ngIf="editando" id="nombre" type="text" [(ngModel)]="usuarioEditado.nombre" 
+                         class="form-input" placeholder="Nombre completo">
                 </div>
+
+                <div class="form-group">
+                  <label for="curp">CURP *</label>
+                  <div *ngIf="!editando" class="info-display">{{ usuario.curp }}</div>
+                  <input *ngIf="editando" id="curp" type="text" [(ngModel)]="usuarioEditado.curp" 
+                         class="form-input" placeholder="ABCD123456HEMLMN09" maxlength="18">
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Correo electrónico *</label>
+                  <div *ngIf="!editando" class="info-display">{{ usuario.email }}</div>
+                  <input *ngIf="editando" id="email" type="email" [(ngModel)]="usuarioEditado.email" 
+                         class="form-input" placeholder="correo@ejemplo.com">
+                </div>
+
+                <div class="form-group">
+                  <label for="telefono">Teléfono *</label>
+                  <div *ngIf="!editando" class="info-display">{{ usuario.telefono }}</div>
+                  <input *ngIf="editando" id="telefono" type="tel" [(ngModel)]="usuarioEditado.telefono" 
+                         class="form-input" placeholder="+52 55 1234 5678">
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="fechaNacimiento">Fecha de nacimiento</label>
+                  <div *ngIf="!editando" class="info-display">{{ usuario.fechaNacimiento | date:'longDate' }}</div>
+                  <input *ngIf="editando" id="fechaNacimiento" type="date" [(ngModel)]="usuarioEditado.fechaNacimiento" 
+                         class="form-input">
+                </div>
+              </div>
+
+              <!-- Acciones del formulario -->
+              <div *ngIf="editando" class="form-actions">
+                <button class="btn-guardar" (click)="guardarCambios()">
+                  <i class="icon-save">💾</i> Guardar Cambios
+                </button>
+                <button class="btn-cancelar" (click)="toggleEdicion()">Cancelar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pestaña: Direcciones -->
+          <div *ngIf="tabActiva === 'direcciones'" class="tab-pane">
+            <div class="pane-header">
+              <h2><i class="icon-location">📍</i> Mis Direcciones</h2>
+              <div class="pane-acciones">
+                <button class="btn-secundario" (click)="cerrarSesion()">
+                  <i class="icon-logout">🚪</i> Cerrar Sesión
+                </button>
+                <button class="btn-primary" (click)="agregarDireccion()">
+                  <i class="icon-plus">➕</i> Agregar Dirección
+                </button>
+              </div>
             </div>
 
-              <div *ngIf="direcciones.length === 0" class="sin-direcciones">
-                <p>No tienes direcciones guardadas</p>
-                <button class="btn-primary" (click)="agregarDireccion()">Agregar primera dirección</button>
+            <div class="direcciones-grid">
+              <div *ngFor="let direccion of direcciones; let i = index" class="direccion-card">
+                <div class="direccion-header">
+                  <div class="direccion-titulo">
+                    <h3>{{ direccion.nombre }}</h3>
+                    <span *ngIf="direccion.principal" class="badge-principal">
+                      <i class="icon-check">✅</i> Principal
+                    </span>
+                  </div>
+                  <div class="direccion-acciones">
+                    <button class="btn-icon" (click)="editarDireccion(i)" title="Editar">
+                      <i class="icon-edit">✏️</i>
+                    </button>
+                    <button class="btn-icon" (click)="eliminarDireccion(i)" title="Eliminar">
+                      <i class="icon-trash">🗑️</i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="direccion-info">
+                  <p><strong>Dirección:</strong> {{ direccion.calle }}, {{ direccion.colonia }}</p>
+                  <p><strong>Ciudad:</strong> {{ direccion.ciudad }}, {{ direccion.estado }}</p>
+                  <p><strong>C.P.:</strong> {{ direccion.codigoPostal }}</p>
+                  <p><strong>Entre calles:</strong> {{ direccion.entreCalles }}</p>
+                  <p><strong>Instrucciones:</strong> {{ direccion.instrucciones }}</p>
+                </div>
+
+                <div class="direccion-footer">
+                  <button *ngIf="!direccion.principal" 
+                          class="btn-secundario" 
+                          (click)="establecerPrincipal(i)">
+                    Establecer como principal
+                  </button>
+                </div>
+              </div>
             </div>
-        </div>
-    </div>
-<!-- Pestaña: Privacidad y Seguridad -->
-          <div *ngIf="tabActiva === 'privacidad'" class="tab-pane">
+
+            <div *ngIf="direcciones.length === 0" class="sin-direcciones">
+              <i class="icon-location-off">📍</i>
+              <h3>No hay direcciones guardadas</h3>
+              <p>Agrega una dirección para recibir tus pedidos</p>
+              <button class="btn-primary" (click)="agregarDireccion()">
+                <i class="icon-plus">➕</i> Agregar primera dirección
+              </button>
+            </div>
+          </div>
+
+          <!-- Pestaña: Mis Productos -->
+          <div *ngIf="tabActiva === 'productos'" class="tab-pane">
             <div class="pane-header">
-                <h2>Privacidad y Seguridad</h2>
+              <h2><i class="icon-package">📦</i> Mis Productos</h2>
+              <div class="pane-acciones">
+                <button class="btn-secundario" (click)="cerrarSesion()">
+                  <i class="icon-logout">🚪</i> Cerrar Sesión
+                </button>
+                <button class="btn-primary" [routerLink]="['/publicar_producto']">
+                  <i class="icon-plus">➕</i> Publicar Nuevo Producto
+                </button>
+              </div>
+            </div>
+
+            <!-- Filtros de productos -->
+            <div class="productos-filtros">
+              <div class="filtros-group">
+                <button class="filtro-btn active">Todos</button>
+                <button class="filtro-btn">Activos</button>
+                <button class="filtro-btn">Pausados</button>
+                <button class="filtro-btn">Vendidos</button>
+              </div>
+              <div class="busqueda-productos">
+                <input type="text" placeholder="Buscar producto..." class="search-input">
+                <button class="btn-icon">
+                  <i class="icon-search">🔍</i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Lista de productos -->
+            <div class="productos-grid">
+              <div *ngFor="let producto of productos; let i = index" class="producto-card">
+                <div class="producto-imagen">
+                  <img [src]="producto.imagen" [alt]="producto.nombre">
+                  <span class="producto-estado" [class]="producto.estado">
+                    {{ producto.estado === 'activo' ? 'Activo' : producto.estado === 'pausado' ? 'Pausado' : 'Vendido' }}
+                  </span>
+                </div>
+                
+                <div class="producto-info">
+                  <h3>{{ producto.nombre }}</h3>
+                  <p class="producto-descripcion">{{ producto.descripcion }}</p>
+                  <div class="producto-detalles">
+                    <span class="producto-precio">${{ producto.precio | number }}</span>
+                    <span class="producto-stock">
+                      <i class="icon-box">📦</i> {{ producto.stock }} disponibles
+                    </span>
+                    <span class="producto-visitas">
+                      <i class="icon-eye">👁️</i> {{ producto.visitas }} vistas
+                    </span>
+                  </div>
+                </div>
+
+                <div class="producto-acciones">
+                  <button class="btn-icon btn-icon-warning" (click)="editarProducto(i)" title="Editar">
+                    <i class="icon-edit">✏️</i>
+                  </button>
+                  <button class="btn-icon btn-icon-info" (click)="pausarProducto(i)" 
+                          [title]="producto.estado === 'activo' ? 'Pausar' : 'Activar'">
+                    <i class="icon-pause">⏸️</i>
+                  </button>
+                  <button class="btn-icon btn-icon-danger" (click)="eliminarProducto(i)" title="Eliminar">
+                    <i class="icon-trash">🗑️</i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="productos.length === 0" class="sin-productos">
+              <i class="icon-package-off">📦</i>
+              <h3>No hay productos publicados</h3>
+              <p>Comienza a publicar tus productos para vender en la plataforma</p>
+              <button class="btn-primary" [routerLink]="['/publicar_producto']">
+                <i class="icon-plus">➕</i> Publicar primer producto
+              </button>
+            </div>
+          </div>
+
+          <!-- Pestaña: Seguridad -->
+          <div *ngIf="tabActiva === 'seguridad'" class="tab-pane">
+            <div class="pane-header">
+              <h2><i class="icon-shield">🛡️</i> Seguridad y Privacidad</h2>
+              <div class="pane-acciones">
+                <button class="btn-secundario" (click)="cerrarSesion()">
+                  <i class="icon-logout">🚪</i> Cerrar Sesión
+                </button>
+              </div>
             </div>
 
             <div class="configuraciones-list">
-                <div class="configuracion-item">
+              <div class="config-item">
                 <div class="config-info">
-                    <h3>Cambiar Contraseña</h3>
-                    <p>Actualiza tu contraseña regularmente para mantener tu cuenta segura</p>
+                  <h3><i class="icon-lock">🔒</i> Cambiar Contraseña</h3>
+                  <p>Actualiza tu contraseña regularmente para mantener tu cuenta segura</p>
                 </div>
-                <button class="btn-primary" (click)="cambiarContrasena()">Cambiar</button>
-            </div>
+                <button class="btn-primary btn-password" (click)="cambiarContrasena()">
+                  <i class="icon-key">🔑</i> Cambiar Contraseña
+                </button>
+              </div>
 
-            <div class="configuracion-item">
+              <div class="config-item">
                 <div class="config-info">
-                    <h3>Verificación en dos pasos</h3>
-                    <p>Añade una capa extra de seguridad a tu cuenta</p>
+                  <h3><i class="icon-shield-check">✅</i> Verificación en dos pasos</h3>
+                  <p>Añade una capa extra de seguridad a tu cuenta</p>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" [(ngModel)]="verificacionDosPasos">
-                    <span class="slider"></span>
+                  <input type="checkbox" [(ngModel)]="verificacionDosPasos" id="verificacionDosPasos">
+                  <span class="toggle-slider"></span>
                 </label>
-            </div>
+              </div>
 
-            <div class="configuracion-item">
+              <div class="config-item">
                 <div class="config-info">
-                    <h3>Notificaciones por email</h3>
-                    <p>Recibe notificaciones sobre tus pedidos y ofertas especiales</p>
+                  <h3><i class="icon-bell">🔔</i> Notificaciones</h3>
+                  <p>Configura cómo recibir notificaciones sobre tus actividades</p>
                 </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" [(ngModel)]="notificacionesEmail" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
+                <div class="notificaciones-opciones">
+                  <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="notificacionesEmail" id="notificacionesEmail">
+                    <span class="checkmark"></span>
+                    Correo electrónico
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="notificacionesPush" id="notificacionesPush">
+                    <span class="checkmark"></span>
+                    Notificaciones push
+                  </label>
+                </div>
+              </div>
 
-            <div class="configuracion-item">
+              <div class="config-item danger">
                 <div class="config-info">
-                    <h3>Eliminar cuenta</h3>
-                    <p>Elimina permanentemente tu cuenta y todos tus datos</p>
+                  <h3><i class="icon-alert-triangle">⚠️</i> Eliminar cuenta</h3>
+                  <p>Elimina permanentemente tu cuenta y todos tus datos</p>
                 </div>
-                <button class="btn-eliminar-cuenta" (click)="eliminarCuenta()">Eliminar Cuenta</button>
-                </div>
+                <button class="btn-danger" (click)="eliminarCuenta()">
+                  <i class="icon-trash">🗑️</i> Eliminar Cuenta
+                </button>
+              </div>
             </div>
+          </div>
         </div>
-
-        </div>
-    </div>
+      </div>
 
     </div>
-    </main>
+  </main>
 </div>
