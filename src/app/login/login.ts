@@ -232,4 +232,13 @@ export class LoginComponent implements OnInit {
         },
       });
   }
+  /**
+   * Inicia el flujo de OAuth con Google
+   *
+   * Redirige al endpoint del backend que maneja Google OAuth
+   */
+  loginWithGoogle() {
+    // Redirige al endpoint de Google OAuth del backend
+    window.location.href = 'http://localhost:3000/auth/google';
+  }
 }
