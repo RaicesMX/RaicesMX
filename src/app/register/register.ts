@@ -191,7 +191,6 @@ export class RegisterComponent {
             },
           });
         },
-
         /**
          * Maneja errores de la petición
          *

@@ -1,29 +1,27 @@
 <div class="portal-wrapper">
-<!-- Fondo Alebrije + Overlay -->
-    <div class="bg-alebrije"></div>
-        <div class="overlay-alebrije"></div>
+  <!-- Fondo Alebrije + Overlay -->
+  <div class="bg-alebrije"></div>
+  <div class="overlay-alebrije"></div>
 
-<!-- Partículas Doradas -->
-    <div class="particulas">
-        <div class="particula large"></div>
-        <div class="particula medium"></div>
-        <div div class="particula large"></div>
-        <div class="particula small"></div>
-        <div class="particula medium"></div>
-        <div class="particula large"></div>
-        <div class="particula small"></div>
-    </div>
+  <!-- Partículas Doradas -->
+  <div class="particulas">
+    <div class="particula large"></div>
+    <div class="particula medium"></div>
+    <div div class="particula large"></div>
+    <div class="particula small"></div>
+    <div class="particula medium"></div>
+    <div class="particula large"></div>
+    <div class="particula small"></div>
+  </div>
 
   <!-- Anillo giratorio -->
-<div class="portal-ring"></div>
+  <div class="portal-ring"></div>
 
-<!-- Formulario -->
+  <!-- Formulario -->
   <div class="formulario-raiz" #formulario>
     <div class="form-header">
-      <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-alebrije">
-      <h1 class="titulo-raiz">
-        <span class="vino">Raíces</span><span class="dorado">MX</span>
-      </h1>
+      <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-alebrije" />
+      <h1 class="titulo-raiz"><span class="vino">Raíces</span><span class="dorado">MX</span></h1>
       <p class="subtitulo-raiz">Recupera tu acceso al mercado artesanal</p>
     </div>
 
@@ -38,7 +36,7 @@
       </div>
 
       <h3 class="step-title">Ingresa tu correo electrónico</h3>
-      
+
       <div class="input-group">
         <label for="email">Correo Electrónico</label>
         <input
@@ -50,9 +48,7 @@
           required
           class="input-raiz"
         />
-        <div class="input-hint">
-          Te enviaremos un código de verificación a este correo
-        </div>
+        <div class="input-hint">Te enviaremos un código de verificación a este correo</div>
       </div>
 
       <button type="submit" class="btn-raiz" [disabled]="isLoading">
@@ -79,7 +75,7 @@
       <p class="step-description">
         Hemos enviado un código de 6 dígitos a: <strong>{{ email }}</strong>
       </p>
-      
+
       <div class="input-group">
         <label for="verificationCode">Código de Verificación</label>
         <input
@@ -93,17 +89,24 @@
           class="input-raiz code-input"
         />
         <div class="code-actions">
-          <button type="button" class="btn-link" (click)="resendCode()" [disabled]="resendCooldown > 0">
+          <button
+            type="button"
+            class="btn-link"
+            (click)="resendCode()"
+            [disabled]="resendCooldown > 0"
+          >
             Reenviar código {{ resendCooldown > 0 ? '(' + resendCooldown + 's)' : '' }}
           </button>
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn-secondary" (click)="previousStep()">
-          ← Volver
-        </button>
-        <button type="submit" class="btn-raiz" [disabled]="isLoading || verificationCode.length !== 6">
+        <button type="button" class="btn-secondary" (click)="previousStep()">← Volver</button>
+        <button
+          type="submit"
+          class="btn-raiz"
+          [disabled]="isLoading || verificationCode.length !== 6"
+        >
           <span *ngIf="!isLoading">Verificar Código</span>
           <span *ngIf="isLoading" class="loading-text">
             <div class="spinner"></div>
@@ -124,7 +127,7 @@
       </div>
 
       <h3 class="step-title">Crea tu nueva contraseña</h3>
-      
+
       <div class="input-group">
         <label for="newPassword">Nueva Contraseña</label>
         <div class="password-wrapper">
@@ -173,7 +176,11 @@
             <span class="icon-eye"></span>
           </button>
         </div>
-        <div class="password-match" [class.valid]="passwordsMatch()" [class.invalid]="confirmPassword && !passwordsMatch()">
+        <div
+          class="password-match"
+          [class.valid]="passwordsMatch()"
+          [class.invalid]="confirmPassword && !passwordsMatch()"
+        >
           {{ getPasswordMatchText() }}
         </div>
       </div>
@@ -190,9 +197,7 @@
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn-secondary" (click)="previousStep()">
-          ← Volver
-        </button>
+        <button type="button" class="btn-secondary" (click)="previousStep()">← Volver</button>
         <button type="submit" class="btn-raiz" [disabled]="isLoading || !isFormValid()">
           <span *ngIf="!isLoading">Restablecer Contraseña</span>
           <span *ngIf="isLoading" class="loading-text">
@@ -208,11 +213,10 @@
       <div class="success-icon">✓</div>
       <h3 class="step-title">¡Contraseña restablecida!</h3>
       <p class="success-message">
-        Tu contraseña ha sido actualizada exitosamente. Ahora puedes iniciar sesión con tus nuevas credenciales.
+        Tu contraseña ha sido actualizada exitosamente. Ahora puedes iniciar sesión con tus nuevas
+        credenciales.
       </p>
-      <button class="btn-raiz" routerLink="/login">
-        Ir al Inicio de Sesión
-      </button>
+      <button class="btn-raiz" routerLink="/login">Ir al Inicio de Sesión</button>
     </div>
 
     <!-- Mensajes de estado -->
