@@ -14,6 +14,7 @@ import { FavoritosComponent } from './favoritos/favoritos';
 import { OfertasComponent } from './ofertas/ofertas';
 import { AyudaComponent } from './ayuda/ayuda';
 import { PublicarProducto } from './publicar-producto/publicar-producto';
+import { HistorialCompras } from './historial-compras/historial-compras';
 
 
 export const routes: Routes = [
@@ -41,6 +42,7 @@ export const routes: Routes = [
       { path: 'ofertas', component: OfertasComponent },
       { path: 'ayuda', component: AyudaComponent },
       { path: 'publicar_producto', component: PublicarProducto},
+      { path: 'historial_compras', component: HistorialCompras}
     ]
   },
 

@@ -6,7 +6,7 @@
 
   <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="producto-form card-base">
     
-    <!-- Sección 1: Título e Imágenes (Orden modificado) -->
+    <!-- Sección 1: Título e Imágenes -->
     <div class="form-section">
       <h2 class="text-subtitle">1. Información Básica</h2>
       
@@ -61,7 +61,7 @@
             </div>
           </div>
         </div>
-        <div *ngIf="archivosImagenes.length === 0 && productoForm.get('imagenes')?.touched" class="error-message">
+        <div *ngIf="archivosImagenes.length === 0 && productoForm.get('titulo')?.touched" class="error-message">
           Debes subir al menos una imagen
         </div>
       </div>
@@ -117,12 +117,17 @@
       </div>
     </div>
 
-    <!-- Sección 3: Precio -->
+    <!-- Sección 3: Precio con Modal de Comisión -->
     <div class="form-section">
-      <h2 class="text-subtitle">3. Precio</h2>
+      <h2 class="text-subtitle">3. Precio y Comisión</h2>
       
       <div class="form-group">
-        <label for="precio" class="form-label">Precio (MXN) *</label>
+        <div class="precio-header">
+          <label for="precio" class="form-label">Precio (MXN) *</label>
+          <button type="button" class="btn-info-comision" (click)="abrirModalComision()">
+            <i class="fas fa-info-circle"></i> Ver detalles de comisión
+          </button>
+        </div>
         <div class="input-with-icon">
           <span class="input-icon">$</span>
           <input 
@@ -143,32 +148,17 @@
       <!-- Información de comisión -->
       <div class="info-box bg-light p-3 rounded-md mt-3" *ngIf="productoForm.get('precio')?.value">
         <div class="d-flex justify-between align-center">
-          <span class="text-caption">Comisión de RaícesMX (5%):</span>
-          <span class="text-bold">${{ formatNumber(calcularComision()) }} MXN</span>
+          <span class="text-caption">Comisión de RaícesMX ({{ porcentajeComision * 100 }}%):</span>
+          <span class="text-bold text-secondary">${{ formatNumber(calcularComision()) }} MXN</span>
         </div>
         <div class="d-flex justify-between align-center mt-1">
-          <span class="text-subtitle">Ganancia neta estimada:</span>
+          <span class="text-subtitle">Tu ganancia neta estimada:</span>
           <span class="text-bold text-primary">${{ formatNumber(calcularPrecioTotal()) }} MXN</span>
-        </div>
-      </div>
-
-      <div class="form-row mt-3">
-        <div class="form-group checkbox-group">
-          <label class="checkbox-label">
-            <input type="checkbox" formControlName="envioDisponible">
-            <span class="text-body">Ofrecer envío a domicilio</span>
-          </label>
-        </div>
-        <div class="form-group checkbox-group">
-          <label class="checkbox-label">
-            <input type="checkbox" formControlName="envioNacional">
-            <span class="text-body">Envío a todo México</span>
-          </label>
         </div>
       </div>
     </div>
 
-    <!-- Sección 4: Ubicación con Mapa -->
+    <!-- Sección 4: Ubicación con Mapa Real -->
     <div class="form-section">
       <h2 class="text-subtitle">4. Ubicación</h2>
       
@@ -231,74 +221,74 @@
         </div>
       </div>
 
-      <!-- Mapa para seleccionar ubicación -->
+      <!-- Mapa con API real (Geoapify Free Tier) -->
       <div class="form-group">
-        <div class="form-label">Selecciona ubicación en el mapa *</div>
+        <div class="form-label">Selecciona tu ubicación exacta en el mapa *</div>
         
-        <div class="mapa-container">
+        <div class="mapa-container-real">
           <!-- Controles del mapa -->
-          <div class="mapa-controls mb-2">
-            <button type="button" class="btn-mapa" (click)="usarUbicacionActual()">
-              <i class="fas fa-location-arrow"></i> Usar mi ubicación actual
-            </button>
-            <button type="button" class="btn-mapa" (click)="toggleMapa()">
-              <i class="fas" [class.fa-expand]="!mostrarMapa" [class.fa-compress]="mostrarMapa"></i> 
-              {{ mostrarMapa ? 'Ocultar mapa' : 'Mostrar mapa completo' }}
-            </button>
-          </div>
-
-          <!-- Previsualización del mapa estático -->
-          <div class="mapa-preview" *ngIf="!mostrarMapa">
-            <div class="mapa-placeholder" (click)="toggleMapa()">
-              <div class="mapa-overlay">
-                <i class="fas fa-map-marker-alt"></i>
-                <p>Haz clic para seleccionar la ubicación en el mapa</p>
-                <small class="text-caption" *ngIf="ubicacionSeleccionada">
-                  Lat: {{ ubicacionSeleccionada.lat | number:'1.4-4' }}, Lng: {{ ubicacionSeleccionada.lng | number:'1.4-4' }}
-                </small>
-              </div>
+          <div class="mapa-header">
+            <div class="mapa-coordenadas">
+              <i class="fas fa-map-marker-alt text-primary"></i>
+              <span class="text-caption" *ngIf="ubicacionSeleccionada">
+                Lat: {{ ubicacionSeleccionada.lat | number:'1.6-6' }}, 
+                Lng: {{ ubicacionSeleccionada.lng | number:'1.6-6' }}
+              </span>
+              <span class="text-caption" *ngIf="!ubicacionSeleccionada">
+                Haz clic en el mapa para seleccionar ubicación
+              </span>
+            </div>
+            
+            <div class="mapa-botones">
+              <button type="button" class="btn-mapa-chico" (click)="usarUbicacionActual()" title="Usar mi ubicación actual">
+                <i class="fas fa-location-arrow"></i> Mi ubicación
+              </button>
+              <button type="button" class="btn-mapa-chico" (click)="centrarMapa()" title="Centrar mapa">
+                <i class="fas fa-crosshairs"></i> Centrar
+              </button>
             </div>
           </div>
 
-          <!-- Mapa interactivo (simulado) -->
-          <div class="mapa-interactivo" *ngIf="mostrarMapa">
-            <div class="mapa-simulado">
-              <div class="mapa-grid">
-                <!-- Simulación de mapa con cuadrícula -->
-                <div *ngFor="let row of [0,1,2,3,4]; let i = index" class="mapa-row">
-                  <div *ngFor="let col of [0,1,2,3,4]; let j = index" 
-                       class="mapa-cell" 
-                       [class.selected]="esCeldaSeleccionada(i, j)"
-                       (click)="seleccionarEnMapa(i, j)">
-                  </div>
-                </div>
-                
-                <!-- Marcador -->
-                <div class="mapa-marker" *ngIf="celdaSeleccionada" 
-                     [style.top.%]="(celdaSeleccionada.row / 5 * 100)"
-                     [style.left.%]="(celdaSeleccionada.col / 5 * 100)">
-                  <i class="fas fa-map-marker-alt text-primary"></i>
-                </div>
+          <!-- Mapa real con API de Geoapify (gratis) -->
+          <div class="mapa-real" (click)="seleccionarUbicacionManual($event)" #mapaContainer>
+            <!-- Imagen del mapa estático -->
+            <div class="mapa-imagen-container">
+              <img [src]="getMapaUrl()" alt="Mapa de ubicación" class="mapa-imagen-real">
+              
+              <!-- Marcador de ubicación -->
+              <div class="mapa-marcador-real" 
+                   *ngIf="mostrarMarcador"
+                   [style.top.px]="marcadorPosicion.y"
+                   [style.left.px]="marcadorPosicion.x">
+                <i class="fas fa-map-pin text-primary"></i>
+                <div class="marcador-punto-real"></div>
               </div>
               
-              <div class="mapa-instructions">
-                <p class="text-caption"><i class="fas fa-mouse-pointer"></i> Haz clic en el mapa para seleccionar la ubicación exacta</p>
-                <p class="text-caption" *ngIf="ubicacionSeleccionada">
-                  <i class="fas fa-check-circle text-success"></i> 
-                  Ubicación seleccionada: 
-                  Lat {{ ubicacionSeleccionada.lat | number:'1.6-6' }}, 
-                  Lng {{ ubicacionSeleccionada.lng | number:'1.6-6' }}
-                </p>
+              <!-- Instrucciones overlay -->
+              <div class="mapa-instrucciones-real">
+                <p><i class="fas fa-mouse-pointer"></i> Haz clic para marcar tu ubicación exacta</p>
               </div>
             </div>
           </div>
 
-          <!-- Instrucciones -->
-          <div class="instrucciones-mapa mt-2 p-2 bg-light rounded-md">
+          <!-- Instrucciones actualizadas -->
+          <div class="instrucciones-mapa-actualizadas mt-2 p-3 bg-light rounded-md">
             <p class="text-caption mb-1">
               <i class="fas fa-info-circle text-primary"></i> 
-              La ubicación en el mapa ayuda a los compradores a conocer la zona de entrega
+              La ubicación exacta permite a los compradores calcular distancias y coordinar entregas personalizadas
             </p>
+          </div>
+
+          <!-- Leyenda del mapa -->
+          <div class="mapa-leyenda-real">
+            <div class="leyenda-item">
+              <i class="fas fa-map-pin text-primary"></i>
+              <span class="text-caption">Tu ubicación seleccionada</span>
+            </div>
+            <div class="leyenda-item">
+              <i class="fas fa-city text-secondary"></i>
+              <span class="text-caption">Centro de la ciudad más cercano</span>
+            </div>
           </div>
         </div>
       </div>
@@ -382,14 +372,71 @@
     </div>
   </form>
 
-  <!-- Información de ayuda -->
+  <!-- Modal de Comisión -->
+  <div class="modal-overlay" *ngIf="mostrarModalComision">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fas fa-exclamation-circle text-secondary"></i>
+          Información sobre Comisiones
+        </h3>
+        <button type="button" class="modal-close" (click)="cerrarModalComision()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="comision-info">
+          <div class="comision-icon">
+            <i class="fas fa-percentage text-primary"></i>
+          </div>
+          <div class="comision-text">
+            <h4 class="comision-title">¡Recuerda que RaícesMX cobra comisión por cada venta!</h4>
+            <p class="comision-description">
+              Para mantener nuestra plataforma y apoyar a los artesanos, cobramos una comisión del 
+              <span class="text-bold text-primary">{{ porcentajeComision * 100 }}%</span> sobre el precio de venta de cada producto.
+            </p>
+            
+            <div class="ejemplo-comision">
+              <h5 class="ejemplo-title">Ejemplo:</h5>
+              <div class="ejemplo-item">
+                <span>Si vendes un producto en:</span>
+                <span class="text-bold">${{ getEjemploComision().precio }} MXN</span>
+              </div>
+              <div class="ejemplo-item">
+                <span>Comisión de RaícesMX ({{ porcentajeComision * 100 }}%):</span>
+                <span class="text-bold text-secondary">${{ formatNumber(getEjemploComision().comision) }} MXN</span>
+              </div>
+              <div class="ejemplo-item total">
+                <span>Tu ganancia neta será:</span>
+                <span class="text-bold text-primary">${{ formatNumber(getEjemploComision().ganancia) }} MXN</span>
+              </div>
+            </div>
+            
+            <div class="comision-consejo">
+              <i class="fas fa-lightbulb text-warning"></i>
+              <p><strong>Consejo:</strong> Establece tus precios considerando esta comisión para asegurar una ganancia justa.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn-primary" (click)="cerrarModalComision()">
+          <i class="fas fa-check"></i> Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información de ayuda ACTUALIZADA -->
   <div class="help-section mt-4 p-3 bg-light rounded-md">
     <h3 class="text-subtitle mb-2">📝 Consejos para una buena publicación:</h3>
     <ul class="text-caption">
       <li>Usa fotos bien iluminadas y desde diferentes ángulos</li>
       <li>Describe bien los materiales y técnicas artesanales</li>
       <li>Menciona las medidas exactas del producto</li>
-      <li>Se específico en la ubicación para facilitar entregas</li>
+      <li>Se específico en la ubicación</li>
       <li>Se honesto sobre el estado y disponibilidad del producto</li>
       <li>Responde rápidamente a las consultas de los compradores</li>
     </ul>

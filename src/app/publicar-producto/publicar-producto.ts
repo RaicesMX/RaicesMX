@@ -1,18 +1,26 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-publicar-producto',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    RouterModule, 
+    FormsModule
+  ],
   templateUrl: './publicar-producto.html',
   styleUrls: ['./publicar-producto.scss']
 })
 export class PublicarProducto implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+
+  @ViewChild('mapaContainer') mapaContainer!: ElementRef;
 
   productoForm: FormGroup;
   
@@ -71,12 +79,37 @@ export class PublicarProducto implements OnInit {
   imagenesPrevisualizacion: string[] = [];
   archivosImagenes: File[] = [];
 
-  // Coordenadas del mapa
-  ubicacionSeleccionada: { lat: number; lng: number } | null = null;
-  mostrarMapa = false;
+  // Variables para el sistema de envíos
+  costoEnvioLocal = 50;
+  paqueteriaSeleccionada = 'estafeta';
+  pesoProducto = 1.0;
 
-  // Para el mapa simulado
-  celdaSeleccionada: { row: number; col: number } | null = null;
+  dimensiones = {
+    largo: 20,
+    ancho: 15,
+    alto: 10
+  };
+
+  // Variables para cálculo de envío nacional
+  costoBaseEnvio = 80;
+  costoPorPeso = 0;
+  costoSeguro = 20;
+
+  // Variables para el mapa y ubicación
+  ubicacionSeleccionada: { lat: number; lng: number } | null = null;
+  mostrarMarcador = false;
+  marcadorPosicion = { x: 0, y: 0 };
+  mapaCoordenadas = {
+    lat: 19.4326,
+    lng: -99.1332,
+    zoom: 12
+  };
+
+  // Variables para modal de comisión
+  mostrarModalComision = false;
+  
+  // Porcentaje de comisión (10%)
+  porcentajeComision = 0.10;
 
   constructor() {
     this.productoForm = this.fb.group({
@@ -107,6 +140,8 @@ export class PublicarProducto implements OnInit {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
+          this.mapaCoordenadas.lat = position.coords.latitude;
+          this.mapaCoordenadas.lng = position.coords.longitude;
           this.actualizarCoordenadasFormulario();
         },
         (error) => {
@@ -165,13 +200,100 @@ export class PublicarProducto implements OnInit {
     this.archivosImagenes.splice(index, 1);
   }
 
-  // Método para manejar clic en el mapa
-  onMapClick(event: MouseEvent): void {
-    // Para un mapa real, aquí procesarías las coordenadas del click
-    console.log('Map click:', event);
+  // MÉTODOS PARA EL SISTEMA DE ENVÍOS
+
+  seleccionarEnvioLocal(): void {
+    this.productoForm.get('envioDisponible')?.setValue(true);
+    this.productoForm.get('envioNacional')?.setValue(false);
   }
 
-  // Actualizar coordenadas en el formulario
+  seleccionarEnvioNacional(): void {
+    this.productoForm.get('envioDisponible')?.setValue(true);
+    this.productoForm.get('envioNacional')?.setValue(true);
+  }
+
+  calcularCostoEnvioLocal(): number {
+    return this.costoEnvioLocal;
+  }
+
+  calcularCostoEnvioNacional(): number {
+    // Cálculo basado en peso y paquetería
+    this.costoPorPeso = this.pesoProducto * 25; // $25 por kg
+    
+    let costoPaqueteria = 0;
+    switch (this.paqueteriaSeleccionada) {
+      case 'dhl': costoPaqueteria = 30; break;
+      case 'fedex': costoPaqueteria = 35; break;
+      case 'correos': costoPaqueteria = 15; break;
+      case 'paqueteexpress': costoPaqueteria = 20; break;
+      default: costoPaqueteria = 25; // estafeta
+    }
+    
+    return this.costoBaseEnvio + this.costoPorPeso + this.costoSeguro + costoPaqueteria;
+  }
+
+  calcularTiempoEntrega(): number {
+    switch (this.paqueteriaSeleccionada) {
+      case 'dhl': return 2;
+      case 'fedex': return 3;
+      case 'correos': return 7;
+      case 'paqueteexpress': return 5;
+      default: return 4; // estafeta
+    }
+  }
+
+  // MÉTODOS PARA EL MAPA
+
+  getMapaUrl(): string {
+    // En producción usarías: https://maps.googleapis.com/maps/api/staticmap?center=...
+    // Por ahora usamos un placeholder más realista
+    if (this.ubicacionSeleccionada) {
+      const lat = this.ubicacionSeleccionada.lat.toFixed(6);
+      const lng = this.ubicacionSeleccionada.lng.toFixed(6);
+      return `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=800&height=400&center=lonlat:${lng},${lat}&zoom=14&marker=lonlat:${lng},${lat};color:%23ff0000;size:medium&apiKey=demo`;
+    }
+    return 'https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=800&height=400&center=lonlat:-99.1332,19.4326&zoom=12&apiKey=demo';
+  }
+
+  seleccionarUbicacionManual(event: MouseEvent): void {
+    if (!this.mapaContainer) return;
+    
+    const elemento = this.mapaContainer.nativeElement;
+    const rect = elemento.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    // Calcular coordenadas basadas en la posición del clic
+    const lat = this.mapaCoordenadas.lat + ((y / rect.height) - 0.5) * 0.1;
+    const lng = this.mapaCoordenadas.lng + ((x / rect.width) - 0.5) * 0.1;
+    
+    this.ubicacionSeleccionada = { lat, lng };
+    this.actualizarCoordenadasFormulario();
+    
+    // Mostrar feedback visual
+    this.mostrarMarcador = true;
+    this.marcadorPosicion = { x, y };
+  }
+
+  centrarMapa(): void {
+    if (this.ubicacionSeleccionada) {
+      this.mapaCoordenadas.lat = this.ubicacionSeleccionada.lat;
+      this.mapaCoordenadas.lng = this.ubicacionSeleccionada.lng;
+    }
+  }
+
+  // MÉTODOS PARA MODAL DE COMISIÓN
+
+  abrirModalComision(): void {
+    this.mostrarModalComision = true;
+  }
+
+  cerrarModalComision(): void {
+    this.mostrarModalComision = false;
+  }
+
+  // MÉTODOS EXISTENTES
+
   actualizarCoordenadasFormulario(): void {
     if (this.ubicacionSeleccionada) {
       this.productoForm.patchValue({
@@ -181,7 +303,6 @@ export class PublicarProducto implements OnInit {
     }
   }
 
-  // Método para usar ubicación actual
   usarUbicacionActual(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -190,7 +311,14 @@ export class PublicarProducto implements OnInit {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
+          this.mapaCoordenadas.lat = position.coords.latitude;
+          this.mapaCoordenadas.lng = position.coords.longitude;
           this.actualizarCoordenadasFormulario();
+          
+          // Posicionar marcador en el centro
+          this.mostrarMarcador = true;
+          this.marcadorPosicion = { x: 400, y: 200 };
+          
           alert('Ubicación actual establecida');
         },
         (error) => {
@@ -200,27 +328,6 @@ export class PublicarProducto implements OnInit {
     } else {
       alert('Tu navegador no soporta geolocalización');
     }
-  }
-
-  // Mostrar/ocultar mapa
-  toggleMapa(): void {
-    this.mostrarMapa = !this.mostrarMapa;
-  }
-
-  // Métodos para el mapa simulado
-  esCeldaSeleccionada(row: number, col: number): boolean {
-    if (!this.celdaSeleccionada) return false;
-    return this.celdaSeleccionada.row === row && this.celdaSeleccionada.col === col;
-  }
-
-  seleccionarEnMapa(row: number, col: number): void {
-    // Simular selección de ubicación en mapa
-    const lat = 19.4326 + (row - 2) * 0.01;
-    const lng = -99.1332 + (col - 2) * 0.01;
-    
-    this.ubicacionSeleccionada = { lat, lng };
-    this.celdaSeleccionada = { row, col };
-    this.actualizarCoordenadasFormulario();
   }
 
   onSubmit(): void {
@@ -246,7 +353,9 @@ export class PublicarProducto implements OnInit {
         ...this.productoForm.value,
         imagenes: this.archivosImagenes,
         fechaPublicacion: new Date().toISOString(),
-        ubicacion: this.ubicacionSeleccionada
+        ubicacion: this.ubicacionSeleccionada,
+        comision: this.calcularComision(),
+        precioFinal: this.calcularPrecioTotal()
       };
       
       console.log('Producto listo para publicar:', productoData);
@@ -287,20 +396,20 @@ export class PublicarProducto implements OnInit {
     this.router.navigate(['/marketplace']);
   }
 
-  // Calcular comisión (ejemplo: 5% del precio)
+  // Calcular comisión (10% del precio)
   calcularComision(): number {
     const precio = this.productoForm.get('precio')?.value;
     if (precio) {
-      return precio * 0.05;
+      return precio * this.porcentajeComision;
     }
     return 0;
   }
 
-  // Precio total (precio + comisión)
+  // Precio total (precio - comisión)
   calcularPrecioTotal(): number {
     const precio = this.productoForm.get('precio')?.value;
     if (precio) {
-      return parseFloat(precio) + this.calcularComision();
+      return parseFloat(precio) - this.calcularComision();
     }
     return 0;
   }
@@ -308,5 +417,14 @@ export class PublicarProducto implements OnInit {
   // Método para formatear números
   formatNumber(value: number): string {
     return value.toFixed(2);
+  }
+
+  // Ejemplo de comisión para el modal
+  getEjemploComision(): { precio: number; comision: number; ganancia: number } {
+    return {
+      precio: 250,
+      comision: 250 * this.porcentajeComision,
+      ganancia: 250 - (250 * this.porcentajeComision)
+    };
   }
 }
