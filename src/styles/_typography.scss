@@ -1,3 +1,6 @@
+// Importar colores primero
+@import './colors';
+
 // Fuentes
 $font-family-primary: 'Montserrat', sans-serif;
 $font-family-secondary: 'Inter', sans-serif;
@@ -27,41 +30,41 @@ $line-height-relaxed: 1.75;
 
 // Mixins para textos comunes
 @mixin text-display {
-    font-family: $font-family-primary;
-    font-size: $font-size-4xl;
-    font-weight: $font-weight-extrabold;
-    line-height: $line-height-tight;
-    color: $color-primary;
+  font-family: $font-family-primary;
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-extrabold;
+  line-height: $line-height-tight;
+  color: $color-primary;
 }
 
 @mixin text-title {
-    font-family: $font-family-primary;
-    font-size: $font-size-3xl;
-    font-weight: $font-weight-bold;
-    line-height: $line-height-tight;
-    color: $color-gray-900;
+  font-family: $font-family-primary;
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $color-primary; // Cambié de $color-gray-900 a $color-primary
 }
 
 @mixin text-subtitle {
-    font-family: $font-family-primary;
-    font-size: $font-size-xl;
-    font-weight: $font-weight-semibold;
-    line-height: $line-height-normal;
-    color: $color-gray-800;
+  font-family: $font-family-primary;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-normal;
+  color: $color-primary; // Cambié de $color-gray-800 a $color-primary
 }
 
 @mixin text-body {
-    font-family: $font-family-secondary;
-    font-size: $font-size-base;
-    font-weight: $font-weight-normal;
-    line-height: $line-height-relaxed;
-    color: $color-gray-700;
+  font-family: $font-family-secondary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-relaxed;
+  color: $color-gray-700;
 }
 
 @mixin text-caption {
-    font-family: $font-family-secondary;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-normal;
-    line-height: $line-height-normal;
-    color: $color-gray-500;
+  font-family: $font-family-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  color: $color-gray-500;
 }

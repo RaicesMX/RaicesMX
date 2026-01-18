@@ -1,0 +1,500 @@
+<div class="historial-wrapper">
+  <!-- Sidebar de filtros -->
+  <aside class="historial-sidebar">
+    <div class="sidebar-header">
+  <h2 class="sidebar-title">
+    <i class="fas fa-filter"></i>
+    Filtros
+  </h2>
+</div>
+
+    <!-- Filtro por estado -->
+    <div class="filter-section">
+      <h3 class="filter-title">
+        <i class="fas fa-tag"></i>
+        Estado del Pedido
+      </h3>
+      <div class="filter-options">
+        <button class="filter-option" 
+                [class.active]="filtroActivo === 'todos'"
+                (click)="cambiarFiltro('todos')">
+          <span class="filter-dot all"></span>
+          <span class="filter-text">Todos los pedidos</span>
+          <span class="filter-count">{{ historialCompras.length }}</span>
+        </button>
+        
+        <button class="filter-option" 
+                [class.active]="filtroActivo === 'pendiente'"
+                (click)="cambiarFiltro('pendiente')">
+          <span class="filter-dot pendiente"></span>
+          <span class="filter-text">Pendientes</span>
+          <span class="filter-count">{{ contarPorEstado('pendiente') }}</span>
+        </button>
+        
+        <button class="filter-option" 
+                [class.active]="filtroActivo === 'completado'"
+                (click)="cambiarFiltro('completado')">
+          <span class="filter-dot completado"></span>
+          <span class="filter-text">Completados</span>
+          <span class="filter-count">{{ contarPorEstado('completado') }}</span>
+        </button>
+        
+        <button class="filter-option" 
+                [class.active]="filtroActivo === 'cancelado'"
+                (click)="cambiarFiltro('cancelado')">
+          <span class="filter-dot cancelado"></span>
+          <span class="filter-text">Cancelados</span>
+          <span class="filter-count">{{ contarPorEstado('cancelado') }}</span>
+        </button>
+        
+        <button class="filter-option" 
+                [class.active]="filtroActivo === 'reembolsado'"
+                (click)="cambiarFiltro('reembolsado')">
+          <span class="filter-dot reembolsado"></span>
+          <span class="filter-text">Reembolsados</span>
+          <span class="filter-count">{{ contarPorEstado('reembolsado') }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtro por fecha -->
+    <div class="filter-section">
+      <h3 class="filter-title">
+        <i class="fas fa-calendar-alt"></i>
+        Rango de Fechas
+      </h3>
+      <div class="date-filters">
+        <div class="date-input-group">
+          <label for="fechaInicio" class="date-label">
+            <i class="fas fa-play"></i>
+            Desde
+          </label>
+          <input type="date" 
+                 id="fechaInicio" 
+                 [(ngModel)]="fechaInicio" 
+                 (change)="filtrarPorFecha()"
+                 class="date-input">
+        </div>
+        
+        <div class="date-input-group">
+          <label for="fechaFin" class="date-label">
+            <i class="fas fa-stop"></i>
+            Hasta
+          </label>
+          <input type="date" 
+                 id="fechaFin" 
+                 [(ngModel)]="fechaFin" 
+                 (change)="filtrarPorFecha()"
+                 class="date-input">
+        </div>
+        
+        <div class="date-quick-filters">
+          <button class="date-quick-btn" (click)="filtrarHoy()">
+            Hoy
+          </button>
+          <button class="date-quick-btn" (click)="filtrarEstaSemana()">
+            Esta semana
+          </button>
+          <button class="date-quick-btn" (click)="filtrarEsteMes()">
+            Este mes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtro por monto -->
+    <div class="filter-section">
+      <h3 class="filter-title">
+        <i class="fas fa-dollar-sign"></i>
+        Rango de Monto
+      </h3>
+      <div class="amount-filter">
+        <div class="amount-inputs">
+          <input type="number" 
+                 [(ngModel)]="montoMinimo" 
+                 (change)="filtrarPorMonto()"
+                 placeholder="Mínimo"
+                 class="amount-input">
+          <span class="amount-separator">-</span>
+          <input type="number" 
+                 [(ngModel)]="montoMaximo" 
+                 (change)="filtrarPorMonto()"
+                 placeholder="Máximo"
+                 class="amount-input">
+        </div>
+        <div class="amount-presets">
+          <button class="amount-preset" (click)="setMontoPreset(0, 1000)">≤ $1,000</button>
+          <button class="amount-preset" (click)="setMontoPreset(1000, 5000)">$1K-5K</button>
+          <button class="amount-preset" (click)="setMontoPreset(5000, null)">≥ $5,000</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón limpiar filtros -->
+    <div class="filter-actions">
+      <button class="btn-clear-filters" (click)="limpiarFiltros()">
+        <i class="fas fa-eraser"></i>
+        Limpiar todos los filtros
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="historial-main">
+    <!-- Header principal -->
+<!-- Header principal -->
+<header class="main-header">
+  <div class="header-content">
+    <div class="header-left">
+      <h1 class="page-title">
+        <i class="fas fa-history"></i>
+        Historial de Compras
+      </h1>
+      <p class="page-subtitle">
+        Revisa y gestiona todas tus transacciones realizadas
+      </p>
+    </div>
+    
+    <div class="header-right">
+      <div class="header-stats">
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ resumen.totalCompras }}</span>
+            <span class="stat-label">Compras</span>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">${{ resumen.totalGastado | number:'1.0-0' }}</span>
+            <span class="stat-label">Total gastado</span>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fas fa-box"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ resumen.productosComprados }}</span>
+            <span class="stat-label">Productos</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="btn-back-profile" [routerLink]="['/perfil']">
+          <i class="fas fa-arrow-left"></i>
+          Volver al Perfil
+        </button>
+        
+        <button class="btn-export" (click)="exportarHistorial()">
+          <i class="fas fa-file-export"></i>
+          Exportar
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <!-- Barra de herramientas -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="results-info">
+          <span class="results-count">{{ comprasFiltradas.length }}</span>
+          <span class="results-text">compras encontradas</span>
+        </div>
+        
+        <div class="sort-controls">
+          <label for="sortSelect" class="sort-label">
+            <i class="fas fa-sort-amount-down"></i>
+            Ordenar por:
+          </label>
+          <select id="sortSelect" 
+                  [(ngModel)]="ordenActivo" 
+                  (change)="aplicarOrden()"
+                  class="sort-select">
+            <option value="fecha-desc">Más recientes primero</option>
+            <option value="fecha-asc">Más antiguos primero</option>
+            <option value="total-desc">Mayor monto primero</option>
+            <option value="total-asc">Menor monto primero</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="toolbar-right">
+        <div class="view-toggle">
+          <button class="view-btn" 
+                  [class.active]="vistaActiva === 'tabla'"
+                  (click)="cambiarVista('tabla')"
+                  title="Vista tabla">
+            <i class="fas fa-list"></i>
+          </button>
+          <button class="view-btn" 
+                  [class.active]="vistaActiva === 'tarjetas'"
+                  (click)="cambiarVista('tarjetas')"
+                  title="Vista tarjetas">
+            <i class="fas fa-th-large"></i>
+          </button>
+        </div>
+        
+        <div class="items-per-page">
+          <label for="itemsSelect" class="items-label">Mostrar:</label>
+          <select id="itemsSelect" 
+                  [(ngModel)]="itemsPorPagina" 
+                  (change)="cambiarItemsPorPagina()"
+                  class="items-select">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de compras -->
+    <div class="historial-content">
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="cargando">
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-text">Cargando historial...</div>
+        </div>
+      </div>
+
+      <!-- Sin resultados -->
+      <div class="empty-state" *ngIf="!cargando && comprasFiltradas.length === 0">
+        <div class="empty-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3 class="empty-title">No se encontraron compras</h3>
+        <p class="empty-message" *ngIf="filtroActivo !== 'todos' || fechaInicio || fechaFin || montoMinimo || montoMaximo">
+          Los filtros actuales no coinciden con ninguna compra. Intenta ajustarlos.
+        </p>
+        <p class="empty-message" *ngIf="filtroActivo === 'todos' && !fechaInicio && !fechaFin && !montoMinimo && !montoMaximo">
+          Aún no has realizado ninguna compra en nuestra plataforma.
+        </p>
+        <button class="btn-explore" [routerLink]="['/marketplace']">
+          <i class="fas fa-store"></i>
+          Explorar productos
+        </button>
+      </div>
+
+      <!-- Vista de tabla -->
+      <div class="table-view" *ngIf="!cargando && comprasFiltradas.length > 0 && vistaActiva === 'tabla'">
+        <div class="table-container">
+          <table class="purchases-table">
+            <thead>
+              <tr>
+                <th class="col-order">Orden</th>
+                <th class="col-date">Fecha</th>
+                <th class="col-items">Productos</th>
+                <th class="col-total">Total</th>
+                <th class="col-status">Estado</th>
+                <th class="col-actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let compra of comprasPaginadas" 
+                  [class]="'status-' + compra.estado"
+                  (click)="verDetalles(compra)">
+                <td class="col-order">
+                  <div class="order-cell">
+                    <span class="order-id">#{{ compra.id }}</span>
+                    <span class="order-method">{{ compra.metodoPago }}</span>
+                  </div>
+                </td>
+                
+                <td class="col-date">
+                  <div class="date-cell">
+                    <span class="date-day">{{ compra.fecha | date:'dd/MM/yyyy' }}</span>
+                    <span class="date-time">{{ compra.fecha | date:'HH:mm' }}</span>
+                  </div>
+                </td>
+                
+                <td class="col-items">
+                  <div class="items-cell">
+                    <div class="items-preview">
+                      <img *ngFor="let producto of compra.productos.slice(0, 3)" 
+                           [src]="producto.imagen" 
+                           [alt]="producto.nombre"
+                           class="item-thumb">
+                      <div class="items-count" *ngIf="compra.productos.length > 3">
+                        +{{ compra.productos.length - 3 }}
+                      </div>
+                    </div>
+                    <span class="items-total">{{ compra.productos.length }} artículos</span>
+                  </div>
+                </td>
+                
+                <td class="col-total">
+                  <div class="total-cell">
+                    <span class="total-amount">${{ compra.total | number:'1.2-2' }}</span>
+                    <span class="total-breakdown" *ngIf="compra.costoEnvio > 0">
+                      + ${{ compra.costoEnvio | number:'1.2-2' }} envío
+                    </span>
+                  </div>
+                </td>
+                
+                <td class="col-status">
+                  <span class="status-badge" [class]="compra.estado">
+                    <i [class]="getEstadoIcono(compra.estado)"></i>
+                    {{ getEstadoTexto(compra.estado) }}
+                  </span>
+                </td>
+                
+                <td class="col-actions">
+                  <div class="actions-cell" (click)="$event.stopPropagation()">
+                    <button class="action-btn" (click)="verFactura(compra)" title="Ver factura">
+                      <i class="fas fa-file-invoice"></i>
+                    </button>
+                    <button class="action-btn" (click)="repetirCompra(compra)" title="Repetir compra">
+                      <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="action-btn" (click)="descargarComprobante(compra)" title="Descargar comprobante">
+                      <i class="fas fa-download"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Vista de tarjetas -->
+      <div class="cards-view" *ngIf="!cargando && comprasFiltradas.length > 0 && vistaActiva === 'tarjetas'">
+        <div class="cards-grid">
+          <div *ngFor="let compra of comprasPaginadas" 
+               class="purchase-card" 
+               [class]="'card-status-' + compra.estado">
+            
+            <div class="card-header">
+              <div class="card-header-left">
+                <span class="card-order">#{{ compra.id }}</span>
+                <span class="card-date">{{ compra.fecha | date:'mediumDate' }}</span>
+              </div>
+              <div class="card-header-right">
+                <span class="card-status" [class]="compra.estado">
+                  {{ getEstadoTexto(compra.estado) }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="card-body">
+              <div class="card-products">
+                <h4 class="products-title">
+                  <i class="fas fa-box-open"></i>
+                  Productos comprados
+                </h4>
+                <div class="products-list">
+                  <div *ngFor="let producto of compra.productos.slice(0, 2)" class="product-item">
+                    <img [src]="producto.imagen" [alt]="producto.nombre" class="product-image">
+                    <div class="product-details">
+                      <span class="product-name">{{ producto.nombre }}</span>
+                      <span class="product-quantity">{{ producto.cantidad }} × ${{ producto.precio | number:'1.2-2' }}</span>
+                    </div>
+                  </div>
+                  <div class="products-more" *ngIf="compra.productos.length > 2">
+                    y {{ compra.productos.length - 2 }} productos más
+                  </div>
+                </div>
+              </div>
+              
+              <div class="card-summary">
+                <div class="summary-row">
+                  <span>Subtotal:</span>
+                  <span>${{ compra.subtotal | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-row">
+                  <span>Envío:</span>
+                  <span>${{ compra.costoEnvio | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-row total">
+                  <span>Total:</span>
+                  <span class="total-amount">${{ compra.total | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-footer">
+              <button class="card-action" (click)="verDetalles(compra)">
+                <i class="fas fa-eye"></i>
+                Ver detalles
+              </button>
+              <button class="card-action" (click)="verFactura(compra)">
+                <i class="fas fa-file-invoice-dollar"></i>
+                Factura
+              </button>
+              <button class="card-action" (click)="repetirCompra(compra)" *ngIf="compra.estado === 'completado'">
+                <i class="fas fa-shopping-cart"></i>
+                Comprar de nuevo
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginación -->
+      <div class="pagination-container" *ngIf="!cargando && comprasFiltradas.length > 0">
+        <div class="pagination-info">
+          Mostrando {{ (paginaActual - 1) * itemsPorPagina + 1 }} - 
+          {{ Math.min(paginaActual * itemsPorPagina, comprasFiltradas.length) }} 
+          de {{ comprasFiltradas.length }} compras
+        </div>
+        
+        <div class="pagination-controls">
+          <button class="pagination-btn prev" 
+                  [disabled]="paginaActual === 1" 
+                  (click)="paginaAnterior()">
+            <i class="fas fa-chevron-left"></i>
+            Anterior
+          </button>
+          
+          <div class="pagination-numbers">
+            <button *ngFor="let pagina of getPaginas()" 
+                    class="page-number" 
+                    [class.active]="pagina === paginaActual"
+                    (click)="irAPagina(pagina)">
+              {{ pagina }}
+            </button>
+            <span class="page-ellipsis" *ngIf="totalPaginas > 5 && paginaActual < totalPaginas - 2">...</span>
+          </div>
+          
+          <button class="pagination-btn next" 
+                  [disabled]="paginaActual === totalPaginas" 
+                  (click)="paginaSiguiente()">
+            Siguiente
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal de detalles -->
+<div class="details-modal" [class.active]="compraSeleccionada">
+  <div class="modal-overlay" (click)="cerrarDetalles()"></div>
+  <div class="modal-content" *ngIf="compraSeleccionada">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i class="fas fa-receipt"></i>
+        Detalles de la compra #{{ compraSeleccionada.id }}
+      </h3>
+      <button class="modal-close" (click)="cerrarDetalles()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Aquí irían los detalles completos de la compra -->
+    </div>
+  </div>
+</div>
