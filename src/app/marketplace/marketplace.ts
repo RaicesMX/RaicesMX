@@ -77,18 +77,21 @@ export class MarketplaceComponent implements OnInit {
     }
   ];
 
-  // Estado del componente - SIN TIPOS EXPLÍCITOS CUANDO SE INFIEREN
+  // Estado del componente
   productosFiltrados: Producto[] = [];
-  cargando = true; // boolean se infiere
-  cartItems = 3; // number se infiere
-  filtroActivo = ''; // string se infiere
+  cargando = true;
+  cartItems = 3;
+  filtroActivo = '';
 
+  // ========== LIFECYCLE HOOKS ==========
   ngOnInit(): void {
+    // Solo UN ngOnInit
     this.simularCarga();
     this.productosFiltrados = [...this.productos];
   }
 
-  simularCarga(): void {
+  // ========== MÉTODOS PRIVADOS ==========
+  private simularCarga(): void {
     this.cargando = true;
     setTimeout(() => {
       this.cargando = false;
@@ -96,7 +99,6 @@ export class MarketplaceComponent implements OnInit {
   }
 
   // ========== FILTROS UTILES ==========
-  
   filtrarDestacados(): void {
     this.filtroActivo = 'destacados';
     this.productosFiltrados = this.productos.filter(p => p.popular);
@@ -123,7 +125,6 @@ export class MarketplaceComponent implements OnInit {
   }
 
   // ========== FUNCIONALIDADES ==========
-  
   scrollToProductos(): void {
     if (this.productosSection) {
       this.productosSection.nativeElement.scrollIntoView({ 
@@ -138,18 +139,14 @@ export class MarketplaceComponent implements OnInit {
     this.mostrarNotificacion(`"${producto.nombre}" agregado al carrito`);
   }
 
-  // Corregido: usar tipo específico en lugar de 'any'
   onImgError(event: Event): void {
     const target = event.target as HTMLImageElement;
-    // Usar imagen de placeholder si la original falla
     target.src = 'assets/images/placeholder-artesania.jpg';
     target.onerror = null;
   }
 
-  // Corregido: usar tipo específico en lugar de 'any'
   onLogoError(event: Event): void {
     const target = event.target as HTMLImageElement;
-    // Si el logo no carga, mostrar texto
     target.style.display = 'none';
     const container = target.parentElement;
     
@@ -168,9 +165,7 @@ export class MarketplaceComponent implements OnInit {
     const notification = document.createElement('div');
     notification.textContent = mensaje;
     
-    // Usar colores directamente en lugar de variables no disponibles
-    const colorPrimary = '#9D2235'; // Rojo mexicano
-    const colorSecondary = '#C99E10'; // Dorado mexicano
+    const colorPrimary = '#9D2235';
     
     notification.style.cssText = `
       position: fixed;
@@ -196,13 +191,11 @@ export class MarketplaceComponent implements OnInit {
     }, 3000);
   }
 
-  // Método para obtener productos en carrito (para futuro uso)
+  // Getters
   get productosEnCarrito(): Producto[] {
-    // En una implementación real, esto vendría de un servicio
     return [];
   }
 
-  // Método para calcular total del carrito (para futuro uso)
   get totalCarrito(): number {
     return this.productosEnCarrito.reduce((total, p) => total + p.precio, 0);
   }

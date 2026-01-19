@@ -578,5 +578,157 @@
   }
 }
 
-// ✅ ELIMINAR las animaciones duplicadas (líneas 423-437)
-// Ya existen en _animations.scss y se acceden con anim.bounce y anim.spin
+/* Estilos para Material Icons */
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Tamaño por defecto */
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  
+  // Para asegurar alineación vertical
+  vertical-align: middle;
+}
+
+/* Tamaños específicos */
+.btn-icon {
+  .material-icons {
+    font-size: 20px;
+    margin-right: 8px;
+  }
+}
+
+.filtro-icon {
+  .material-icons {
+    font-size: 32px;
+    color: #8B4513; // Color marrón mexicano
+    transition: color 0.3s ease;
+    
+    .filtro-card.active & {
+      color: #C41E3A; // Rojo mexicano cuando está activo
+    }
+  }
+}
+
+.beneficio-icon {
+  .material-icons {
+    font-size: 40px;
+    color: #D2691E; // Color chocolate
+    
+    // Opcional: efecto hover
+    transition: transform 0.3s ease, color 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+      color: #8B4513;
+    }
+  }
+}
+
+.no-results-icon {
+  .material-icons {
+    font-size: 64px;
+    color: #666;
+    margin-bottom: 16px;
+  }
+}
+
+.product-badge {
+  .material-icons {
+    font-size: 14px;
+    margin-right: 4px;
+    vertical-align: text-bottom;
+  }
+  
+  // Estilos para badges específicos
+  span {
+    display: inline-flex;
+    align-items: center;
+    
+    &:first-child {
+      .material-icons {
+        color: #4CAF50; // Verde para "Nuevo"
+      }
+    }
+    
+    &:last-child {
+      .material-icons {
+        color: #FF9800; // Naranja para "Oferta"
+      }
+    }
+  }
+}
+
+/* Ajustes específicos para botones */
+.btn-explorar, .btn-add-cart, .btn-limpiar {
+  .material-icons {
+    margin-right: 8px;
+  }
+}
+
+.btn-details {
+  .material-icons {
+    font-size: 18px;
+    margin-right: 6px;
+    vertical-align: text-bottom;
+  }
+}
+
+/* Clases de utilidad para tamaños */
+.icon-sm {
+  .material-icons {
+    font-size: 16px;
+  }
+}
+
+.icon-md {
+  .material-icons {
+    font-size: 24px;
+  }
+}
+
+.icon-lg {
+  .material-icons {
+    font-size: 32px;
+  }
+}
+
+.icon-xl {
+  .material-icons {
+    font-size: 48px;
+  }
+}
+
+/* Colores temáticos mexicanos */
+.icon-mexican-red {
+  .material-icons {
+    color: #C41E3A; // Rojo mexicano
+  }
+}
+
+.icon-mexican-green {
+  .material-icons {
+    color: #006847; // Verde mexicano
+  }
+}
+
+.icon-mexican-brown {
+  .material-icons {
+    color: #8B4513; // Marrón mexicano
+  }
+}
+
+.icon-mexican-gold {
+  .material-icons {
+    color: #D4AF37; // Oro mexicano
+  }
+}

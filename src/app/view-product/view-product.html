@@ -1,138 +1,166 @@
-    <div class="product-container">
+<div class="product-container">
     <!-- =========== GALERÍA + INFORMACIÓN ======== -->
     <div class="product-main">
-    <!-- ===== GALERÍA CORREGIDA ===== -->
-    <div class="product-gallery">
-        <!-- Contenedor principal SIMPLIFICADO -->
-        <div class="main-img-container" [class.zoomed]="imagenZoomed">
-        <!-- Imagen principal -->
-        <img 
-            [src]="producto.imagen" 
-            class="main-img" 
-            alt="Producto"
-            (click)="alternarZoom()"
-            #mainImage
-        />
-        <!-- Indicador de zoom (solo cuando NO está en zoom) -->
-          <div class="zoom-indicator" *ngIf="!imagenZoomed">
-            🔍 Click para zoom
-        </div>
-        
-        <!-- Controles de zoom (solo cuando ESTÁ en zoom) -->
-          <div class="zoom-controls" *ngIf="imagenZoomed">
-            <button class="zoom-btn" (click)="cerrarZoom($event)">
-                <span>✕</span>
-                Cerrar
-            </button>
+        <!-- ===== GALERÍA CORREGIDA ===== -->
+        <div class="product-gallery">
+            <!-- Contenedor principal SIMPLIFICADO -->
+            <div class="main-img-container" [class.zoomed]="imagenZoomed">
+                <!-- Imagen principal -->
+                <img 
+                    [src]="producto.imagen" 
+                    class="main-img" 
+                    alt="Producto"
+                    (click)="alternarZoom()"
+                    #mainImage
+                />
+                <!-- Indicador de zoom (solo cuando NO está en zoom) -->
+                <div class="zoom-indicator" *ngIf="!imagenZoomed">
+                    <i class="material-icons">search</i>
+                    Click para zoom
+                </div>
+                
+                <!-- Controles de zoom (solo cuando ESTÁ en zoom) -->
+                <div class="zoom-controls" *ngIf="imagenZoomed">
+                    <button class="zoom-btn" (click)="cerrarZoom($event)">
+                        <i class="material-icons">close</i>
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Miniaturas -->
+            <div class="thumbs">
+                <img 
+                    *ngFor="let img of producto.imagenes; let i = index" 
+                    [src]="img" 
+                    class="thumb" 
+                    [class.active]="i === imagenActiva"
+                    (click)="cambiarImagen(i)"
+                    (load)="onImageLoad()"
+                />
             </div>
         </div>
 
-        <!-- Miniaturas -->
-        <div class="thumbs">
-        <img 
-            *ngFor="let img of producto.imagenes; let i = index" 
-            [src]="img" 
-            class="thumb" 
-            [class.active]="i === imagenActiva"
-            (click)="cambiarImagen(i)"
-            (load)="onImageLoad()"
-        />
-        </div>
-    </div>
+        <!-- Información -->
+        <div class="product-info">
+            <h1 class="product-name">{{ producto.nombre }}</h1>
 
-    <!-- Información -->
-    <div class="product-info">
-        <h1 class="product-name">{{ producto.nombre }}</h1>
-
-        <!-- Sistema de calificación interactivo -->
-        <div class="product-rating">
-            <div class="stars-container">
-            <span *ngFor="let star of [1,2,3,4,5]; let i = index" 
-                class="star"
-                [class.active]="i < calificacionUsuario"
-                (click)="calificar(i + 1)"
-                (mouseover)="hoverCalificacion = i + 1"
-                (mouseleave)="hoverCalificacion = 0">
-                ★
-            </span>
+            <!-- Sistema de calificación interactivo -->
+            <div class="product-rating">
+                <div class="stars-container">
+                    <span *ngFor="let star of [1,2,3,4,5]; let i = index" 
+                        class="star"
+                        [class.active]="i < calificacionUsuario"
+                        (click)="calificar(i + 1)"
+                        (mouseover)="hoverCalificacion = i + 1"
+                        (mouseleave)="hoverCalificacion = 0">
+                        <i class="material-icons">star</i>
+                    </span>
+                </div>
+                <span class="rating-count">({{ producto.resenas?.length || 124 }} reseñas)</span>
+                <span *ngIf="calificacionUsuario > 0" class="user-rating">
+                    Tu calificación: {{ calificacionUsuario }} 
+                    <i class="material-icons">star</i>
+                </span>
             </div>
-        <span class="rating-count">({{ producto.resenas?.length || 124 }} reseñas)</span>
-          <span *ngIf="calificacionUsuario > 0" class="user-rating">
-            Tu calificación: {{ calificacionUsuario }} ⭐
-        </span>
-    </div>
 
-        <p class="product-price">${{ producto.precio }} MXN</p>
+            <p class="product-price">${{ producto.precio }} MXN</p>
 
-        <p class="product-description">{{ producto.descripcion }}</p>
+            <p class="product-description">{{ producto.descripcion }}</p>
 
-        <div class="product-stock" [class.low-stock]="producto.stock < 10">
-            Stock disponible: <strong>{{ producto.stock }}</strong>
-          <span *ngIf="producto.stock < 10" class="stock-warning"> - ¡Últimas unidades!</span>
-        </div>
-
-        <div class="qty-container">
-            <label for="quantityInput">Cantidad:</label>
-            <div class="qty-controls">
-            <button class="qty-btn" (click)="disminuir()" [disabled]="cantidad <= 1">-</button>
-            <input 
-                id="quantityInput" 
-                type="number" 
-                min="1" 
-                [max]="producto.stock" 
-                [(ngModel)]="cantidad" 
-                class="qty-input" 
-            />
-            <button class="qty-btn" (click)="aumentar()" [disabled]="cantidad >= producto.stock">+</button>
+            <div class="product-stock" [class.low-stock]="producto.stock < 10">
+                Stock disponible: <strong>{{ producto.stock }}</strong>
+                <span *ngIf="producto.stock < 10" class="stock-warning">
+                    <i class="material-icons">warning</i>
+                    ¡Últimas unidades!
+                </span>
             </div>
-        </div>
 
-        <!-- Botones principales con efectos -->
-        <div class="actions">
-            <button class="btn-buy" (click)="comprarAhora()">
-                <span class="btn-content">Comprar ahora</span>
-            <div class="btn-glow"></div>
-            </button>
-            <button class="btn-add" (click)="agregarAlCarrito()">
-                <span class="btn-content">Agregar al carrito</span>
-            <div class="btn-glow"></div>
-            </button>
-            <button class="btn-share" (click)="compartir()">
-                <span class="btn-content">Compartir</span>
-            </button>
-        </div>
-
-        <!-- Envío -->
-        <div class="shipping-box">
-            <h3>Envío</h3>
-            <p>📦 Llegada estimada: <strong>2 - 5 días</strong></p>
-            <p>🚚 Costo estimado: <strong>$79 MXN</strong></p>
-            <p>↩️ Devoluciones: <strong>30 días</strong></p>
-        </div>
-
-        <!-- Información del vendedor -->
-        <div class="seller-box">
-            <h3>Vendedor</h3>
-            <p><strong>Artesanos de México</strong></p>
-            <p class="seller-desc">Productos 100% hechos a mano por artesanos.</p>
-            <div class="seller-rating">
-            ⭐⭐⭐⭐⭐ (4.8/5.0)
+            <div class="qty-container">
+                <label for="quantityInput">Cantidad:</label>
+                <div class="qty-controls">
+                    <button class="qty-btn" (click)="disminuir()" [disabled]="cantidad <= 1">
+                        <i class="material-icons">remove</i>
+                    </button>
+                    <input 
+                        id="quantityInput" 
+                        type="number" 
+                        min="1" 
+                        [max]="producto.stock" 
+                        [(ngModel)]="cantidad" 
+                        class="qty-input" 
+                    />
+                    <button class="qty-btn" (click)="aumentar()" [disabled]="cantidad >= producto.stock">
+                        <i class="material-icons">add</i>
+                    </button>
+                </div>
             </div>
-        </div>
+
+            <!-- Botones principales con efectos -->
+            <div class="actions">
+                <button class="btn-buy" (click)="comprarAhora()">
+                    <i class="material-icons">shopping_bag</i>
+                    <span class="btn-content">Comprar ahora</span>
+                    <div class="btn-glow"></div>
+                </button>
+                <button class="btn-add" (click)="agregarAlCarrito()">
+                    <i class="material-icons">add_shopping_cart</i>
+                    <span class="btn-content">Agregar al carrito</span>
+                    <div class="btn-glow"></div>
+                </button>
+                <button class="btn-share" (click)="compartir()">
+                    <i class="material-icons">share</i>
+                    <span class="btn-content">Compartir</span>
+                </button>
+            </div>
+
+            <!-- Envío -->
+            <div class="shipping-box">
+                <h3><i class="material-icons">local_shipping</i> Envío</h3>
+                <p>
+                    <i class="material-icons">package</i>
+                    Llegada estimada: <strong>2 - 5 días</strong>
+                </p>
+                <p>
+                    <i class="material-icons">directions_car</i>
+                    Costo estimado: <strong>$79 MXN</strong>
+                </p>
+                <p>
+                    <i class="material-icons">autorenew</i>
+                    Devoluciones: <strong>30 días</strong>
+                </p>
+            </div>
+
+            <!-- Información del vendedor -->
+            <div class="seller-box">
+                <h3><i class="material-icons">store</i> Vendedor</h3>
+                <p><strong>Artesanos de México</strong></p>
+                <p class="seller-desc">Productos 100% hechos a mano por artesanos.</p>
+                <div class="seller-rating">
+                    <i class="material-icons">star</i>
+                    <i class="material-icons">star</i>
+                    <i class="material-icons">star</i>
+                    <i class="material-icons">star</i>
+                    <i class="material-icons">star</i>
+                    (4.8/5.0)
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- ======== PRODUCTOS RELACIONADOS ========= -->
     <div class="related-section">
         <h2>Productos relacionados</h2>
-
-    <div class="related-grid">
-        <div class="related-card" *ngFor="let prod of productosRelacionados">
-            <img [src]="prod.imagen" />
-            <h4>{{ prod.nombre }}</h4>
-            <p>${{ prod.precio }} MXN</p>
-            <button class="btn-ver" (click)="verProducto(prod.id)">Ver producto</button>
-        </div>
+        <div class="related-grid">
+            <div class="related-card" *ngFor="let prod of productosRelacionados">
+                <img [src]="prod.imagen" />
+                <h4>{{ prod.nombre }}</h4>
+                <p>${{ prod.precio }} MXN</p>
+                <button class="btn-ver" (click)="verProducto(prod.id)">
+                    <i class="material-icons">visibility</i>
+                    Ver producto
+                </button>
+            </div>
         </div>
     </div>
 </div>

@@ -93,3 +93,48 @@ a {
     --border-radius-lg: 20px;
     --border-radius-xl: 50px;
 }
+
+// Añadir estas reglas al final de tu styles.scss
+
+:root {
+    --bg: #ffffff;
+    --text: #1f2937;
+    --border: #e5e7eb;
+    --primary: #7a1a2c;
+    --accent: #d4af37;
+}
+
+body.dark {
+    --bg: #0f172a;
+    --text: #f8fafc;
+    --border: #334155;
+    --primary: #d4af37;
+    --accent: #7a1a2c;
+  /* Asegurar que todo el body use el tema oscuro */
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+/* Aplicar el tema a todos los componentes */
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Puedes añadir clases auxiliares para usar en otros componentes */
+.bg-primary {
+    background-color: var(--primary);
+}
+
+.text-primary {
+    color: var(--primary);
+}
+
+.bg-accent {
+    background-color: var(--accent);
+}
+
+.text-accent {
+    color: var(--accent);
+}
