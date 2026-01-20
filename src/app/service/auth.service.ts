@@ -2,7 +2,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap, catchError, of } from 'rxjs';
+import { Observable, tap, catchError, of, map } from 'rxjs';
 
 export interface User {
   id: number;
@@ -29,6 +29,20 @@ export interface RegisterRequest {
   isSeller?: boolean;
 }
 
+// ✨ NUEVA INTERFAZ para las solicitudes de vendedor
+export interface SellerRequestResponse {
+  success: boolean;
+  hasRequest: boolean;
+  request: {
+    id: number;
+    status: 'pending' | 'approved' | 'rejected';
+    curp: string;
+    createdAt: Date;
+    reviewedAt?: Date;
+    rejectionReason?: string;
+  } | null;
+}
+
 /**
  * Servicio de Autenticación con Persistencia de Sesión
  */
@@ -37,6 +51,7 @@ export interface RegisterRequest {
 })
 export class AuthService {
   private apiUrl = 'http://localhost:3000/auth';
+  private sellerRequestsUrl = 'http://localhost:3000/seller-requests'; // ✨ NUEVO
 
   /**
    * Estado reactivo del usuario actual
@@ -164,5 +179,73 @@ export class AuthService {
    */
   isSeller(): boolean {
     return this.currentUser()?.isSeller ?? false;
+  }
+
+  // ✨ NUEVOS MÉTODOS PARA SOLICITUDES DE VENDEDOR
+
+  /**
+   * Obtiene la solicitud de vendedor del usuario actual
+   *
+   * GET /seller-requests/me
+   */
+  getMySellerRequest(): Observable<SellerRequestResponse> {
+    return this.http.get<SellerRequestResponse>(`${this.sellerRequestsUrl}/me`, {
+      withCredentials: true,
+    });
+  }
+
+  /**
+   * Verifica si el usuario tiene una solicitud de vendedor (cualquier estado)
+   *
+   * @returns Observable<boolean> - true si tiene solicitud, false si no
+   */
+  hasSellerRequest(): Observable<boolean> {
+    return this.getMySellerRequest().pipe(
+      map((response) => response.hasRequest),
+      catchError(() => of(false)),
+    );
+  }
+
+  /**
+   * Verifica si el usuario tiene una solicitud PENDIENTE
+   *
+   * @returns Observable<boolean> - true si tiene solicitud pendiente
+   */
+  hasPendingSellerRequest(): Observable<boolean> {
+    return this.getMySellerRequest().pipe(
+      map((response) => {
+        return response.hasRequest && response.request?.status === 'pending';
+      }),
+      catchError(() => of(false)),
+    );
+  }
+
+  /**
+   * Verifica si el usuario es vendedor aprobado
+   *
+   * @returns Observable<boolean> - true si isSeller === true
+   */
+  isApprovedSeller(): Observable<boolean> {
+    return this.getProfile().pipe(
+      map((response) => response?.user?.isSeller ?? false),
+      catchError(() => of(false)),
+    );
+  }
+
+  /**
+   * Obtiene el estado de la solicitud del usuario
+   *
+   * @returns Observable con el estado: null | 'pending' | 'approved' | 'rejected'
+   */
+  getSellerRequestStatus(): Observable<'pending' | 'approved' | 'rejected' | null> {
+    return this.getMySellerRequest().pipe(
+      map((response) => {
+        if (!response.hasRequest || !response.request) {
+          return null;
+        }
+        return response.request.status;
+      }),
+      catchError(() => of(null)),
+    );
   }
 }

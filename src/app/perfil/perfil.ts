@@ -46,6 +46,12 @@ export class PerfilComponent implements OnInit {
   notificacionesEmail = true;
   notificacionesPush = false;
 
+  // ✨ NUEVO: Control de permisos de vendedor
+  puedePublicarProductos = false;
+  esVendedorAprobado = false;
+  estadoSolicitud: 'pending' | 'approved' | 'rejected' | null = null;
+  cargandoPermisos = true; // Para mostrar loading mientras verifica
+
   // Direcciones del usuario
   direcciones: any[] = [
     {
@@ -87,6 +93,10 @@ export class PerfilComponent implements OnInit {
           if (!response || !response.user) {
             // No hay sesión válida, redirigir al login
             this.router.navigate(['/login']);
+          } else {
+            console.log('✅ Usuario cargado desde backend:', response.user);
+            // ✨ Después de cargar usuario, verificar permisos
+            this.verificarPermisoVendedor();
           }
         },
         error: () => {
@@ -95,8 +105,64 @@ export class PerfilComponent implements OnInit {
         },
       });
     } else {
-      console.log('✅ Usuario cargado:', user);
+      console.log('✅ Usuario cargado desde signal:', user);
+      // ✨ Usuario ya está en memoria, verificar permisos
+      this.verificarPermisoVendedor();
     }
+  }
+
+  /**
+   * ✨ NUEVO MÉTODO
+   * Verifica si el usuario puede publicar productos
+   *
+   * Lógica:
+   * - Solo si isSeller === true puede publicar
+   * - También obtiene el estado de la solicitud para mostrar mensajes
+   */
+  verificarPermisoVendedor(): void {
+    this.cargandoPermisos = true;
+
+    // Verificar si es vendedor aprobado
+    this.authService.isApprovedSeller().subscribe({
+      next: (esVendedor) => {
+        this.esVendedorAprobado = esVendedor;
+        this.puedePublicarProductos = esVendedor;
+
+        if (esVendedor) {
+          console.log('✅ Usuario es vendedor aprobado - Puede publicar productos');
+        } else {
+          console.log('⏳ Usuario NO es vendedor aprobado - Botón oculto');
+        }
+
+        this.cargandoPermisos = false;
+      },
+      error: (error) => {
+        console.error('❌ Error al verificar permisos de vendedor:', error);
+        this.puedePublicarProductos = false;
+        this.cargandoPermisos = false;
+      },
+    });
+
+    // Obtener estado de la solicitud (para mostrar mensajes)
+    this.authService.getSellerRequestStatus().subscribe({
+      next: (estado) => {
+        this.estadoSolicitud = estado;
+
+        if (estado === 'pending') {
+          console.log('⏳ Solicitud de vendedor pendiente de revisión');
+        } else if (estado === 'rejected') {
+          console.log('❌ Solicitud de vendedor rechazada');
+        } else if (estado === null) {
+          console.log('📝 Sin solicitud de vendedor');
+        } else if (estado === 'approved') {
+          console.log('✅ Solicitud de vendedor aprobada');
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al obtener estado de solicitud:', error);
+        this.estadoSolicitud = null;
+      },
+    });
   }
 
   cambiarTab(tab: 'informacion' | 'direcciones' | 'productos' | 'seguridad') {
@@ -194,7 +260,7 @@ export class PerfilComponent implements OnInit {
 
   editarProducto(index: number) {
     console.log('✏️ Editando producto:', this.productos[index]);
-    alert('Funcionalidad de editar producto en desarrollo');
+    alert('Funcionalidad de editar producto en development');
   }
 
   pausarProducto(index: number) {
