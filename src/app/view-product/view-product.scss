@@ -535,3 +535,32 @@ app-header header.header-marketplace {
     gap: 0.5rem;
     }
 }
+
+/* Estilos específicos para íconos en view-product */
+.product-rating .material-icons {
+    font-size: 20px;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+    
+    &.active {
+        color: #FFD700; /* Amarillo oro para estrellas activas */
+    }
+}
+
+.qty-controls .material-icons {
+    font-size: 18px;
+}
+
+.shipping-box .material-icons,
+.seller-box .material-icons {
+    font-size: 18px;
+    margin-right: 8px;
+    vertical-align: text-bottom;
+}
+
+.btn-buy .material-icons,
+.btn-add .material-icons,
+.btn-share .material-icons {
+    margin-right: 8px;
+}

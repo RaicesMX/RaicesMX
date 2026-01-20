@@ -2,32 +2,51 @@
 @import '../../../../styles/variables';
 @import '../../../../styles/colors';
 
+/* =========================
+   FOOTER BASE
+========================= */
 .app-footer {
-  // Volvemos al gradiente elegante con difuminación
-  background: linear-gradient(to bottom, var(--color-primary-dark), #0f0f1a); 
+  background: linear-gradient(
+    to bottom,
+    var(--color-primary-dark),
+    #0f0f1a
+  );
   color: var(--color-gray-300);
-  padding: 60px 0 30px; // Reducimos un poco el padding excesivo
+  padding: 60px 0 30px;
   position: relative;
   overflow: hidden;
 }
 
+/* =========================
+   CONTENEDOR PRINCIPAL
+========================= */
 .footer-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 40px;
   display: grid;
-  // Usamos columnas más equilibradas para evitar que el logo empuje todo
-  grid-template-columns: 1.2fr 0.8fr 0.8fr 1.2fr; 
+  grid-template-columns: 1.2fr 0.8fr 0.8fr 1.2fr;
   gap: 40px;
   position: relative;
-  z-index: 2; // Asegura que el texto esté sobre cualquier efecto de fondo
+  z-index: 2;
 
+  /* Tablet */
   @media (max-width: 1024px) {
     grid-template-columns: 1fr 1fr;
     gap: 30px;
   }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+    gap: 32px;
+  }
 }
 
+/* =========================
+   BRAND / LOGO
+========================= */
 .footer-brand {
   .footer-logo-wrapper {
     display: flex;
@@ -36,13 +55,13 @@
     margin-bottom: 20px;
 
     .logo-footer {
-      height: 45px; // Tamaño controlado para que no sea gigante
+      height: 45px;
       width: auto;
-      filter: drop-shadow(0 0 8px rgba(var(--color-secondary), 0.3));
+      filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.3));
     }
 
     .logo-text {
-      font-size: 1.6rem; // Un poco más pequeño que el anterior
+      font-size: 1.6rem;
       font-weight: 800;
       color: var(--color-secondary);
     }
@@ -51,11 +70,14 @@
   .footer-desc {
     font-size: 0.9rem;
     line-height: 1.6;
-    max-width: 280px; // Evita que el texto se estire mucho
+    max-width: 280px;
+    color: var(--color-gray-400);
   }
 }
 
-// Estilo para los títulos de sección (Soporte, Esencia, etc)
+/* =========================
+   SECCIONES DE LINKS
+========================= */
 .footer-section {
   .footer-title {
     color: var(--color-secondary);
@@ -68,14 +90,17 @@
   .footer-links-list {
     list-style: none;
     padding: 0;
-    
+    margin: 0;
+
     li {
       margin-bottom: 10px;
+
       a {
         color: var(--color-gray-400);
         text-decoration: none;
         font-size: 0.9rem;
-        transition: color 0.3s ease;
+        transition: color 0.25s ease;
+
         &:hover {
           color: var(--color-secondary-light);
         }
@@ -84,15 +109,28 @@
   }
 }
 
+/* =========================
+   NEWSLETTER
+========================= */
 .footer-newsletter {
+  .newsletter-desc {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    color: var(--color-gray-400);
+  }
+
   .newsletter-input {
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     padding: 10px 15px;
-    border-radius: 4px;
+    border-radius: 6px;
     color: white;
     width: 100%;
     margin-bottom: 10px;
+
+    &::placeholder {
+      color: var(--color-gray-500);
+    }
   }
 
   .newsletter-btn {
@@ -102,11 +140,63 @@
   }
 }
 
+/* =========================
+   NEWSLETTER FULL WIDTH (TABLET)
+========================= */
+@media (max-width: 1024px) {
+  .footer-newsletter {
+    grid-column: 1 / -1;
+  }
+}
+
+/* =========================
+   MOBILE ALIGNMENTS
+========================= */
+@media (max-width: 640px) {
+  .footer-brand {
+    text-align: center;
+
+    .footer-logo-wrapper {
+      justify-content: center;
+    }
+
+    .footer-desc {
+      margin: 0 auto;
+    }
+
+    .footer-social-icons {
+      justify-content: center;
+    }
+  }
+
+  .footer-section {
+    text-align: center;
+  }
+
+  .footer-newsletter {
+    text-align: center;
+
+    .newsletter-input,
+    .newsletter-btn {
+      font-size: 0.95rem;
+    }
+  }
+}
+
+/* =========================
+   FOOTER BOTTOM
+========================= */
 .footer-bottom {
   margin-top: 40px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   text-align: center;
   font-size: 0.8rem;
   color: var(--color-gray-500);
+
+  .bottom-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 }

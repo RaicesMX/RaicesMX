@@ -1,47 +1,47 @@
 <header class="header">
-  <div class="header-container">
-    <!-- LOGO -->
-    <a routerLink="/marketplace" class="logo">
-      <img src="assets/images/Logo_RMX.png" alt="RaícesMX" />
-      <span>RaícesMX</span>
+    <div class="header-container">
+                <!-- LOGO -->
+    <a routerLink="/welcome" class="logo">
+        <img src="assets/images/Logo_RMX.png" alt="RaícesMX" />
+        <span>RaícesMX</span>
     </a>
-    <!-- SEARCH -->
+                <!-- SEARCH -->
     <div class="search-box">
-      <input type="text" placeholder="Buscar productos..." />
-      <button>
-        <i class="material-icons">search</i>
-      </button>
+        <input type="text" placeholder="Buscar productos..." />
+        <button>
+            <i class="material-icons">search</i>
+        </button>
     </div>
-    <!-- NAV DESKTOP -->
+                <!-- NAV DESKTOP -->
     <nav class="nav-links">
-      <a routerLink="/marketplace" routerLinkActive="active">Inicio</a>
-      <a routerLink="/categorias" routerLinkActive="active">Categorías</a>
-      <a routerLink="/ofertas" routerLinkActive="active">Ofertas</a>
-      <a routerLink="/ayuda" routerLinkActive="active">Ayuda</a>
+        <a routerLink="/marketplace" routerLinkActive="active">Inicio</a>
+        <a routerLink="/categorias" routerLinkActive="active">Categorías</a>
+        <a routerLink="/ofertas" routerLinkActive="active">Ofertas</a>
+        <a routerLink="/ayuda" routerLinkActive="active">Ayuda</a>
     </nav>
-    <!-- ACTIONS -->
-    <div class="actions">
-      <a routerLink="/favoritos" class="icon-btn">
-        <i class="material-icons">favorite_border</i>
-      </a>
-      <a routerLink="/carrito" class="icon-btn cart">
-        <i class="material-icons">shopping_cart</i>
-        <span class="badge">5</span>
-      </a>
-      <a routerLink="/perfil" class="icon-btn">
-        <i class="material-icons">person</i>
-      </a>
-      <!-- HAMBURGER -->
-      <button class="hamburger" (click)="toggleMenu()">
-        <i class="material-icons">menu</i>
-      </button>
+                    <!-- ACTIONS -->
+        <div class="actions">
+            <a routerLink="/favoritos" class="icon-btn">
+                <i class="material-icons">favorite_border</i>
+            </a>
+            <a routerLink="/carrito" class="icon-btn cart">
+                <i class="material-icons">shopping_cart</i>
+                <span class="badge">5</span>
+            </a>
+            <a routerLink="/perfil" class="icon-btn">
+                <i class="material-icons">person</i>
+            </a>
+                    <!-- HAMBURGER -->
+            <button class="hamburger" (click)="toggleMenu()">
+                <i class="material-icons">menu</i>
+            </button>
+        </div>
     </div>
-  </div>
-  <!-- MOBILE MENU -->
-  <nav class="mobile-menu" [class.open]="menuOpen">
-    <a routerLink="/marketplace" (click)="toggleMenu()">Inicio</a>
-    <a routerLink="/categorias" (click)="toggleMenu()">Categorías</a>
-    <a routerLink="/ofertas" (click)="toggleMenu()">Ofertas</a>
-    <a routerLink="/ayuda" (click)="toggleMenu()">Ayuda</a>
-  </nav>
+        <!-- MOBILE MENU -->
+    <nav class="mobile-menu" [class.open]="menuOpen">
+        <a routerLink="/marketplace" (click)="toggleMenu()">Inicio</a>
+        <a routerLink="/categorias" (click)="toggleMenu()">Categorías</a>
+        <a routerLink="/ofertas" (click)="toggleMenu()">Ofertas</a>
+        <a routerLink="/ayuda" (click)="toggleMenu()">Ayuda</a>
+    </nav>
 </header>
