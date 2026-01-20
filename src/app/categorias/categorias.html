@@ -34,17 +34,23 @@
           </div>
           
           <div class="hero-cta">
-            <button class="btn-explorar" (click)="scrollToCategorias()">
-              <span class="btn-icon">🔍</span>
+            <button class="btn-explorar btn-glow-effect" (click)="scrollToCategorias()">
+              <i class="material-icons btn-icon">search</i>
               <span class="btn-text">Explorar Categorías</span>
             </button>
           </div>
         </div>
         
         <div class="hero-decoration">
-          <div class="decoration-item">🏺</div>
-          <div class="decoration-item">🧵</div>
-          <div class="decoration-item">🎨</div>
+          <div class="decoration-item">
+            <i class="material-icons icon-xl">auto_awesome</i>
+          </div>
+          <div class="decoration-item">
+            <i class="material-icons icon-xl">palette</i>
+          </div>
+          <div class="decoration-item">
+            <i class="material-icons icon-xl">brush</i>
+          </div>
         </div>
       </div>
     </div>
@@ -54,15 +60,16 @@
     </div>
   </section>
 
-  <!-- FILTROS UTILES -->
+  <!-- FILTROS -->
   <section class="filtros-section">
     <div class="container">
       <div class="filtros-grid">
-        <!-- Filtros rápidos -->
         <div class="filtro-card" 
             [class.active]="filtroRapido === 'todos'"
             (click)="aplicarFiltroRapido('todos')">
-          <div class="filtro-icon">🎯</div>
+          <div class="filtro-icon">
+            <i class="material-icons">category</i>
+          </div>
           <div class="filtro-content">
             <h4>Todas</h4>
             <p>Todas las categorías</p>
@@ -72,7 +79,9 @@
         <div class="filtro-card"
             [class.active]="filtroRapido === 'populares'"
             (click)="aplicarFiltroRapido('populares')">
-          <div class="filtro-icon">🔥</div>
+          <div class="filtro-icon">
+            <i class="material-icons icon-mexican-red">whatshot</i>
+          </div>
           <div class="filtro-content">
             <h4>Populares</h4>
             <p>Lo más buscado</p>
@@ -82,28 +91,28 @@
         <div class="filtro-card"
             [class.active]="filtroRapido === 'nuevos'"
             (click)="aplicarFiltroRapido('nuevos')">
-          <div class="filtro-icon">🆕</div>
+          <div class="filtro-icon">
+            <i class="material-icons icon-mexican-green">fiber_new</i>
+          </div>
           <div class="filtro-content">
             <h4>Nuevos</h4>
             <p>Últimas categorías</p>
           </div>
         </div>
         
-        <!-- Dropdown de regiones -->
         <div class="filtro-card dropdown-filtro">
-          <div class="filtro-icon">📍</div>
+          <div class="filtro-icon">
+            <i class="material-icons">location_on</i>
+          </div>
           <div class="filtro-content">
             <select [(ngModel)]="filtroRegion" (change)="filtrarCategorias()" class="region-select">
               <option value="">Todas las regiones</option>
-              <option *ngFor="let region of regiones" [value]="region">
-                {{ region }}
-              </option>
+              <option *ngFor="let region of regiones" [value]="region">{{ region }}</option>
             </select>
           </div>
         </div>
       </div>
       
-      <!-- Controles adicionales -->
       <div class="filtros-footer">
         <div class="ordenamiento">
           <label>Ordenar por:</label>
@@ -115,16 +124,16 @@
           </select>
         </div>
         
-        <button class="btn-filtros-avanzados" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+        <button class="btn-filtros-avanzados btn-glow-subtle" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
           {{ mostrarFiltrosAvanzados ? 'Menos filtros' : 'Más filtros' }}
         </button>
         
-        <button class="btn-limpiar" (click)="limpiarFiltros()" *ngIf="filtroActivo">
-          🗑️ Limpiar filtros
+        <button class="btn-limpiar btn-glow-effect btn-glow-subtle" (click)="limpiarFiltros()" *ngIf="filtroActivo">
+          <i class="material-icons btn-icon">refresh</i>
+          Limpiar filtros
         </button>
       </div>
       
-      <!-- Filtros avanzados -->
       <div class="filtros-avanzados" *ngIf="mostrarFiltrosAvanzados">
         <div class="filtro-avanzado">
           <label>⭐ Rating mínimo</label>
@@ -133,7 +142,8 @@
                     class="rating-btn"
                     [class.active]="filtroRating === rating"
                     (click)="filtroRating = filtroRating === rating ? 0 : rating; filtrarCategorias()">
-              {{ rating }}+ ⭐
+              {{ rating }}+ 
+              <i class="material-icons icon-mexican-gold">star</i>
             </button>
           </div>
         </div>
@@ -141,7 +151,7 @@
     </div>
   </section>
 
-  <!-- SECCIÓN DE CATEGORÍAS -->
+  <!-- GRID DE CATEGORÍAS -->
   <section class="categorias-section" id="categorias" #categoriasSection>
     <div class="container">
       <div class="section-header">
@@ -154,106 +164,105 @@
         </div>
       </div>
       
-      <!-- Estado de carga -->
       <div class="loading-state" *ngIf="cargando">
         <div class="spinner"></div>
         <p>Cargando categorías...</p>
       </div>
       
-      <!-- Grid de categorías -->
       <div class="categorias-grid" *ngIf="!cargando">
         <div class="categoria-card" *ngFor="let categoria of categoriasFiltradas">
-          
-          <!-- Imagen con fallback -->
           <div class="categoria-imagen">
             <img 
               [src]="categoria.imagen" 
               [alt]="categoria.nombre"
               (error)="onImgError($event, categoria)"
-              (load)="onImgLoad(categoria)"
               loading="lazy"
             />
             
-            <!-- Badges -->
             <div class="categoria-badges">
               <span class="badge badge-region">{{ categoria.region }}</span>
-              <span class="badge badge-popular" *ngIf="categoria.popular">🔥</span>
-              <span class="badge badge-nuevo" *ngIf="esCategoriaNueva(categoria)">🆕</span>
+              <span class="badge badge-popular" *ngIf="categoria.popular">
+                <i class="material-icons icon-mexican-red">whatshot</i>
+              </span>
+              <span class="badge badge-nuevo" *ngIf="esCategoriaNueva(categoria)">
+                <i class="material-icons icon-mexican-green">fiber_new</i>
+              </span>
             </div>
           </div>
           
-          <!-- Contenido -->
           <div class="categoria-content">
             <h3 class="categoria-nombre">{{ categoria.nombre }}</h3>
-            
             <p class="categoria-descripcion">{{ categoria.descripcionCorta }}</p>
             
-            <!-- Stats -->
             <div class="categoria-stats">
               <div class="stat">
-                <span class="stat-icon">📦</span>
+                <i class="material-icons icon-mexican-brown">inventory_2</i>
                 <span class="stat-value">{{ categoria.totalProductos }}</span>
                 <span class="stat-label">Productos</span>
               </div>
               <div class="stat">
-                <span class="stat-icon">👨‍🎨</span>
+                <i class="material-icons icon-mexican-gold">person</i>
                 <span class="stat-value">{{ categoria.artesanos }}</span>
                 <span class="stat-label">Artesanos</span>
               </div>
               <div class="stat">
-                <span class="stat-icon">⭐</span>
+                <i class="material-icons icon-mexican-gold">star</i>
                 <span class="stat-value">{{ categoria.rating }}</span>
                 <span class="stat-label">Rating</span>
               </div>
             </div>
             
-            <!-- Tags -->
             <div class="categoria-tags">
-              <span *ngFor="let tag of categoria.tags" 
-                    class="tag"
-                    [style.background]="getTagColor(tag)">
+              <span *ngFor="let tag of categoria.tags" class="tag">
                 {{ tag }}
               </span>
             </div>
             
-            <!-- Botón de acción -->
-            <button class="btn-explorar-categoria" (click)="verCategoria(categoria)">
+            <button class="btn-explorar-categoria btn-glow-effect" (click)="verCategoria(categoria)">
               <span>Explorar Categoría</span>
-              <span class="btn-arrow">→</span>
+              <i class="material-icons">arrow_forward</i>
             </button>
           </div>
         </div>
       </div>
       
-      <!-- Sin resultados -->
       <div class="no-resultados" *ngIf="!cargando && categoriasFiltradas.length === 0">
-        <div class="no-resultados-icon">🔍</div>
+        <div class="no-resultados-icon">
+          <i class="material-icons icon-lg">search_off</i>
+        </div>
         <h3>No encontramos categorías</h3>
         <p>Prueba con otros filtros</p>
-        <button class="btn-limpiar" (click)="limpiarFiltros()">
+        <button class="btn-limpiar btn-glow-effect btn-glow-subtle" (click)="limpiarFiltros()">
+          <i class="material-icons btn-icon">refresh</i>
           Ver todas las categorías
         </button>
       </div>
     </div>
   </section>
 
-  <!-- INFORMACIÓN ADICIONAL -->
+  <!-- INFO SECTION -->
   <section class="info-section">
     <div class="container">
       <h2 class="info-title">Explora la Artesanía Mexicana</h2>
       <div class="info-grid">
         <div class="info-card">
-          <div class="info-icon">👨‍🎨</div>
+          <div class="info-icon">
+            <i class="material-icons icon-mexican-brown icon-xl">person_apron</i>
+          </div>
           <h3>Artesanos Expertos</h3>
           <p>Trabajamos con maestros artesanos certificados</p>
         </div>
         <div class="info-card">
-          <div class="info-icon">🏆</div>
+          <div class="info-icon">
+            <i class="material-icons icon-mexican-gold icon-xl">verified</i>
+          </div>
           <h3>Calidad Garantizada</h3>
           <p>Cada pieza es única y auténtica</p>
         </div>
         <div class="info-card">
-          <div class="info-icon">🚚</div>
+          <div class="info-icon">
+            <i class="material-icons icon-mexican-green icon-xl">local_shipping</i>
+          </div>
           <h3>Envío Nacional</h3>
           <p>Llevamos la artesanía a todo México</p>
         </div>

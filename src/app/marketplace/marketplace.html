@@ -17,7 +17,7 @@
           <p class="hero-subtitle">Artesanías mexicanas auténticas, tradición en cada pieza</p>
 
           <div class="hero-cta">
-            <button class="btn-explorar" (click)="scrollToProductos()">
+            <button class="btn-explorar btn-glow-effect" (click)="scrollToProductos()">
               <i class="material-icons btn-icon">card_giftcard</i>
               <span class="btn-text">Explorar Colección</span>
             </button>
@@ -43,11 +43,10 @@
     </div>
   </section>
 
-  <!-- SECCIÓN DE FILTROS -->
+  <!-- FILTROS -->
   <section class="filtros-section">
     <div class="container">
       <div class="filtros-grid">
-        <!-- Filtro por Destacados -->
         <div
           class="filtro-card"
           (click)="filtrarDestacados()"
@@ -62,7 +61,6 @@
           </div>
         </div>
 
-        <!-- Filtro por Novedades -->
         <div
           class="filtro-card"
           (click)="filtrarNovedades()"
@@ -77,7 +75,6 @@
           </div>
         </div>
 
-        <!-- Filtro por Ofertas -->
         <div
           class="filtro-card"
           (click)="filtrarOfertas()"
@@ -92,7 +89,6 @@
           </div>
         </div>
 
-        <!-- Filtro por Precio -->
         <div
           class="filtro-card"
           (click)="filtrarPorPrecio()"
@@ -114,7 +110,11 @@
           <span class="count-text">artesanías</span>
         </div>
 
-        <button class="btn-limpiar" (click)="limpiarFiltros()" *ngIf="filtroActivo">
+        <button
+          class="btn-limpiar btn-glow-effect btn-glow-subtle"
+          (click)="limpiarFiltros()"
+          *ngIf="filtroActivo"
+        >
           <i class="material-icons btn-icon">refresh</i>
           Limpiar filtro
         </button>
@@ -122,7 +122,7 @@
     </div>
   </section>
 
-  <!-- SECCIÓN DE PRODUCTOS -->
+  <!-- PRODUCTOS -->
   <section class="productos-section" id="productos" #productosSection>
     <div class="container">
       <h2 class="section-title">Nuestras Artesanías</h2>
@@ -138,8 +138,8 @@
             <img
               [src]="producto.imagen"
               [alt]="producto.nombre"
-              (error)="onImgError($event)"
               loading="lazy"
+              (error)="onImgError($event)"
             />
 
             <div class="product-badge" *ngIf="producto.nuevo || producto.oferta">
@@ -164,12 +164,15 @@
             </div>
 
             <div class="product-actions">
-              <button class="btn-add-cart" (click)="agregarAlCarrito(producto)">
+              <button class="btn-add-cart btn-glow-effect" (click)="agregarAlCarrito(producto)">
                 <i class="material-icons btn-icon">shopping_cart</i>
                 Agregar
               </button>
 
-              <a class="btn-details" [routerLink]="['/producto', producto.id]">
+              <a
+                class="btn-details btn-glow-effect btn-glow-subtle"
+                [routerLink]="['/producto', producto.id]"
+              >
                 <i class="material-icons">visibility</i>
                 Ver detalles
               </a>
@@ -182,8 +185,13 @@
         <div class="no-results-icon">
           <i class="material-icons">sentiment_dissatisfied</i>
         </div>
+
         <h3>No hay productos con ese filtro</h3>
-        <button class="btn-limpiar" (click)="limpiarFiltros()">Ver todas las artesanías</button>
+
+        <button class="btn-limpiar btn-glow-effect btn-glow-subtle" (click)="limpiarFiltros()">
+          <i class="material-icons btn-icon">refresh</i>
+          Ver todas las artesanías
+        </button>
       </div>
     </div>
   </section>
@@ -192,6 +200,7 @@
   <section class="beneficios-section">
     <div class="container">
       <h2 class="beneficios-title">¿Por qué elegir RaícesMX?</h2>
+
       <div class="beneficios-grid">
         <div class="beneficio-card">
           <div class="beneficio-icon">
@@ -200,6 +209,7 @@
           <h3>Hecho en México</h3>
           <p>Artesanía 100% auténtica</p>
         </div>
+
         <div class="beneficio-card">
           <div class="beneficio-icon">
             <i class="material-icons">local_shipping</i>
@@ -207,6 +217,7 @@
           <h3>Envío Seguro</h3>
           <p>A todo el país</p>
         </div>
+
         <div class="beneficio-card">
           <div class="beneficio-icon">
             <i class="material-icons">card_giftcard</i>
@@ -218,7 +229,7 @@
     </div>
   </section>
 
-  <!-- SECCIÓN CTA PARA VENDEDORES -->
+  <!-- CTA VENDEDOR -->
   <section class="vendedor-cta-section" *ngIf="mostrarCTAVendedor">
     <div class="container">
       <div class="vendedor-cta-card">

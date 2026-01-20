@@ -198,3 +198,47 @@
     justify-content: center;
     animation: cartBadgePulse 2s infinite;
 }
+
+/* =================================== */
+/* BOTÓN SECUNDARIO UNIFICADO - VER DETALLES */
+/* =================================== */
+.btn-details {
+    background: rgba(122, 26, 44, 0.08); /* Fondo vino muy suave (8% opacidad) */
+    color: var(--color-primary); /* Vino #7A1A2C */
+    border: 2px solid var(--color-primary);
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--border-radius-xl);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+
+.material-icons {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+&:hover {
+    background: var(--color-primary); /* Se llena completo de vino */
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(122, 26, 44, 0.3);
+
+    .material-icons {
+        transform: translateX(5px);
+    }
+}
+
+&:active {
+    transform: translateY(0);
+}
+
+  /* Combinar con glow sutil para más elegancia */
+    &.btn-glow-subtle::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    }
+}

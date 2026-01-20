@@ -564,3 +564,47 @@ app-header header.header-marketplace {
 .btn-share .material-icons {
     margin-right: 8px;
 }
+
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  color: white;
+  border: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20; /* Por encima de todo */
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: var(--color-primary); /* Vino mexicano */
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 0 20px rgba(122, 26, 44, 0.6);
+  }
+
+  .material-icons {
+    font-size: 40px;
+  }
+
+  &.prev { left: 30px; }
+  &.next { right: 30px; }
+
+  /* En modo zoom: un poco más grandes y más al borde para mejor usabilidad */
+  .main-img-container.zoomed & {
+    width: 70px;
+    height: 70px;
+    &.prev { left: 40px; }
+    &.next { right: 40px; }
+
+    .material-icons {
+      font-size: 48px;
+    }
+  }
+}
