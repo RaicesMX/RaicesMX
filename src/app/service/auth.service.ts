@@ -93,8 +93,8 @@ export class AuthService {
       .post<AuthResponse>(`${this.apiUrl}/register`, data, { withCredentials: true })
       .pipe(
         tap((response) => {
-          if (response.success) {
-            console.log('✅ Usuario registrado:', response.user.email);
+          if (response.success && response.user) {
+            console.log('✅ Usuario registrado:', response.user);
             this.currentUser.set(response.user);
             this.isAuthenticated.set(true);
           }
@@ -110,8 +110,8 @@ export class AuthService {
       .post<AuthResponse>(`${this.apiUrl}/login`, credentials, { withCredentials: true })
       .pipe(
         tap((response) => {
-          if (response.success) {
-            console.log('✅ Login exitoso:', response.user.email);
+          if (response.success && response.user) {
+            console.log('✅ Login exitoso:', response.user);
             this.currentUser.set(response.user);
             this.isAuthenticated.set(true);
           }
@@ -128,10 +128,21 @@ export class AuthService {
    * 3. Verificación en background
    */
   getProfile(): Observable<{ success: boolean; message: string; user: User } | null> {
-    return this.http.get<{ success: boolean; message: string; user: User }>(
-      `${this.apiUrl}/profile`,
-      { withCredentials: true },
-    );
+    return this.http
+      .get<{
+        success: boolean;
+        message: string;
+        user: User;
+      }>(`${this.apiUrl}/profile`, { withCredentials: true })
+      .pipe(
+        tap((response) => {
+          if (response && response.user) {
+            // Actualizar el estado local
+            this.currentUser.set(response.user);
+            this.isAuthenticated.set(true);
+          }
+        }),
+      );
   }
 
   /**

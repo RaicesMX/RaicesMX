@@ -1,15 +1,14 @@
 <div class="perfil-container">
   <main class="perfil-main">
     <div class="perfil-content">
-      
       <!-- Banner superior -->
       <section class="banner-superior">
         <div class="banner-content">
           <div class="bienvenida">
-            <h1>¡Hola, {{ usuario.nombre.split(' ')[0] }}!</h1>
+            <h1>¡Hola, {{ usuario.nombre || 'Cargando' }}!</h1>
             <p class="bienvenida-subtitle">Gestiona tu cuenta desde el panel de control</p>
           </div>
-          
+
           <div class="acciones-rapidas">
             <button class="btn-accion btn-accion-primary" [routerLink]="['/publicar_producto']">
               <i class="icon-publish">📦</i>
@@ -22,7 +21,7 @@
             <!-- ELIMINADO: Botón Cerrar Sesión del banner -->
           </div>
         </div>
-        
+
         <!-- Tarjetas de estadísticas -->
         <div class="estadisticas-grid">
           <div class="estadistica-card">
@@ -34,7 +33,7 @@
               <span class="label">Pedidos Activos</span>
             </div>
           </div>
-          
+
           <div class="estadistica-card">
             <div class="estadistica-icon estadistica-icon-2">
               <i class="icon-star">⭐</i>
@@ -44,7 +43,7 @@
               <span class="label">Favoritos</span>
             </div>
           </div>
-          
+
           <div class="estadistica-card">
             <div class="estadistica-icon estadistica-icon-3">
               <i class="icon-box">🎁</i>
@@ -54,7 +53,7 @@
               <span class="label">Productos Publicados</span>
             </div>
           </div>
-          
+
           <div class="estadistica-card">
             <div class="estadistica-icon estadistica-icon-4">
               <i class="icon-credit-card">💳</i>
@@ -71,27 +70,35 @@
       <div class="panel-principal">
         <!-- Navegación por pestañas mejorada -->
         <nav class="tabs-navigation">
-          <button class="tab-btn" 
-                  [class.active]="tabActiva === 'informacion'" 
-                  (click)="cambiarTab('informacion')">
+          <button
+            class="tab-btn"
+            [class.active]="tabActiva === 'informacion'"
+            (click)="cambiarTab('informacion')"
+          >
             <i class="icon-user">👤</i>
             Información Personal
           </button>
-          <button class="tab-btn" 
-                  [class.active]="tabActiva === 'direcciones'" 
-                  (click)="cambiarTab('direcciones')">
+          <button
+            class="tab-btn"
+            [class.active]="tabActiva === 'direcciones'"
+            (click)="cambiarTab('direcciones')"
+          >
             <i class="icon-location">📍</i>
             Direcciones
           </button>
-          <button class="tab-btn" 
-                  [class.active]="tabActiva === 'productos'" 
-                  (click)="cambiarTab('productos')">
+          <button
+            class="tab-btn"
+            [class.active]="tabActiva === 'productos'"
+            (click)="cambiarTab('productos')"
+          >
             <i class="icon-package">📦</i>
             Mis Productos
           </button>
-          <button class="tab-btn" 
-                  [class.active]="tabActiva === 'seguridad'" 
-                  (click)="cambiarTab('seguridad')">
+          <button
+            class="tab-btn"
+            [class.active]="tabActiva === 'seguridad'"
+            (click)="cambiarTab('seguridad')"
+          >
             <i class="icon-shield">🛡️</i>
             Seguridad
           </button>
@@ -118,36 +125,68 @@
                 <div class="form-group">
                   <label for="nombre">Nombre completo *</label>
                   <div *ngIf="!editando" class="info-display">{{ usuario.nombre }}</div>
-                  <input *ngIf="editando" id="nombre" type="text" [(ngModel)]="usuarioEditado.nombre" 
-                         class="form-input" placeholder="Nombre completo">
+                  <input
+                    *ngIf="editando"
+                    id="nombre"
+                    type="text"
+                    [(ngModel)]="usuarioEditado.nombre"
+                    class="form-input"
+                    placeholder="Nombre completo"
+                  />
                 </div>
 
                 <div class="form-group">
                   <label for="curp">CURP *</label>
                   <div *ngIf="!editando" class="info-display">{{ usuario.curp }}</div>
-                  <input *ngIf="editando" id="curp" type="text" [(ngModel)]="usuarioEditado.curp" 
-                         class="form-input" placeholder="ABCD123456HEMLMN09" maxlength="18">
+                  <input
+                    *ngIf="editando"
+                    id="curp"
+                    type="text"
+                    [(ngModel)]="usuarioEditado.curp"
+                    class="form-input"
+                    placeholder="ABCD123456HEMLMN09"
+                    maxlength="18"
+                  />
                 </div>
 
                 <div class="form-group">
                   <label for="email">Correo electrónico *</label>
                   <div *ngIf="!editando" class="info-display">{{ usuario.email }}</div>
-                  <input *ngIf="editando" id="email" type="email" [(ngModel)]="usuarioEditado.email" 
-                         class="form-input" placeholder="correo@ejemplo.com">
+                  <input
+                    *ngIf="editando"
+                    id="email"
+                    type="email"
+                    [(ngModel)]="usuarioEditado.email"
+                    class="form-input"
+                    placeholder="correo@ejemplo.com"
+                  />
                 </div>
 
                 <div class="form-group">
                   <label for="telefono">Teléfono *</label>
                   <div *ngIf="!editando" class="info-display">{{ usuario.telefono }}</div>
-                  <input *ngIf="editando" id="telefono" type="tel" [(ngModel)]="usuarioEditado.telefono" 
-                         class="form-input" placeholder="+52 55 1234 5678">
+                  <input
+                    *ngIf="editando"
+                    id="telefono"
+                    type="tel"
+                    [(ngModel)]="usuarioEditado.telefono"
+                    class="form-input"
+                    placeholder="+52 55 1234 5678"
+                  />
                 </div>
 
                 <div class="form-group full-width">
                   <label for="fechaNacimiento">Fecha de nacimiento</label>
-                  <div *ngIf="!editando" class="info-display">{{ usuario.fechaNacimiento | date:'longDate' }}</div>
-                  <input *ngIf="editando" id="fechaNacimiento" type="date" [(ngModel)]="usuarioEditado.fechaNacimiento" 
-                         class="form-input">
+                  <div *ngIf="!editando" class="info-display">
+                    {{ usuario.fechaNacimiento | date: 'longDate' }}
+                  </div>
+                  <input
+                    *ngIf="editando"
+                    id="fechaNacimiento"
+                    type="date"
+                    [(ngModel)]="usuarioEditado.fechaNacimiento"
+                    class="form-input"
+                  />
                 </div>
               </div>
 
@@ -193,7 +232,7 @@
                     </button>
                   </div>
                 </div>
-                
+
                 <div class="direccion-info">
                   <p><strong>Dirección:</strong> {{ direccion.calle }}, {{ direccion.colonia }}</p>
                   <p><strong>Ciudad:</strong> {{ direccion.ciudad }}, {{ direccion.estado }}</p>
@@ -203,9 +242,11 @@
                 </div>
 
                 <div class="direccion-footer">
-                  <button *ngIf="!direccion.principal" 
-                          class="btn-secundario" 
-                          (click)="establecerPrincipal(i)">
+                  <button
+                    *ngIf="!direccion.principal"
+                    class="btn-secundario"
+                    (click)="establecerPrincipal(i)"
+                  >
                     Establecer como principal
                   </button>
                 </div>
@@ -245,7 +286,7 @@
                 <button class="filtro-btn">Vendidos</button>
               </div>
               <div class="busqueda-productos">
-                <input type="text" placeholder="Buscar producto..." class="search-input">
+                <input type="text" placeholder="Buscar producto..." class="search-input" />
                 <button class="btn-icon">
                   <i class="icon-search">🔍</i>
                 </button>
@@ -256,12 +297,18 @@
             <div class="productos-grid">
               <div *ngFor="let producto of productos; let i = index" class="producto-card">
                 <div class="producto-imagen">
-                  <img [src]="producto.imagen" [alt]="producto.nombre">
+                  <img [src]="producto.imagen" [alt]="producto.nombre" />
                   <span class="producto-estado" [class]="producto.estado">
-                    {{ producto.estado === 'activo' ? 'Activo' : producto.estado === 'pausado' ? 'Pausado' : 'Vendido' }}
+                    {{
+                      producto.estado === 'activo'
+                        ? 'Activo'
+                        : producto.estado === 'pausado'
+                          ? 'Pausado'
+                          : 'Vendido'
+                    }}
                   </span>
                 </div>
-                
+
                 <div class="producto-info">
                   <h3>{{ producto.nombre }}</h3>
                   <p class="producto-descripcion">{{ producto.descripcion }}</p>
@@ -277,14 +324,25 @@
                 </div>
 
                 <div class="producto-acciones">
-                  <button class="btn-icon btn-icon-warning" (click)="editarProducto(i)" title="Editar">
+                  <button
+                    class="btn-icon btn-icon-warning"
+                    (click)="editarProducto(i)"
+                    title="Editar"
+                  >
                     <i class="icon-edit">✏️</i>
                   </button>
-                  <button class="btn-icon btn-icon-info" (click)="pausarProducto(i)" 
-                          [title]="producto.estado === 'activo' ? 'Pausar' : 'Activar'">
+                  <button
+                    class="btn-icon btn-icon-info"
+                    (click)="pausarProducto(i)"
+                    [title]="producto.estado === 'activo' ? 'Pausar' : 'Activar'"
+                  >
                     <i class="icon-pause">⏸️</i>
                   </button>
-                  <button class="btn-icon btn-icon-danger" (click)="eliminarProducto(i)" title="Eliminar">
+                  <button
+                    class="btn-icon btn-icon-danger"
+                    (click)="eliminarProducto(i)"
+                    title="Eliminar"
+                  >
                     <i class="icon-trash">🗑️</i>
                   </button>
                 </div>
@@ -329,7 +387,11 @@
                   <p>Añade una capa extra de seguridad a tu cuenta</p>
                 </div>
                 <label class="toggle-switch">
-                  <input type="checkbox" [(ngModel)]="verificacionDosPasos" id="verificacionDosPasos">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="verificacionDosPasos"
+                    id="verificacionDosPasos"
+                  />
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -341,12 +403,20 @@
                 </div>
                 <div class="notificaciones-opciones">
                   <label class="checkbox-label">
-                    <input type="checkbox" [(ngModel)]="notificacionesEmail" id="notificacionesEmail">
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="notificacionesEmail"
+                      id="notificacionesEmail"
+                    />
                     <span class="checkmark"></span>
                     Correo electrónico
                   </label>
                   <label class="checkbox-label">
-                    <input type="checkbox" [(ngModel)]="notificacionesPush" id="notificacionesPush">
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="notificacionesPush"
+                      id="notificacionesPush"
+                    />
                     <span class="checkmark"></span>
                     Notificaciones push
                   </label>
@@ -366,7 +436,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </main>
 </div>

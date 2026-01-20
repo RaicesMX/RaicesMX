@@ -25,22 +25,24 @@
   align-items: center;
   justify-content: center;
   padding: 6rem 2rem 4rem;
-  background: linear-gradient(135deg, 
-    colors.$color-primary-dark 0%, // Usar variable global
+  background: linear-gradient(
+    135deg,
+    colors.$color-primary-dark 0%,
+    // Usar variable global
     colors.$color-primary 100%
   );
   overflow: hidden;
-  
+
   .mexican-pattern {
     position: absolute;
     inset: 0;
-    background-image: 
+    background-image:
       radial-gradient(circle at 20% 30%, rgba(colors.$color-secondary, 0.1) 1px, transparent 1px),
       radial-gradient(circle at 80% 70%, rgba(colors.$color-secondary, 0.1) 1px, transparent 1px);
     background-size: 50px 50px;
     opacity: 0.2;
   }
-  
+
   .hero-content-wrapper {
     position: relative;
     z-index: 2;
@@ -48,20 +50,21 @@
     margin: 0 auto;
     width: 100%;
   }
-  
+
   .hero-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
     align-items: center;
-    
-    @include mixins.respond-to(md) { // Usar mixin responsive
+
+    @include mixins.respond-to(md) {
+      // Usar mixin responsive
       grid-template-columns: 1fr;
       text-align: center;
       gap: 3rem;
     }
   }
-  
+
   .hero-text {
     .hero-title {
       font-size: clamp(2.5rem, 5vw, 4rem);
@@ -69,7 +72,7 @@
       line-height: typo.$line-height-tight; // Usar variable
       margin-bottom: 1.5rem;
       color: colors.$color-white;
-      
+
       .hero-line-1 {
         display: block;
         color: rgba(colors.$color-white, 0.9);
@@ -77,18 +80,18 @@
         margin-bottom: 0.5rem;
         font-weight: typo.$font-weight-light; // Usar variable
       }
-      
+
       .hero-line-2 {
         display: flex;
         align-items: baseline;
         gap: 0.5rem;
         flex-wrap: wrap;
-        
+
         .text-raices {
           color: colors.$color-white;
           font-weight: typo.$font-weight-extrabold;
         }
-        
+
         .text-mx {
           background: colors.$color-secondary;
           color: colors.$color-primary;
@@ -100,7 +103,7 @@
         }
       }
     }
-    
+
     .hero-subtitle {
       font-size: typo.$font-size-xl; // Usar variable
       color: rgba(colors.$color-white, 0.9);
@@ -108,7 +111,7 @@
       max-width: 500px;
       line-height: typo.$line-height-normal; // Usar variable
     }
-    
+
     .hero-cta {
       .btn-explorar {
         @include mixins.btn-secondary; // Usar mixin de botón
@@ -118,24 +121,24 @@
         display: inline-flex;
         align-items: center;
         gap: 0.8rem;
-        
+
         &:hover {
           transform: translateY(-3px);
           box-shadow: vars.$shadow-lg; // Usar variable
         }
-        
+
         .btn-icon {
           font-size: 1.2rem;
         }
       }
     }
   }
-  
+
   .hero-logo {
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     .logo-container {
       background: rgba(colors.$color-white, 0.1);
       backdrop-filter: blur(10px);
@@ -145,18 +148,18 @@
       text-align: center;
       max-width: 350px;
       width: 100%;
-      
+
       @include mixins.respond-to(md) {
         margin: 0 auto;
       }
-      
+
       .logo-img {
         max-width: 200px;
         height: auto;
         margin-bottom: 1.5rem;
         filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
       }
-      
+
       .logo-tagline {
         color: colors.$color-secondary;
         font-weight: typo.$font-weight-semibold; // Usar variable
@@ -165,7 +168,7 @@
       }
     }
   }
-  
+
   .scroll-indicator {
     position: absolute;
     bottom: 30px;
@@ -173,7 +176,7 @@
     transform: translateX(-50%);
     cursor: pointer;
     animation: bounce 2s infinite; // Usar animación global
-    
+
     .arrow {
       width: 25px;
       height: 25px;
@@ -188,31 +191,31 @@
 .filtros-section {
   background: white;
   padding: 2rem 1rem;
-  border-bottom: 1px solid rgba(#7A1A2C, 0.1);
-  
+  border-bottom: 1px solid rgba(#7a1a2c, 0.1);
+
   .container {
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+
   .filtros-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: vars.$spacing-lg; // Usar variable
     margin-bottom: 1.5rem;
-    
+
     @include mixins.respond-to(md) {
       grid-template-columns: repeat(2, 1fr);
     }
-    
+
     @include mixins.respond-to(xs) {
       grid-template-columns: 1fr;
     }
   }
-  
-    .filtro-card {
-    background: rgba(#7A1A2C, 0.03); // ✨ Color directo
-    border: 2px solid rgba(#7A1A2C, 0.1); // ✨ Color directo
+
+  .filtro-card {
+    background: rgba(#7a1a2c, 0.03); // ✨ Color directo
+    border: 2px solid rgba(#7a1a2c, 0.1); // ✨ Color directo
     border-radius: 15px;
     padding: 1.5rem;
     cursor: pointer;
@@ -220,45 +223,45 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    
+
     &:hover {
       transform: translateY(-3px);
-      border-color: #7A1A2C; // ✨ Color directo
-      box-shadow: 0 4px 12px rgba(#7A1A2C, 0.1); // ✨ Color directo
-      background: rgba(#7A1A2C, 0.05); // ✨ Color directo
+      border-color: #7a1a2c; // ✨ Color directo
+      box-shadow: 0 4px 12px rgba(#7a1a2c, 0.1); // ✨ Color directo
+      background: rgba(#7a1a2c, 0.05); // ✨ Color directo
     }
-    
+
     &.active {
       // ✨ COLORES DIRECTOS - SIN VARIABLES
-      background: #7A1A2C !important; // VINO
-      border-color: #7A1A2C !important;
-      color: #D4AF37 !important; // DORADO
-      
+      background: #7a1a2c !important; // VINO
+      border-color: #7a1a2c !important;
+      color: #d4af37 !important; // DORADO
+
       .filtro-icon {
-        background: #D4AF37 !important; // DORADO
-        color: #7A1A2C !important; // VINO
+        background: #d4af37 !important; // DORADO
+        color: #7a1a2c !important; // VINO
         box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
       }
-      
+
       h4 {
-        color: #D4AF37 !important; // DORADO
+        color: #d4af37 !important; // DORADO
         font-weight: 700;
       }
-      
+
       p {
         color: rgba(212, 175, 55, 0.9) !important; // DORADO claro
         margin: 0;
       }
-      
-      box-shadow: 
+
+      box-shadow:
         0 4px 12px rgba(122, 26, 44, 0.3),
         0 0 0 1px rgba(212, 175, 55, 0.2);
     }
-    
+
     .filtro-icon {
       width: 50px;
       height: 50px;
-      background: rgba(#7A1A2C, 0.1); // ✨ Color directo
+      background: rgba(#7a1a2c, 0.1); // ✨ Color directo
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -266,15 +269,15 @@
       font-size: 1.8rem;
       flex-shrink: 0;
     }
-    
+
     .filtro-content {
       h4 {
         font-size: 1.1rem;
-        color: #7A1A2C; // ✨ Color directo
+        color: #7a1a2c; // ✨ Color directo
         margin-bottom: 0.3rem;
         font-weight: 700;
       }
-      
+
       p {
         font-size: 0.9rem;
         color: rgba(26, 26, 26, 0.6); // Gris oscuro
@@ -282,31 +285,31 @@
       }
     }
   }
-  
+
   .filtros-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-top: 1rem;
     border-top: 1px solid rgba(colors.$color-primary, 0.1);
-    
+
     .productos-count {
       display: flex;
       align-items: baseline;
       gap: 0.5rem;
-      
+
       .count-number {
         font-size: 1.8rem;
         font-weight: typo.$font-weight-extrabold; // Usar variable
         color: colors.$color-primary;
       }
-      
+
       .count-text {
         color: rgba(colors.$color-gray-700, 0.6); // Usar variable
         font-size: typo.$font-size-base; // Usar variable
       }
     }
-    
+
     .btn-limpiar {
       @include mixins.btn-outline; // Usar mixin de botón
       background: rgba(colors.$color-primary, 0.1);
@@ -318,7 +321,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      
+
       &:hover {
         background: rgba(colors.$color-primary, 0.2);
       }
@@ -330,28 +333,28 @@
 .productos-section {
   padding: 4rem 1rem;
   background: colors.$color-white;
-  
+
   .container {
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+
   .section-title {
     text-align: center;
     font-size: typo.$font-size-3xl; // Usar variable
     color: colors.$color-primary;
     margin-bottom: 3rem;
     font-weight: typo.$font-weight-extrabold; // Usar variable
-    
+
     @include mixins.respond-to(md) {
       font-size: typo.$font-size-2xl; // Usar variable
     }
   }
-  
+
   .loading-state {
     text-align: center;
     padding: 3rem;
-    
+
     .spinner {
       width: 50px;
       height: 50px;
@@ -361,7 +364,7 @@
       margin: 0 auto 1.5rem;
       animation: spin 1s linear infinite;
     }
-    
+
     p {
       color: rgba(colors.$color-gray-700, 0.6); // Usar variable
     }
@@ -374,11 +377,12 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: vars.$spacing-lg; // Usar variable
   margin-bottom: 3rem;
-  
-  @media (min-width: vars.$breakpoint-lg) { // Usar variable
+
+  @media (min-width: vars.$breakpoint-lg) {
+    // Usar variable
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   @include mixins.respond-to(md) {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: vars.$spacing-md; // Usar variable
@@ -389,29 +393,29 @@
   @include mixins.card-base; // Usar mixin de card
   border-radius: vars.$border-radius-lg; // Usar variable
   border: 1px solid rgba(colors.$color-secondary, 0.1);
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: vars.$shadow-lg; // Usar variable
-    
+
     .product-image img {
       transform: scale(1.05);
     }
   }
-  
+
   .product-image {
     height: 220px;
     position: relative;
     overflow: hidden;
     background: colors.$color-gray-100; // Usar variable
-    
+
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.5s ease;
     }
-    
+
     .product-badge {
       position: absolute;
       top: 15px;
@@ -425,13 +429,13 @@
       z-index: 2;
     }
   }
-  
+
   .product-info {
     padding: vars.$spacing-md; // Usar variable
-    
+
     .product-header {
       margin-bottom: 1rem;
-      
+
       .product-name {
         font-size: 1.3rem;
         font-weight: typo.$font-weight-bold; // Usar variable
@@ -439,7 +443,7 @@
         margin-bottom: 0.3rem;
         line-height: 1.3;
       }
-      
+
       .product-category {
         font-size: typo.$font-size-sm; // Usar variable
         color: rgba(colors.$color-gray-700, 0.6); // Usar variable
@@ -449,29 +453,29 @@
         display: inline-block;
       }
     }
-    
+
     .product-pricing {
       margin-bottom: 1.5rem;
-      
+
       .current-price {
         font-size: 1.6rem;
         font-weight: typo.$font-weight-extrabold; // Usar variable
         color: colors.$color-secondary;
         margin-right: 0.5rem;
       }
-      
+
       .original-price {
         font-size: typo.$font-size-base; // Usar variable
         color: rgba(colors.$color-gray-700, 0.5); // Usar variable
         text-decoration: line-through;
       }
     }
-    
+
     .product-actions {
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 0.8rem;
-      
+
       .btn-add-cart {
         @include mixins.btn-primary; // Usar mixin de botón
         padding: 0.8rem 1.5rem;
@@ -480,18 +484,18 @@
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
-        
+
         &:hover {
           transform: translateY(-2px);
         }
       }
-      
+
       .btn-details {
         @include mixins.btn-outline; // Usar mixin de botón
         padding: 0.8rem 1.5rem;
         border-radius: vars.$border-radius-md; // Usar variable
         font-weight: typo.$font-weight-semibold; // Usar variable
-        
+
         &:hover {
           background: rgba(colors.$color-primary, 0.05);
           border-color: colors.$color-primary;
@@ -503,14 +507,18 @@
 
 /* === BENEFICIOS === */
 .beneficios-section {
-  background: linear-gradient(135deg, colors.$color-gray-100, colors.$color-white); // Usar variables
+  background: linear-gradient(
+    135deg,
+    colors.$color-gray-100,
+    colors.$color-white
+  ); // Usar variables
   padding: 4rem 1rem;
-  
+
   .container {
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+
   .beneficios-title {
     text-align: center;
     font-size: typo.$font-size-2xl; // Usar variable
@@ -518,34 +526,34 @@
     margin-bottom: 3rem;
     font-weight: typo.$font-weight-bold; // Usar variable
   }
-  
+
   .beneficios-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: vars.$spacing-lg; // Usar variable
-    
+
     .beneficio-card {
       @include mixins.card-base; // Usar mixin de card
       border-radius: vars.$border-radius-lg; // Usar variable
       padding: 2rem;
       text-align: center;
-      
+
       &:hover {
         transform: translateY(-5px);
         box-shadow: vars.$shadow-md; // Usar variable
       }
-      
+
       .beneficio-icon {
         font-size: 3rem;
         margin-bottom: 1rem;
       }
-      
+
       h3 {
         color: colors.$color-primary;
         margin-bottom: 0.8rem;
         font-size: 1.3rem;
       }
-      
+
       p {
         color: rgba(colors.$color-gray-700, 0.7); // Usar variable
         line-height: typo.$line-height-normal; // Usar variable
@@ -559,24 +567,83 @@
 @include mixins.respond-to(md) {
   .hero-section {
     padding: 5rem 1rem 3rem;
-    
+
     .hero-content {
       gap: 2rem;
     }
-    
+
     .hero-logo .logo-container {
       padding: vars.$spacing-md; // Usar variable
-      
+
       .logo-img {
         max-width: 150px;
       }
     }
   }
-  
+
   .producto-card .product-actions {
     grid-template-columns: 1fr;
   }
 }
 
-// ✅ ELIMINAR las animaciones duplicadas (líneas 423-437)
-// Ya existen en _animations.scss y se acceden con anim.bounce y anim.spin
+/* === CTA VENDEDOR === */
+.vendedor-cta-section {
+  padding: 5rem 1rem;
+  background: linear-gradient(135deg, colors.$color-primary-dark, colors.$color-primary);
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .vendedor-cta-card {
+    @include mixins.card-base;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: vars.$spacing-xl;
+    padding: 3.5rem;
+    border-radius: vars.$border-radius-xl;
+    background: colors.$color-white;
+    box-shadow: vars.$shadow-lg;
+
+    @include mixins.respond-to(md) {
+      flex-direction: column;
+      text-align: center;
+      gap: vars.$spacing-lg;
+    }
+  }
+
+  .vendedor-cta-text {
+    max-width: 650px;
+
+    h2 {
+      font-size: typo.$font-size-2xl;
+      font-weight: typo.$font-weight-extrabold;
+      color: colors.$color-primary;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: typo.$font-size-lg;
+      line-height: typo.$line-height-normal;
+      color: rgba(colors.$color-gray-700, 0.8);
+    }
+  }
+
+  .vendedor-cta-action {
+    .btn-vendedor {
+      @include mixins.btn-primary;
+      padding: 1rem 2.8rem;
+      border-radius: vars.$border-radius-xl;
+      font-size: 1.1rem;
+      font-weight: typo.$font-weight-bold;
+      white-space: nowrap;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: vars.$shadow-lg;
+      }
+    }
+  }
+}

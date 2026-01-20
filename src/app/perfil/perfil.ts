@@ -1,257 +1,214 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+// src/app/perfil/perfil.component.ts
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [
-    CommonModule, 
-    FormsModule, 
-    RouterModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './perfil.html',
-  styleUrls: ['./perfil.scss']
+  styleUrls: ['./perfil.scss'],
 })
 export class PerfilComponent implements OnInit {
-  // ====== HEADER Y MENÚS ======
-  menuAbierto = false;
-  menuMovilAbierto = false;
-  esMovil = false;
-  itemsCarrito = 3;
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  // ====== DATOS DEL USUARIO ======
-  usuario = {
-    nombre: 'Juan Pérez Rodríguez',
-    email: 'juan.perez@email.com',
-    telefono: '+52 55 1234 5678',
-    curp: 'PERJ800101HDFRNN09',
-    fechaNacimiento: '1980-01-01',
-    fechaRegistro: '2024-01-15'
+  // Estado de la tab activa
+  tabActiva: 'informacion' | 'direcciones' | 'productos' | 'seguridad' = 'informacion';
+
+  // ✅ Usar getter que lee del signal (se actualiza automáticamente)
+  get usuario() {
+    const user = this.authService.currentUser();
+    return {
+      nombre: user?.fullName || '',
+      email: user?.email || '',
+      curp: '',
+      telefono: '',
+      fechaNacimiento: '',
+    };
+  }
+
+  // Copia para edición
+  usuarioEditado = {
+    nombre: '',
+    email: '',
+    curp: '',
+    telefono: '',
+    fechaNacimiento: '',
   };
 
-  // ====== PESTAÑAS Y ESTADO ======
-  tabActiva = 'informacion';
+  // Estados de UI
   editando = false;
-  mostrarHistorial = false;
-  usuarioEditado = { ...this.usuario };
+  verificacionDosPasos = false;
+  notificacionesEmail = true;
+  notificacionesPush = false;
 
-  // ====== DIRECCIONES ======
-  direcciones = [
+  // Direcciones del usuario
+  direcciones: any[] = [
     {
       nombre: 'Casa',
-      principal: true,
       calle: 'Av. Reforma 123',
-      colonia: 'Cuauhtémoc',
-      ciudad: 'Ciudad de México',
-      estado: 'CDMX',
-      codigoPostal: '06500',
-      entreCalles: 'Insurgentes y Hamburgo',
-      instrucciones: 'Timbre blanco, departamento 5B'
-    },
-    {
-      nombre: 'Oficina',
-      principal: false,
-      calle: 'Paseo de la Reforma 250',
-      colonia: 'Juárez',
+      colonia: 'Centro',
       ciudad: 'Ciudad de México',
       estado: 'CDMX',
       codigoPostal: '06600',
-      entreCalles: 'Río Tiber y Río Misisipi',
-      instrucciones: 'Recepción, piso 8'
-    }
+      entreCalles: 'Insurgentes y Juárez',
+      instrucciones: 'Portón negro',
+      principal: true,
+    },
   ];
 
-  // ====== PRODUCTOS ======
-  productos = [
+  // Productos del usuario
+  productos: any[] = [
     {
-      id: 1,
-      nombre: 'Artesanía de Barro Tradicional',
-      descripcion: 'Pieza única elaborada por artesanos mexicanos',
-      precio: 450,
+      nombre: 'Alebrije artesanal',
+      descripcion: 'Alebrije tallado en madera de copal',
+      precio: 850,
       stock: 5,
-      visitas: 120,
+      visitas: 124,
+      imagen: 'assets/images/producto-ejemplo.jpg',
       estado: 'activo',
-      imagen: 'https://via.placeholder.com/300x180/7A1A2C/FFFFFF?text=Artesan%C3%ADa+Barro'
     },
-    {
-      id: 2,
-      nombre: 'Textil Bordado a Mano',
-      descripcion: 'Mantel bordado con técnicas tradicionales',
-      precio: 320,
-      stock: 3,
-      visitas: 85,
-      estado: 'activo',
-      imagen: 'https://via.placeholder.com/300x180/D4AF37/FFFFFF?text=Textil+Bordado'
-    },
-    {
-      id: 3,
-      nombre: 'Joyería de Plata',
-      descripcion: 'Collar de plata con detalles artesanales',
-      precio: 780,
-      stock: 0,
-      visitas: 210,
-      estado: 'vendido',
-      imagen: 'https://via.placeholder.com/300x180/2D3748/FFFFFF?text=Joyer%C3%ADa+Plata'
-    }
-  ];
-
-  // ====== CONFIGURACIONES ======
-  verificacionDosPasos = false;
-  notificacionesEmail = true;
-  notificacionesPush = true;
-
-  // ====== HISTORIAL ======
-  historial = [
-    {
-      id: 1,
-      descripcion: 'Publicaste un nuevo producto: "Artesanía de Barro Tradicional"',
-      fecha: new Date('2024-01-15T10:30:00'),
-      icono: 'icon-package'
-    },
-    {
-      id: 2,
-      descripcion: 'Actualizaste tu información personal',
-      fecha: new Date('2024-01-14T15:45:00'),
-      icono: 'icon-user'
-    },
-    {
-      id: 3,
-      descripcion: 'Agregaste una nueva dirección de envío',
-      fecha: new Date('2024-01-13T09:20:00'),
-      icono: 'icon-location'
-    },
-    {
-      id: 4,
-      descripcion: 'Realizaste una compra: "Textil Bordado a Mano"',
-      fecha: new Date('2024-01-12T16:30:00'),
-      icono: 'icon-shopping-cart'
-    },
-    {
-      id: 5,
-      descripcion: 'Recibiste una nueva reseña en tu producto',
-      fecha: new Date('2024-01-11T11:15:00'),
-      icono: 'icon-star'
-    }
   ];
 
   ngOnInit() {
-    this.detectarMovil();
-  }
+    // Verificar que haya usuario autenticado
+    const user = this.authService.currentUser();
 
-  @HostListener('window:resize')
-  detectarMovil() {
-    this.esMovil = window.innerWidth <= 992;
-    if (!this.esMovil) {
-      this.menuMovilAbierto = false;
+    if (!user) {
+      console.log('⚠️ No hay usuario en estado local, verificando con backend...');
+
+      // Si no hay usuario en el signal, intentar obtener del backend
+      this.authService.getProfile().subscribe({
+        next: (response) => {
+          if (!response || !response.user) {
+            // No hay sesión válida, redirigir al login
+            this.router.navigate(['/login']);
+          }
+        },
+        error: () => {
+          // Error al obtener perfil, redirigir al login
+          this.router.navigate(['/login']);
+        },
+      });
+    } else {
+      console.log('✅ Usuario cargado:', user);
     }
   }
 
-  // ====== MENÚS ======
-  toggleMenu() {
-    this.menuAbierto = !this.menuAbierto;
-  }
-
-  toggleMenuMovil() {
-    this.menuMovilAbierto = !this.menuMovilAbierto;
-  }
-
-  @HostListener('document:click', ['$event'])
-  clickOutside(event: Event) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.user-menu')) {
-      this.menuAbierto = false;
-    }
-  }
-
-  // ====== NAVEGACIÓN ======
-  cambiarTab(tab: string) {
+  cambiarTab(tab: 'informacion' | 'direcciones' | 'productos' | 'seguridad') {
     this.tabActiva = tab;
     this.editando = false;
   }
 
   toggleEdicion() {
+    this.editando = !this.editando;
+
     if (this.editando) {
+      // Al activar edición, copiar datos actuales
       this.usuarioEditado = { ...this.usuario };
     }
-    this.editando = !this.editando;
   }
 
   guardarCambios() {
-    this.usuario = { ...this.usuarioEditado };
+    console.log('💾 Guardando cambios:', this.usuarioEditado);
+
+    // TODO: Hacer petición al backend para actualizar
+    // this.http.patch('/users/me', this.usuarioEditado).subscribe(...)
+
     this.editando = false;
-    
-    // Agregar al historial
-    this.historial.unshift({
-      id: Date.now(),
-      descripcion: 'Actualizaste tu información personal',
-      fecha: new Date(),
-      icono: 'icon-user'
-    });
-    
-    console.log('Información actualizada correctamente');
+    alert('✅ Cambios guardados correctamente');
   }
 
-  // ====== DIRECCIONES ======
-  agregarDireccion() {
-    console.log('Agregar dirección - Funcionalidad próxima');
-  }
+  cerrarSesion() {
+    const confirmar = confirm('¿Estás seguro de que deseas cerrar sesión?');
 
-  editarDireccion(i: number) {
-    console.log(`Editando dirección: ${this.direcciones[i].nombre}`);
-  }
+    if (confirmar) {
+      console.log('🚪 Cerrando sesión...');
 
-  eliminarDireccion(i: number) {
-    if (confirm(`¿Eliminar "${this.direcciones[i].nombre}"?`)) {
-      this.direcciones.splice(i, 1);
-      console.log('Dirección eliminada');
+      this.authService.logout().subscribe({
+        next: (response) => {
+          console.log('✅ Sesión cerrada:', response.message);
+        },
+        error: (error) => {
+          console.error('❌ Error al cerrar sesión:', error);
+          this.authService.currentUser.set(null);
+          this.authService.isAuthenticated.set(false);
+          this.router.navigate(['/login']);
+        },
+      });
     }
   }
 
-  establecerPrincipal(i: number) {
-    this.direcciones.forEach(d => d.principal = false);
-    this.direcciones[i].principal = true;
-    console.log('Dirección principal actualizada');
-  }
-
-  // ====== PRODUCTOS ======
-  editarProducto(i: number) {
-    console.log(`Editando producto: ${this.productos[i].nombre}`);
-  }
-
-  pausarProducto(i: number) {
-    const producto = this.productos[i];
-    producto.estado = producto.estado === 'activo' ? 'pausado' : 'activo';
-    console.log(`Producto ${producto.estado === 'activo' ? 'activado' : 'pausado'}`);
-  }
-
-  eliminarProducto(i: number) {
-    if (confirm(`¿Eliminar "${this.productos[i].nombre}"?`)) {
-      this.productos.splice(i, 1);
-      console.log('Producto eliminado');
-    }
-  }
-
-  verHistorial() {
-    this.mostrarHistorial = !this.mostrarHistorial;
-  }
-
-  // ====== SEGURIDAD ======
   cambiarContrasena() {
-    console.log('Cambiar contraseña - Funcionalidad próxima');
+    this.router.navigate(['/recuperar']);
   }
 
   eliminarCuenta() {
-    if (confirm('¿Estás seguro de eliminar tu cuenta permanentemente?\nEsta acción no se puede deshacer.')) {
-      console.log('Cuenta eliminada');
+    const confirmar = confirm(
+      '⚠️ ADVERTENCIA: Esta acción es irreversible. ¿Estás seguro de que deseas eliminar tu cuenta permanentemente?',
+    );
+
+    if (confirmar) {
+      const confirmar2 = confirm(
+        '¿REALMENTE deseas eliminar tu cuenta? Todos tus datos se perderán.',
+      );
+
+      if (confirmar2) {
+        console.log('🗑️ Eliminando cuenta...');
+        alert('Funcionalidad de eliminación de cuenta en desarrollo');
+      }
     }
   }
 
-  // ====== SESIÓN ======
-  cerrarSesion() {
-    if (confirm('¿Cerrar sesión?')) {
-      this.menuMovilAbierto = false;
-      console.log('Sesión cerrada');
+  // ========== MÉTODOS DE DIRECCIONES ==========
+
+  agregarDireccion() {
+    alert('Funcionalidad de agregar dirección en desarrollo');
+  }
+
+  editarDireccion(index: number) {
+    console.log('✏️ Editando dirección:', this.direcciones[index]);
+    alert('Funcionalidad de editar dirección en desarrollo');
+  }
+
+  eliminarDireccion(index: number) {
+    const confirmar = confirm('¿Estás seguro de eliminar esta dirección?');
+
+    if (confirmar) {
+      this.direcciones.splice(index, 1);
+      alert('✅ Dirección eliminada');
+    }
+  }
+
+  establecerPrincipal(index: number) {
+    this.direcciones.forEach((d) => (d.principal = false));
+    this.direcciones[index].principal = true;
+    alert('✅ Dirección establecida como principal');
+  }
+
+  // ========== MÉTODOS DE PRODUCTOS ==========
+
+  editarProducto(index: number) {
+    console.log('✏️ Editando producto:', this.productos[index]);
+    alert('Funcionalidad de editar producto en desarrollo');
+  }
+
+  pausarProducto(index: number) {
+    const producto = this.productos[index];
+    producto.estado = producto.estado === 'activo' ? 'pausado' : 'activo';
+    alert(`✅ Producto ${producto.estado === 'activo' ? 'activado' : 'pausado'}`);
+  }
+
+  eliminarProducto(index: number) {
+    const confirmar = confirm('¿Estás seguro de eliminar este producto?');
+
+    if (confirmar) {
+      this.productos.splice(index, 1);
+      alert('✅ Producto eliminado');
     }
   }
 }

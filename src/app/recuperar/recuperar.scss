@@ -1,11 +1,11 @@
 // Variables CSS (agregar estas al principio)
-$gold: #D4AF37;
-$vino: #7A1A2C;
-$white: #FFFFFF;
+$gold: #d4af37;
+$vino: #7a1a2c;
+$white: #ffffff;
 $black: #000000;
 $glass: rgba(26, 26, 26, 0.88);
 $glass-border: rgba(212, 175, 55, 0.45);
-$success: #4CAF50;
+$success: #4caf50;
 $error: #f44336;
 
 .portal-wrapper {
@@ -31,8 +31,13 @@ $error: #f44336;
 }
 
 @keyframes alebrije-breath {
-  0%, 100% { transform: scale(1.02); }
-  50% { transform: scale(1.06); }
+  0%,
+  100% {
+    transform: scale(1.02);
+  }
+  50% {
+    transform: scale(1.06);
+  }
 }
 
 /* Overlay oscuro */
@@ -51,7 +56,8 @@ $error: #f44336;
 /* Partículas */
 .particulas {
   position: absolute;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   z-index: 3;
 
   .particula {
@@ -62,34 +68,86 @@ $error: #f44336;
     animation: flotar-particula 12s infinite linear;
     box-shadow: 0 0 15px rgba($gold, 0.6);
 
-    &.large { width: 8px; height: 8px; animation-duration: 10s; }
-    &.medium { width: 6px; height: 6px; animation-duration: 14s; }
-    &.small { width: 4px; height: 4px; animation-duration: 16s; }
+    &.large {
+      width: 8px;
+      height: 8px;
+      animation-duration: 10s;
+    }
+    &.medium {
+      width: 6px;
+      height: 6px;
+      animation-duration: 14s;
+    }
+    &.small {
+      width: 4px;
+      height: 4px;
+      animation-duration: 16s;
+    }
 
-    &:nth-child(1) { left: 12%; top: 20%; animation-delay: 0s; }
-    &:nth-child(2) { left: 28%; top: 40%; animation-delay: 2s; }
-    &:nth-child(3) { left: 45%; top: 15%; animation-delay: 4s; }
-    &:nth-child(4) { left: 60%; top: 60%; animation-delay: 1s; }
-    &:nth-child(5) { left: 75%; top: 30%; animation-delay: 6s; }
-    &:nth-child(6) { left: 88%; top: 50%; animation-delay: 3s; }
-    &:nth-child(7) { left: 18%; top: 70%; animation-delay: 5s; }
+    &:nth-child(1) {
+      left: 12%;
+      top: 20%;
+      animation-delay: 0s;
+    }
+    &:nth-child(2) {
+      left: 28%;
+      top: 40%;
+      animation-delay: 2s;
+    }
+    &:nth-child(3) {
+      left: 45%;
+      top: 15%;
+      animation-delay: 4s;
+    }
+    &:nth-child(4) {
+      left: 60%;
+      top: 60%;
+      animation-delay: 1s;
+    }
+    &:nth-child(5) {
+      left: 75%;
+      top: 30%;
+      animation-delay: 6s;
+    }
+    &:nth-child(6) {
+      left: 88%;
+      top: 50%;
+      animation-delay: 3s;
+    }
+    &:nth-child(7) {
+      left: 18%;
+      top: 70%;
+      animation-delay: 5s;
+    }
   }
 }
 
 @keyframes flotar-particula {
-  0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-  15% { opacity: 0.7; }
-  85% { opacity: 0.7; }
-  100% { transform: translateY(-80px) scale(1); opacity: 0; }
+  0% {
+    transform: translateY(100vh) scale(0.3);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.7;
+  }
+  85% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-80px) scale(1);
+    opacity: 0;
+  }
 }
 
 /* Anillo giratorio */
 .portal-ring {
   position: absolute;
-  width: 400px; height: 400px;
+  width: 400px;
+  height: 400px;
   border: 2.5px dashed $gold;
   border-radius: 50%;
-  top: 50%; left: 50%;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
   opacity: 0.35;
@@ -97,8 +155,12 @@ $error: #f44336;
 }
 
 @keyframes girar-suave {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to { transform: translate(-50%, -50%) rotate(360deg); }
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 /* Formulario */
@@ -108,7 +170,7 @@ $error: #f44336;
   background: $glass;
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-  padding: 3.8rem 3.2rem;
+  padding: 1.8rem 3.2rem;
   border-radius: 28px;
   border: 1px solid $glass-border;
   width: 100%;
@@ -140,8 +202,13 @@ $error: #f44336;
 }
 
 @keyframes brillar-logo {
-  0%, 100% { filter: drop-shadow(0 0 25px rgba($gold, 0.8)); }
-  50% { filter: drop-shadow(0 0 35px rgba($gold, 1)); }
+  0%,
+  100% {
+    filter: drop-shadow(0 0 25px rgba($gold, 0.8));
+  }
+  50% {
+    filter: drop-shadow(0 0 35px rgba($gold, 1));
+  }
 }
 
 .titulo-raiz {
@@ -150,8 +217,12 @@ $error: #f44336;
   margin: 1.2rem 0 0.6rem;
   letter-spacing: 1.2px;
 
-  .vino { color: $vino; }
-  .dorado { color: $gold; }
+  .vino {
+    color: $vino;
+  }
+  .dorado {
+    color: $gold;
+  }
 }
 
 .subtitulo-raiz {
@@ -212,13 +283,13 @@ $error: #f44336;
   margin-bottom: 1.5rem;
   font-weight: 500;
   text-align: center;
-  
+
   &.success {
     background: rgba($success, 0.15);
     border: 1px solid rgba($success, 0.3);
     color: lighten($success, 20%);
   }
-  
+
   &.error {
     background: rgba($error, 0.15);
     border: 1px solid rgba($error, 0.3);
@@ -246,7 +317,7 @@ $error: #f44336;
     background: rgba($vino, 0.5);
     cursor: not-allowed;
     transform: none;
-    
+
     &:hover {
       background: rgba($vino, 0.5);
       transform: none;
@@ -254,22 +325,22 @@ $error: #f44336;
     }
   }
 
-  span { 
-    position: relative; 
-    z-index: 2; 
+  span {
+    position: relative;
+    z-index: 2;
   }
 
   .btn-ripple {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle, rgba(255,255,255,0.5) 10%, transparent 10%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 10%, transparent 10%);
     background-size: 1000% 1000%;
     opacity: 0;
     transition: opacity 0.6s;
   }
 
   &:hover:not(:disabled) {
-    background: lighten($vino,8%);
+    background: lighten($vino, 8%);
     transform: translateY(-2px);
     box-shadow: 0 12px 28px rgba($vino, 0.45);
   }
@@ -281,7 +352,10 @@ $error: #f44336;
 }
 
 @keyframes ripple {
-  to { background-size: 200% 200%; opacity: 0; }
+  to {
+    background-size: 200% 200%;
+    opacity: 0;
+  }
 }
 
 /* Loading */
@@ -302,8 +376,12 @@ $error: #f44336;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Footer */
@@ -315,7 +393,8 @@ $error: #f44336;
   font-size: 0.95rem;
 }
 
-.link-recuperar, .link-registro {
+.link-recuperar,
+.link-registro {
   color: rgba($white, 0.85);
   text-decoration: none;
   font-weight: 500;
@@ -349,13 +428,13 @@ $error: #f44336;
   background: rgba($white, 0.1);
   border: 2px solid rgba($white, 0.3);
   color: rgba($white, 0.5);
-  
+
   &.active {
     background: $vino;
     border-color: $gold;
     color: $white;
   }
-  
+
   &.completed {
     background: $gold;
     border-color: $gold;
@@ -368,7 +447,7 @@ $error: #f44336;
   height: 2px;
   background: rgba($white, 0.2);
   max-width: 40px;
-  
+
   &.completed {
     background: $gold;
   }
@@ -402,7 +481,7 @@ $error: #f44336;
   cursor: pointer;
   font-size: 0.9rem;
   text-decoration: underline;
-  
+
   &:disabled {
     color: rgba($white, 0.4);
     cursor: not-allowed;
@@ -426,7 +505,7 @@ $error: #f44336;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s;
-  
+
   &:hover {
     background: rgba($white, 0.2);
     border-color: rgba($white, 0.5);
@@ -462,8 +541,10 @@ $error: #f44336;
   width: 20px;
   height: 20px;
   background: currentColor;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3E%3C/path%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3C/svg%3E") no-repeat center;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3E%3C/path%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3C/svg%3E") no-repeat center;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3E%3C/path%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3C/svg%3E")
+    no-repeat center;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3E%3C/path%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3C/svg%3E")
+    no-repeat center;
 }
 
 /* Indicadores de contraseña */
@@ -471,19 +552,29 @@ $error: #f44336;
   margin-top: 0.5rem;
   font-size: 0.85rem;
   font-weight: 600;
-  
-  &.weak { color: #f44336; }
-  &.medium { color: #ff9800; }
-  &.strong { color: #4caf50; }
+
+  &.weak {
+    color: #f44336;
+  }
+  &.medium {
+    color: #ff9800;
+  }
+  &.strong {
+    color: #4caf50;
+  }
 }
 
 .password-match {
   margin-top: 0.5rem;
   font-size: 0.85rem;
   font-weight: 600;
-  
-  &.valid { color: #4caf50; }
-  &.invalid { color: #f44336; }
+
+  &.valid {
+    color: #4caf50;
+  }
+  &.invalid {
+    color: #f44336;
+  }
 }
 
 /* Requisitos de contraseña */
@@ -492,35 +583,35 @@ $error: #f44336;
   padding: 1.2rem;
   border-radius: 12px;
   margin: 1.5rem 0;
-  
+
   h4 {
     color: $white;
     margin: 0 0 0.8rem 0;
     font-size: 0.95rem;
   }
-  
+
   ul {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  
+
   li {
     color: rgba($white, 0.6);
     font-size: 0.85rem;
     margin-bottom: 0.4rem;
     position: relative;
     padding-left: 1.2rem;
-    
+
     &::before {
       content: '✗';
       position: absolute;
       left: 0;
     }
-    
+
     &.valid {
       color: #4caf50;
-      
+
       &::before {
         content: '✓';
       }
@@ -568,24 +659,134 @@ $error: #f44336;
     padding: 3rem 2.2rem;
     max-width: 92%;
   }
-  .titulo-raiz { font-size: 1.9rem; }
-  .logo-alebrije { width: 95px; }
-  
+  .titulo-raiz {
+    font-size: 1.9rem;
+  }
+  .logo-alebrije {
+    width: 95px;
+  }
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .step-indicator {
     gap: 0.3rem;
   }
-  
+
   .step {
     width: 28px;
     height: 28px;
     font-size: 0.8rem;
   }
-  
+
   .step-line {
     max-width: 30px;
   }
+
+  .password-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .password-requirements {
+    margin-top: 1.2rem;
+  }
+}
+
+/* === STEPPER VERTICAL LATERAL === */
+
+.stepper-layout {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+.stepper-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6px;
+}
+
+.stepper-vertical .step {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba($white, 0.08);
+  border: 2px solid rgba($gold, 0.4);
+  color: rgba($white, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.35s ease;
+}
+
+.stepper-vertical .step.active {
+  background: $vino;
+  border-color: $gold;
+  color: $white;
+  box-shadow: 0 0 15px rgba($gold, 0.6);
+}
+
+.stepper-vertical .step.completed {
+  background: $gold;
+  border-color: $gold;
+  color: $black;
+}
+
+.stepper-vertical .step-line {
+  width: 2px;
+  height: 34px;
+  background: linear-gradient(to bottom, rgba($gold, 0.15), rgba($gold, 0.6), rgba($gold, 0.15));
+  margin: 6px 0;
+  opacity: 0.7;
+}
+
+/* Contenido */
+.step-content {
+  width: 100%;
+}
+
+/* Ajustes responsive */
+@media (max-width: 768px) {
+  .stepper-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .stepper-vertical {
+    flex-direction: row;
+    justify-content: center;
+    padding-bottom: 1.5rem;
+  }
+
+  .stepper-vertical .step-line {
+    width: 32px;
+    height: 2px;
+    margin: 0 6px;
+  }
+}
+/* Formulario ancho para contraseña */
+.formulario-raiz.wide {
+  max-width: 820px;
+}
+/* === LAYOUT CONTRASEÑA === */
+.password-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.8rem;
+  align-items: start;
+}
+
+/* Columna izquierda */
+.password-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Requisitos derecha */
+.password-requirements {
+  margin: 0; // quitamos el margen vertical
 }
