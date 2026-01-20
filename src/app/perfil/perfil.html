@@ -10,7 +10,11 @@
           </div>
 
           <div class="acciones-rapidas">
-            <button class="btn-accion btn-accion-primary" [routerLink]="['/publicar_producto']">
+            <button
+              class="btn-accion btn-accion-primary"
+              [routerLink]="['/publicar_producto']"
+              *ngIf="puedePublicarProductos"
+            >
               <i class="icon-publish">📦</i>
               <span>Publicar Producto</span>
             </button>
@@ -271,14 +275,37 @@
                 <button class="btn-secundario" (click)="cerrarSesion()">
                   <i class="icon-logout">🚪</i> Cerrar Sesión
                 </button>
-                <button class="btn-primary" [routerLink]="['/publicar_producto']">
+                <button
+                  class="btn-primary"
+                  [routerLink]="['/publicar_producto']"
+                  *ngIf="puedePublicarProductos"
+                >
                   <i class="icon-plus">➕</i> Publicar Nuevo Producto
                 </button>
               </div>
             </div>
 
+            <!-- ✨ AGREGADO: Mensaje si NO es vendedor aprobado -->
+            <div *ngIf="!puedePublicarProductos" class="alerta-vendedor">
+              <div class="alerta-icon">⚠️</div>
+              <div class="alerta-content">
+                <h3>Acceso restringido</h3>
+                <p *ngIf="estadoSolicitud === null">
+                  Necesitas ser vendedor verificado para publicar productos.
+                  <a routerLink="/vendedor" class="link-vendedor">Enviar solicitud de vendedor</a>
+                </p>
+                <p *ngIf="estadoSolicitud === 'pending'">
+                  Tu solicitud de vendedor está siendo revisada. Te notificaremos pronto.
+                </p>
+                <p *ngIf="estadoSolicitud === 'rejected'">
+                  Tu solicitud de vendedor fue rechazada. Puedes intentar nuevamente.
+                  <a routerLink="/vendedor" class="link-vendedor">Enviar nueva solicitud</a>
+                </p>
+              </div>
+            </div>
+
             <!-- Filtros de productos -->
-            <div class="productos-filtros">
+            <div class="productos-filtros" *ngIf="puedePublicarProductos">
               <div class="filtros-group">
                 <button class="filtro-btn active">Todos</button>
                 <button class="filtro-btn">Activos</button>
@@ -294,7 +321,7 @@
             </div>
 
             <!-- Lista de productos -->
-            <div class="productos-grid">
+            <div class="productos-grid" *ngIf="puedePublicarProductos">
               <div *ngFor="let producto of productos; let i = index" class="producto-card">
                 <div class="producto-imagen">
                   <img [src]="producto.imagen" [alt]="producto.nombre" />
@@ -307,6 +334,21 @@
                           : 'Vendido'
                     }}
                   </span>
+                </div>
+                <div
+                  *ngIf="!puedePublicarProductos && productos.length === 0"
+                  class="sin-productos"
+                >
+                  <i class="icon-package-off">📦</i>
+                  <h3>No tienes permisos para publicar productos</h3>
+                  <p>Solicita ser vendedor para comenzar a vender en la plataforma</p>
+                  <button
+                    class="btn-primary"
+                    routerLink="/vendedor"
+                    *ngIf="estadoSolicitud === null"
+                  >
+                    <i class="icon-plus">➕</i> Solicitar ser vendedor
+                  </button>
                 </div>
 
                 <div class="producto-info">
