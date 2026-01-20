@@ -2,9 +2,10 @@
   <!-- HERO SECTION -->
   <section class="hero-section">
     <div class="mexican-pattern"></div>
-    
+
     <div class="hero-content-wrapper">
       <div class="hero-content">
+        <!-- TEXTO -->
         <div class="hero-text">
           <h1 class="hero-title">
             <span class="hero-line-1">Descubre</span>
@@ -13,11 +14,9 @@
               <span class="text-mx">MX</span>
             </span>
           </h1>
-          
-          <p class="hero-subtitle">
-            Artesanías mexicanas auténticas, tradición en cada pieza
-          </p>
-          
+
+          <p class="hero-subtitle">Artesanías mexicanas auténticas, tradición en cada pieza</p>
+
           <div class="hero-cta">
             <button class="btn-explorar" (click)="scrollToProductos()">
               <i class="material-icons btn-icon">card_giftcard</i>
@@ -25,32 +24,37 @@
             </button>
           </div>
         </div>
-        
+
+        <!-- LOGO -->
         <div class="hero-logo">
           <div class="logo-container">
-            <img 
-              src="../../assets/images/Logo_RMX.png" 
-              alt="RaícesMX Logo" 
+            <img
+              src="../../assets/images/Logo_RMX.png"
+              alt="RaícesMX Logo"
               class="logo-img"
               (error)="onLogoError($event)"
-            >
+            />
             <span class="logo-tagline">Artesanía Mexicana</span>
           </div>
         </div>
       </div>
     </div>
-    
+
+    <!-- Flecha indicadora -->
     <div class="scroll-indicator" (click)="scrollToProductos()">
       <div class="arrow"></div>
     </div>
   </section>
 
-  <!-- SECCIÓN DE FILTROS -->
+  <!-- FILTROS -->
   <section class="filtros-section">
     <div class="container">
       <div class="filtros-grid">
-        <!-- Filtro por Destacados -->
-        <div class="filtro-card" (click)="filtrarDestacados()" [class.active]="filtroActivo === 'destacados'">
+        <div
+          class="filtro-card"
+          (click)="filtrarDestacados()"
+          [class.active]="filtroActivo === 'destacados'"
+        >
           <div class="filtro-icon">
             <i class="material-icons">whatshot</i>
           </div>
@@ -59,9 +63,12 @@
             <p>Lo más popular</p>
           </div>
         </div>
-        
-        <!-- Filtro por Novedades -->
-        <div class="filtro-card" (click)="filtrarNovedades()" [class.active]="filtroActivo === 'nuevos'">
+
+        <div
+          class="filtro-card"
+          (click)="filtrarNovedades()"
+          [class.active]="filtroActivo === 'nuevos'"
+        >
           <div class="filtro-icon">
             <i class="material-icons">fiber_new</i>
           </div>
@@ -70,9 +77,12 @@
             <p>Productos nuevos</p>
           </div>
         </div>
-        
-        <!-- Filtro por Ofertas -->
-        <div class="filtro-card" (click)="filtrarOfertas()" [class.active]="filtroActivo === 'ofertas'">
+
+        <div
+          class="filtro-card"
+          (click)="filtrarOfertas()"
+          [class.active]="filtroActivo === 'ofertas'"
+        >
           <div class="filtro-icon">
             <i class="material-icons">local_offer</i>
           </div>
@@ -81,9 +91,12 @@
             <p>Hasta 50% off</p>
           </div>
         </div>
-        
-        <!-- Filtro por Precio -->
-        <div class="filtro-card" (click)="filtrarPorPrecio()" [class.active]="filtroActivo === 'precio'">
+
+        <div
+          class="filtro-card"
+          (click)="filtrarPorPrecio()"
+          [class.active]="filtroActivo === 'precio'"
+        >
           <div class="filtro-icon">
             <i class="material-icons">attach_money</i>
           </div>
@@ -93,18 +106,14 @@
           </div>
         </div>
       </div>
-      
+
       <div class="filtros-footer">
         <div class="productos-count">
           <span class="count-number">{{ productosFiltrados.length }}</span>
           <span class="count-text">artesanías</span>
         </div>
-        
-        <button 
-          class="btn-limpiar" 
-          (click)="limpiarFiltros()"
-          *ngIf="filtroActivo"
-        >
+
+        <button class="btn-limpiar" (click)="limpiarFiltros()" *ngIf="filtroActivo">
           <i class="material-icons btn-icon">refresh</i>
           Limpiar filtro
         </button>
@@ -112,61 +121,53 @@
     </div>
   </section>
 
-  <!-- SECCIÓN DE PRODUCTOS -->
+  <!-- PRODUCTOS -->
   <section class="productos-section" id="productos" #productosSection>
     <div class="container">
       <h2 class="section-title">Nuestras Artesanías</h2>
-      
+
       <div class="loading-state" *ngIf="cargando">
         <div class="spinner"></div>
         <p>Cargando artesanías...</p>
       </div>
-      
+
       <div class="productos-grid" *ngIf="!cargando">
         <div class="producto-card" *ngFor="let producto of productosFiltrados">
-          
           <div class="product-image">
-            <img 
-              [src]="producto.imagen" 
+            <img
+              [src]="producto.imagen"
               [alt]="producto.nombre"
               (error)="onImgError($event)"
               loading="lazy"
             />
-            
+
             <div class="product-badge" *ngIf="producto.nuevo || producto.oferta">
-              <span *ngIf="producto.nuevo">
-                <i class="material-icons">fiber_new</i> Nuevo
-              </span>
+              <span *ngIf="producto.nuevo"> <i class="material-icons">fiber_new</i> Nuevo </span>
               <span *ngIf="producto.oferta">
                 <i class="material-icons">local_offer</i> Oferta
               </span>
             </div>
           </div>
-          
+
           <div class="product-info">
             <div class="product-header">
               <h3 class="product-name">{{ producto.nombre }}</h3>
               <span class="product-category">{{ producto.categoria }}</span>
             </div>
-            
+
             <div class="product-pricing">
-              <span class="current-price">
-                ${{ producto.precio | number:'1.0-0' }} MXN
-              </span>
+              <span class="current-price"> ${{ producto.precio | number: '1.0-0' }} MXN </span>
               <span class="original-price" *ngIf="producto.precioOriginal">
-                ${{ producto.precioOriginal | number:'1.0-0' }}
+                ${{ producto.precioOriginal | number: '1.0-0' }}
               </span>
             </div>
-            
+
             <div class="product-actions">
-              <button 
-                class="btn-add-cart"
-                (click)="agregarAlCarrito(producto)"
-              >
+              <button class="btn-add-cart" (click)="agregarAlCarrito(producto)">
                 <i class="material-icons btn-icon">shopping_cart</i>
                 Agregar
               </button>
-              
+
               <a class="btn-details" [routerLink]="['/producto', producto.id]">
                 <i class="material-icons">visibility</i>
                 Ver detalles
@@ -175,45 +176,13 @@
           </div>
         </div>
       </div>
-      
+
       <div class="no-results" *ngIf="!cargando && productosFiltrados.length === 0">
         <div class="no-results-icon">
           <i class="material-icons">sentiment_dissatisfied</i>
         </div>
         <h3>No hay productos con ese filtro</h3>
-        <button class="btn-limpiar" (click)="limpiarFiltros()">
-          Ver todas las artesanías
-        </button>
-      </div>
-    </div>
-  </section>
-  
-  <!-- BENEFICIOS -->
-  <section class="beneficios-section">
-    <div class="container">
-      <h2 class="beneficios-title">¿Por qué elegir RaícesMX?</h2>
-      <div class="beneficios-grid">
-        <div class="beneficio-card">
-          <div class="beneficio-icon">
-            <i class="material-icons">palette</i>
-          </div>
-          <h3>Hecho en México</h3>
-          <p>Artesanía 100% auténtica</p>
-        </div>
-        <div class="beneficio-card">
-          <div class="beneficio-icon">
-            <i class="material-icons">local_shipping</i>
-          </div>
-          <h3>Envío Seguro</h3>
-          <p>A todo el país</p>
-        </div>
-        <div class="beneficio-card">
-          <div class="beneficio-icon">
-            <i class="material-icons">card_giftcard</i>
-          </div>
-          <h3>Regalos Únicos</h3>
-          <p>Empaque especial</p>
-        </div>
+        <button class="btn-limpiar" (click)="limpiarFiltros()">Ver todas las artesanías</button>
       </div>
     </div>
   </section>

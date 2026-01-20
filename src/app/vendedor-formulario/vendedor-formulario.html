@@ -1,0 +1,185 @@
+<div class="vendedor-registro-container">
+  <div class="vendedor-registro-card">
+    <!-- Header -->
+    <div class="card-header">
+      <h2>Registro de Vendedor</h2>
+      <p class="subtitle">Para garantizar confianza, necesitamos verificar tu identidad.</p>
+    </div>
+
+    <!-- Mensaje de estado (si ya tiene solicitud) -->
+    <div
+      class="alert"
+      *ngIf="hasExistingRequest"
+      [class.alert-success]="existingRequestStatus === 'approved'"
+      [class.alert-warning]="existingRequestStatus === 'pending'"
+      [class.alert-error]="existingRequestStatus === 'rejected'"
+    >
+      <span class="alert-icon" *ngIf="existingRequestStatus === 'pending'">⏳</span>
+      <span class="alert-icon" *ngIf="existingRequestStatus === 'approved'">✅</span>
+      <span class="alert-icon" *ngIf="existingRequestStatus === 'rejected'">❌</span>
+
+      <div class="alert-content">
+        <p *ngIf="existingRequestStatus === 'pending'">
+          <strong>Solicitud pendiente</strong><br />
+          Tu solicitud está siendo revisada por nuestro equipo.
+        </p>
+        <p *ngIf="existingRequestStatus === 'approved'">
+          <strong>¡Cuenta aprobada!</strong><br />
+          Ya puedes publicar productos.
+        </p>
+        <p *ngIf="existingRequestStatus === 'rejected'">
+          <strong>Solicitud rechazada</strong><br />
+          Puedes enviar una nueva solicitud con documentos válidos.
+        </p>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <form
+      (ngSubmit)="onSubmit()"
+      *ngIf="!hasExistingRequest || existingRequestStatus === 'rejected'"
+    >
+      <!-- CURP -->
+      <div class="form-group">
+        <label for="curp">
+          CURP *
+          <span class="label-hint">(Clave Única de Registro de Población)</span>
+        </label>
+        <input
+          type="text"
+          id="curp"
+          [(ngModel)]="curp"
+          name="curp"
+          maxlength="18"
+          placeholder="ABCD123456HEMLMN09"
+          class="form-input"
+          [class.invalid]="curp && curp.length !== 18"
+          required
+        />
+        <div class="input-hint">
+          <span *ngIf="curp.length > 0">{{ curp.length }}/18 caracteres</span>
+        </div>
+      </div>
+
+      <!-- INE Frontal -->
+      <div class="form-group">
+        <label>
+          INE Frontal *
+          <span class="label-hint">(Parte delantera)</span>
+        </label>
+        <p class="hint">Sube una imagen clara de la parte frontal de tu INE</p>
+
+        <!-- Upload box si no hay archivo -->
+        <label class="upload-box" *ngIf="!ineFront">
+          <input
+            type="file"
+            accept="image/*"
+            (change)="onFileSelect($event, 'front')"
+            #ineFrontInput
+          />
+          <div class="upload-content">
+            <span class="upload-icon">📄</span>
+            <span class="upload-text">Click para seleccionar imagen</span>
+            <span class="upload-hint">JPG, PNG o WebP (máx. 5MB)</span>
+          </div>
+        </label>
+
+        <!-- Preview si hay archivo -->
+        <div class="file-preview" *ngIf="ineFront">
+          <img [src]="ineFrontPreview" alt="INE Frontal" />
+          <div class="preview-overlay">
+            <button type="button" class="btn-remove" (click)="removeFile('front')">
+              🗑️ Eliminar
+            </button>
+          </div>
+          <p class="file-name">{{ ineFront.name }}</p>
+        </div>
+      </div>
+
+      <!-- INE Reverso (Opcional) -->
+      <div class="form-group">
+        <label>
+          INE Reverso
+          <span class="label-hint">(Opcional - Parte trasera)</span>
+        </label>
+        <p class="hint">Puedes subir también la parte trasera de tu INE</p>
+
+        <!-- Upload box si no hay archivo -->
+        <label class="upload-box" *ngIf="!ineBack">
+          <input
+            type="file"
+            accept="image/*"
+            (change)="onFileSelect($event, 'back')"
+            #ineBackInput
+          />
+          <div class="upload-content">
+            <span class="upload-icon">📄</span>
+            <span class="upload-text">Click para seleccionar imagen</span>
+            <span class="upload-hint">JPG, PNG o WebP (máx. 5MB)</span>
+          </div>
+        </label>
+
+        <!-- Preview si hay archivo -->
+        <div class="file-preview" *ngIf="ineBack">
+          <img [src]="ineBackPreview" alt="INE Reverso" />
+          <div class="preview-overlay">
+            <button type="button" class="btn-remove" (click)="removeFile('back')">
+              🗑️ Eliminar
+            </button>
+          </div>
+          <p class="file-name">{{ ineBack.name }}</p>
+        </div>
+      </div>
+
+      <!-- Información de seguridad -->
+      <div class="info-box">
+        <span class="info-icon">🔒</span>
+        <div class="info-content">
+          <strong>Tus datos están seguros</strong>
+          <p>
+            La información que proporciones será utilizada únicamente para verificar tu identidad y
+            se mantendrá de forma confidencial.
+          </p>
+        </div>
+      </div>
+
+      <!-- Mensajes de error/éxito -->
+      <div class="message" *ngIf="message" [class.success]="isSuccess" [class.error]="!isSuccess">
+        {{ message }}
+      </div>
+
+      <!-- Botón de envío -->
+      <button
+        type="submit"
+        class="btn-enviar"
+        [disabled]="isLoading || !isFormValid()"
+        [class.loading]="isLoading"
+      >
+        <span *ngIf="!isLoading">
+          <span class="btn-icon">📤</span>
+          Enviar solicitud
+        </span>
+        <span *ngIf="isLoading">
+          <span class="spinner"></span>
+          Enviando...
+        </span>
+      </button>
+
+      <!-- Links -->
+      <div class="form-footer">
+        <a routerLink="/marketplace" class="link-volver">← Volver al marketplace</a>
+      </div>
+    </form>
+
+    <!-- Si ya es vendedor aprobado -->
+    <div class="approved-state" *ngIf="hasExistingRequest && existingRequestStatus === 'approved'">
+      <div class="success-icon">✓</div>
+      <h3>¡Ya eres vendedor verificado!</h3>
+      <p>Ahora puedes publicar tus productos en RaícesMX</p>
+      <div class="approved-actions">
+        <button class="btn-primary" routerLink="/publicar-producto">📦 Publicar Producto</button>
+        <button class="btn-secondary" routerLink="/perfil">👤 Ir a Mi Perfil</button>
+      </div>
+    </div>
+  </div>
+</div>
