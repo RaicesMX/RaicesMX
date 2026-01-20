@@ -3,28 +3,31 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { HeaderComponent } from '../shared/components/header/header';
 
 @Component({
   selector: 'app-view-product',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './view-product.html',
   styleUrl: './view-product.scss'
 })
 export class ViewProductComponent implements OnDestroy {
-  
+
   id!: number;
   cantidad: number = 1;
   calificacionUsuario: number = 0;
   hoverCalificacion: number = 0;
-  imagenActiva: number = 0;
-  itemsCarrito: number = 3;
+
+  // Galería mejorada
+  indiceActual: number = 0;
+  imagenPrincipal: string = '';
   imagenZoomed: boolean = false;
+
+  itemsCarrito: number = 3;
   imagenesCargadas: boolean = false;
   private isBrowser: boolean;
 
-  // Producto por defecto (se actualizará según el ID)
+  // Producto por defecto
   producto: any = {
     id: 1,
     nombre: "Jarrón de Talavera Poblana",
@@ -62,40 +65,15 @@ export class ViewProductComponent implements OnDestroy {
   };
 
   productosRelacionados = [
-    {
-      id: 2,
-      nombre: "Blusa Bordada Tradicional",
-      precio: 450,
-      imagen: "assets/images/Blusa_Bordada.jpg"
-    },
-    {
-      id: 3,
-      nombre: "Máscara Huichol Artesanal",
-      precio: 620,
-      imagen: "assets/images/Máscara_Huichol.jpg"
-    },
-    {
-      id: 4,
-      nombre: "Alebrije Mexicano",
-      precio: 720,
-      imagen: "assets/images/Alebrigue_Artesanal.jpg"
-    },
-    {
-      id: 5,
-      nombre: "Jaguar Cerámico",
-      precio: 380,
-      imagen: "assets/images/Jaguar_ceramico.jpg"
-    },
-    {
-      id: 6,
-      nombre: "Prendas Textiles",
-      precio: 290,
-      imagen: "assets/images/Prendas_textiles.jpg"
-    }
+    { id: 2, nombre: "Blusa Bordada Tradicional", precio: 450, imagen: "assets/images/Blusa_Bordada.jpg" },
+    { id: 3, nombre: "Máscara Huichol Artesanal", precio: 620, imagen: "assets/images/Máscara_Huichol.jpg" },
+    { id: 4, nombre: "Alebrije Mexicano", precio: 720, imagen: "assets/images/Alebrigue_Artesanal.jpg" },
+    { id: 5, nombre: "Jaguar Cerámico", precio: 380, imagen: "assets/images/Jaguar_ceramico.jpg" },
+    { id: 6, nombre: "Prendas Textiles", precio: 290, imagen: "assets/images/Prendas_textiles.jpg" }
   ];
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -105,9 +83,12 @@ export class ViewProductComponent implements OnDestroy {
   ngOnInit() {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
     console.log('ID del producto:', this.id);
-    
-    // Cargar producto según ID
+
     this.cargarProductoPorId(this.id);
+
+    // Inicializar imagen principal
+    this.imagenPrincipal = this.producto.imagen;
+    this.indiceActual = 0;
   }
 
   // 🟦 Cargar producto por ID - CORREGIDO
@@ -315,128 +296,109 @@ export class ViewProductComponent implements OnDestroy {
     const productoEncontrado = productos[id];
     if (productoEncontrado) {
       this.producto = productoEncontrado;
+      // Reiniciar imagen principal al cambiar de producto
+      this.imagenPrincipal = this.producto.imagen;
+      this.indiceActual = 0;
     } else {
       console.log('Producto no encontrado, usando producto default');
     }
   }
 
-  // 🟦 Sistema de calificación
+  // === GALERÍA MEJORADA ===
+  cambiarImagenDirecta(indice: number) {
+    this.indiceActual = indice;
+    this.imagenPrincipal = this.producto.imagenes[indice];
+  }
+
+  anteriorImagen(event: Event) {
+    event.stopPropagation();
+    const total = this.producto.imagenes.length;
+    this.indiceActual = (this.indiceActual - 1 + total) % total;
+    this.imagenPrincipal = this.producto.imagenes[this.indiceActual];
+  }
+
+  siguienteImagen(event: Event) {
+    event.stopPropagation();
+    const total = this.producto.imagenes.length;
+    this.indiceActual = (this.indiceActual + 1) % total;
+    this.imagenPrincipal = this.producto.imagenes[this.indiceActual];
+  }
+
+  abrirZoom() {
+    this.imagenZoomed = true;
+    if (this.isBrowser) {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  cerrarZoom(event?: Event) {
+    if (event) event.stopPropagation();
+    this.imagenZoomed = false;
+    if (this.isBrowser) {
+      document.body.style.overflow = '';
+    }
+  }
+
+  // === OTROS MÉTODOS ===
   calificar(rating: number) {
     this.calificacionUsuario = rating;
     console.log(`Calificación dada: ${rating} estrellas`);
   }
 
-  // 🟦 Cambiar imagen de la galería (MEJORADO)
-  cambiarImagen(index: number) {
-    // Si está en zoom, primero cerrar el zoom suavemente
-    if (this.imagenZoomed) {
-      this.imagenZoomed = false;
-      if (this.isBrowser) {
-        document.body.style.overflow = '';
-      }
-      
-      // Pequeño delay para que la transición sea suave
-      setTimeout(() => {
-        this.imagenActiva = index;
-        this.producto.imagen = this.producto.imagenes[index];
-      }, 300);
-    } else {
-      // Cambio normal sin zoom
-      this.imagenActiva = index;
-      this.producto.imagen = this.producto.imagenes[index];
-    }
-  }
-
-  // 🟦 Botón de compartir
   compartir() {
     if (navigator.share) {
       navigator.share({
         title: this.producto.nombre,
         text: this.producto.descripcion,
         url: window.location.href,
-      })
-      .then(() => console.log('Compartido exitosamente'))
-      .catch((error) => console.log('Error al compartir', error));
+      }).then(() => console.log('Compartido exitosamente'))
+        .catch((error) => console.log('Error al compartir', error));
     } else {
       alert("Compartido en redes sociales (simulación)");
     }
   }
 
-  // 🟦 Aumentar cantidad
   aumentar() {
     if (this.cantidad < this.producto.stock) this.cantidad++;
   }
 
-  // 🟦 Disminuir cantidad
   disminuir() {
     if (this.cantidad > 1) this.cantidad--;
   }
 
-  // 🟦 Comprar ahora
   comprarAhora() {
     alert(`Redirigiendo a checkout con ${this.cantidad} unidades de ${this.producto.nombre}`);
   }
 
-  // 🟦 Agregar al carrito
   agregarAlCarrito() {
     this.itemsCarrito += this.cantidad;
     alert(`Agregado al carrito: ${this.cantidad} x ${this.producto.nombre}`);
   }
 
-  // 🟦 Ver producto relacionado
   verProducto(id: number) {
     this.router.navigate(['/producto', id]);
   }
 
-  // === MÉTODOS DE ZOOM CORREGIDOS ===
-
-  // 🟦 Alternar zoom de la imagen
-  alternarZoom() {
-    this.imagenZoomed = !this.imagenZoomed;
-    
-    if (this.isBrowser) {
-        if (this.imagenZoomed) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-    }
-  }
-
-  // 🟦 Cerrar zoom (con prevención de evento)
-  cerrarZoom(event: Event) {
-    event.stopPropagation(); // IMPORTANTE: prevenir propagación
-    this.imagenZoomed = false;
-    if (this.isBrowser) {
-        document.body.style.overflow = '';
-    }
-  }
-
-  // 🟦 Verificar cuando las imágenes se cargan
   onImageLoad() {
     this.imagenesCargadas = true;
   }
 
-  // 🟦 Cerrar zoom con tecla ESC (CORREGIDO)
   @HostListener('document:keydown', ['$event'])
   handleKeydown(event: KeyboardEvent) {
     if (this.isBrowser && event.key === 'Escape' && this.imagenZoomed) {
-      this.imagenZoomed = false;
-      document.body.style.overflow = '';
+      this.cerrarZoom();
     }
   }
 
-  // 🟦 Cleanup al destruir el componente (CORREGIDO)
   ngOnDestroy() {
     if (this.isBrowser) {
       document.body.style.overflow = '';
     }
   }
 
-  // 🟦 Verificar página activa para resaltar en el header
   esPaginaActiva(ruta: string): boolean {
     if (typeof window !== 'undefined') {
-        return window.location.pathname === ruta;
+      return window.location.pathname === ruta;
     }
     return false;
   }

@@ -820,4 +820,36 @@
   }
 }
 
+/* Añade o actualiza estas reglas para los íconos nuevos */
+.categoria-stats .material-icons {
+  font-size: 28px;
+  margin-bottom: 6px;
+  display: block;
+}
 
+.info-icon .material-icons {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.no-resultados-icon .material-icons {
+  font-size: 64px;
+  color: #999;
+}
+
+/* Botón explorar categoría - más consistente con Marketplace */
+.btn-explorar-categoria {
+  background: transparent;
+  color: #7A1A2C;
+  border: 2px solid #7A1A2C;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #7A1A2C;
+    color: white;
+
+    .material-icons {
+      transform: translateX(4px);
+    }
+  }
+}

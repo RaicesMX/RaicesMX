@@ -19,10 +19,10 @@
           </p>
           
           <div class="hero-cta">
-            <button class="btn-explorar" (click)="scrollToProductos()">
-              <i class="material-icons btn-icon">card_giftcard</i>
-              <span class="btn-text">Explorar Colección</span>
-            </button>
+              <button class="btn-explorar btn-glow-effect" (click)="scrollToProductos()">
+                <i class="material-icons btn-icon">card_giftcard</i>
+                <span class="btn-text">Explorar Colección</span>
+              </button>
           </div>
         </div>
         
@@ -101,7 +101,7 @@
         </div>
         
         <button 
-          class="btn-limpiar" 
+          class="btn-limpiar btn-glow-effect btn-glow-subtle"
           (click)="limpiarFiltros()"
           *ngIf="filtroActivo"
         >
@@ -160,14 +160,14 @@
             
             <div class="product-actions">
               <button 
-                class="btn-add-cart"
+                class="btn-add-cart btn-glow-effect"
                 (click)="agregarAlCarrito(producto)"
               >
                 <i class="material-icons btn-icon">shopping_cart</i>
                 Agregar
               </button>
               
-              <a class="btn-details" [routerLink]="['/producto', producto.id]">
+              <a class="btn-details btn-glow-effect btn-glow-subtle" [routerLink]="['/producto', producto.id]">
                 <i class="material-icons">visibility</i>
                 Ver detalles
               </a>
@@ -180,8 +180,9 @@
         <div class="no-results-icon">
           <i class="material-icons">sentiment_dissatisfied</i>
         </div>
-        <h3>No hay productos con ese filtro</h3>
-        <button class="btn-limpiar" (click)="limpiarFiltros()">
+          <h3>No hay productos con ese filtro</h3>
+        <button class="btn-limpiar btn-glow-effect btn-glow-subtle" (click)="limpiarFiltros()">
+          <i class="material-icons btn-icon">refresh</i>
           Ver todas las artesanías
         </button>
       </div>
