@@ -1,144 +1,336 @@
 <div class="carrito-container">
-<!-- Contenido principal del carrito -->
-<main class="carrito-main">
-    <div class="carrito-content">
-<!-- Header del carrito -->
-    <section class="carrito-header">
-        <div class="header-info">
-            <h1>Tu Carrito de Compras 🛒</h1>
-                <p>Revisa tus productos artesanales antes de finalizar tu compra</p>
-        </div>
-        <div class="carrito-stats">
-            <div class="stat">
-                <span class="numero">{{ obtenerTotalItems() }}</span>
-                <span class="label">Productos</span>
-        </div>
-            <div class="stat">
-                <span class="numero">{{ carrito.length }}</span>
-                <span class="label">Artículos</span>
+  <!-- HERO SECTION COMPLETAMENTE NUEVO -->
+  <section class="carrito-hero">
+    <div class="hero-pattern"></div>
+    
+    <div class="hero-checkout-flow">
+      <!-- Pasos del proceso -->
+      <div class="checkout-steps">
+        <div class="step active">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <div class="step-icon">
+              <i class="material-icons">shopping_cart</i>
             </div>
+            <span class="step-label">Carrito</span>
+          </div>
         </div>
-    </section>
-
-    <div class="carrito-layout">
-        <!-- Lista de productos -->
-        <div class="productos-section">
-            <div class="section-header">
-            <h2>Productos en el carrito</h2>
-            <button class="btn-vaciar" (click)="vaciarCarrito()" *ngIf="carrito.length > 0">
-                🗑️ Vaciar Carrito
+        
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <div class="step-icon">
+              <i class="material-icons">person</i>
+            </div>
+            <span class="step-label">Datos</span>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <div class="step-icon">
+              <i class="material-icons">payment</i>
+            </div>
+            <span class="step-label">Pago</span>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <div class="step-icon">
+              <i class="material-icons">check_circle</i>
+            </div>
+            <span class="step-label">Confirmación</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Información del carrito -->
+      <div class="checkout-summary">
+        <div class="summary-card">
+          <div class="summary-header">
+            <h1 class="summary-title">
+              <i class="material-icons">shopping_bag</i>
+              Resumen de tu compra
+            </h1>
+          </div>
+          
+          <div class="summary-details">
+            <div class="detail-item">
+              <div class="detail-label">
+                <i class="material-icons">inventory_2</i>
+                Productos en carrito
+              </div>
+              <div class="detail-value highlight">
+                {{ carrito.length }} artículos
+              </div>
+            </div>
+            
+            <div class="detail-item">
+              <div class="detail-label">
+                <i class="material-icons">tag</i>
+                Items totales
+              </div>
+              <div class="detail-value">
+                {{ obtenerTotalItems() }} unidades
+              </div>
+            </div>
+            
+            <div class="detail-item">
+              <div class="detail-label">
+                <i class="material-icons">local_shipping</i>
+                Envío estimado
+              </div>
+              <div class="detail-value free" *ngIf="calcularEnvio() === 0">
+                <i class="material-icons">celebration</i>
+                ¡Gratis!
+              </div>
+              <div class="detail-value" *ngIf="calcularEnvio() > 0">
+                {{ calcularEnvio() | currency:'MXN':'symbol' }}
+              </div>
+            </div>
+            
+            <div class="detail-item total">
+              <div class="detail-label">
+                <i class="material-icons">receipt</i>
+                Total a pagar
+              </div>
+              <div class="detail-value total-amount">
+                {{ calcularTotal() | currency:'MXN':'symbol' }}
+              </div>
+            </div>
+          </div>
+          
+          <div class="summary-actions">
+            <button class="btn-quick-checkout btn-glow-effect" 
+                    (click)="procederPago()"
+                    [disabled]="carrito.length === 0">
+              <i class="material-icons">shopping_cart_checkout</i>
+              Pago Rápido
             </button>
+            <button class="btn-continue btn-glow-subtle" routerLink="/marketplace">
+              <i class="material-icons">add</i>
+              Agregar Más
+            </button>
+          </div>
         </div>
-
-<!-- Carrito vacío -->
-          <div *ngIf="carrito.length === 0" class="carrito-vacio">
-            <div class="vacio-content">
-                <div class="vacio-icon">🛒</div>
-                <h3>Tu carrito está vacío</h3>
-                <p>Agrega algunos productos artesanales para comenzar</p>
-                <button class="btn-primary" routerLink="/marketplace">
-                    Explorar Productos
-                </button>
-            </div>
-        </div>
-
-<!-- Lista de productos -->
-          <div *ngIf="carrito.length > 0" class="productos-list">
+      </div>
+    </div>
+    
+    <!-- Indicador de progreso -->
+    <div class="progress-indicator">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width]="'25%'"></div>
+      </div>
+      <div class="progress-text">Paso 1 de 4: Revisión del carrito</div>
+    </div>
+  </section>
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="carrito-content" *ngIf="carrito.length > 0">
+    <div class="container">
+      <div class="carrito-layout">
+        <!-- COLUMNA IZQUIERDA: PRODUCTOS -->
+        <div class="productos-columna">
+          <div class="section-header">
+            <h2 class="section-title">Productos en tu carrito</h2>
+            <button class="btn-vaciar btn-glow-subtle" (click)="vaciarCarrito()">
+              <i class="material-icons">delete_sweep</i>
+              <span class="btn-text">Vaciar Carrito</span>
+            </button>
+          </div>
+          
+          <div class="productos-list">
             <div *ngFor="let item of carrito; let i = index" class="producto-card">
-                <div class="producto-imagen">
-                    <img [src]="item.imagen" [alt]="item.nombre">
+              <!-- Imagen -->
+              <div class="producto-imagen">
+                <img [src]="item.imagen" [alt]="item.nombre">
+                <div class="producto-badges">
+                  <span class="badge badge-categoria">{{ item.categoria }}</span>
                 </div>
-            <div class="producto-info">
-                <h3>{{ item.nombre }}</h3>
+              </div>
+              
+              <!-- Información -->
+              <div class="producto-info">
+                <div class="producto-header">
+                  <h3 class="producto-nombre">{{ item.nombre }}</h3>
+                  <button class="btn-eliminar btn-glow-subtle" (click)="eliminarProducto(i)">
+                    <i class="material-icons">close</i>
+                  </button>
+                </div>
+                
                 <p class="producto-desc">{{ item.descripcion }}</p>
-                <div class="producto-meta">
-                    <span class="categoria">{{ item.categoria }}</span>
-                    <span class="artesano">Por: {{ item.artesano }}</span>
+                
+                <div class="producto-artesano">
+                  <i class="material-icons">palette</i>
+                  <span class="artesano-nombre">{{ item.artesano }}</span>
                 </div>
-            </div>
-
-            <div class="producto-precio">
-                <span class="precio">${{ item.precio * item.cantidad | number:'1.2-2' }}</span>
-                <span class="precio-unitario">${{ item.precio | number:'1.2-2' }} c/u</span>
-            </div>
-
-            <div class="producto-cantidad">
+                
+                <!-- Precio unitario -->
+                <div class="producto-precio-unitario">
+                  <span class="precio-label">Precio unitario:</span>
+                  <span class="precio-valor">{{ item.precio | currency:'MXN':'symbol' }}</span>
+                </div>
+              </div>
+              
+              <!-- Controles de cantidad -->
+              <div class="producto-cantidad">
                 <div class="cantidad-controls">
-                    <button class="btn-cantidad" (click)="disminuirCantidad(i)" [disabled]="item.cantidad <= 1">
-                    −
-                </button>
-                    <span class="cantidad">{{ item.cantidad }}</span>
-                    <button class="btn-cantidad" (click)="aumentarCantidad(i)">
-                        +
-                </button>
+                  <button class="btn-cantidad btn-glow-subtle" 
+                          (click)="disminuirCantidad(i)" 
+                          [disabled]="item.cantidad <= 1">
+                    <i class="material-icons">remove</i>
+                  </button>
+                  
+                  <div class="cantidad-display">
+                    <span class="cantidad-numero">{{ item.cantidad }}</span>
+                    <span class="cantidad-texto">unidades</span>
+                  </div>
+                  
+                  <button class="btn-cantidad btn-glow-subtle" (click)="aumentarCantidad(i)">
+                    <i class="material-icons">add</i>
+                  </button>
                 </div>
-                <button class="btn-eliminar" (click)="eliminarProducto(i)">
-                    🗑️
-                </button>
+                
+                <!-- Subtotal del producto -->
+                <div class="producto-subtotal">
+                  <span class="subtotal-label">Subtotal:</span>
+                  <span class="subtotal-valor">{{ item.precio * item.cantidad | currency:'MXN':'symbol' }}</span>
+                </div>
+              </div>
             </div>
-            </div>
+          </div>
         </div>
-</div>
-
-        <!-- Resumen del pedido -->
-        <div *ngIf="carrito.length > 0" class="resumen-section">
-            <div class="resumen-card">
-                <h3>Resumen del Pedido</h3>
+        
+        <!-- COLUMNA DERECHA: RESUMEN -->
+        <div class="resumen-columna">
+          <div class="resumen-card">
+            <h3 class="resumen-title">Resumen del Pedido</h3>
             
-            <div class="resumen-linea">
-                <span>Subtotal:</span>
-                <span>${{ calcularSubtotal() | number:'1.2-2' }}</span>
+            <div class="resumen-detalles">
+              <div class="detalle-linea">
+                <span class="detalle-label">Subtotal</span>
+                <span class="detalle-valor">{{ calcularSubtotal() | currency:'MXN':'symbol' }}</span>
+              </div>
+              
+              <div class="detalle-linea">
+                <span class="detalle-label">Envío</span>
+                <span class="detalle-valor envio-gratis" *ngIf="calcularEnvio() === 0">
+                  <i class="material-icons">local_shipping</i> ¡Gratis!
+                </span>
+                <span class="detalle-valor" *ngIf="calcularEnvio() > 0">
+                  {{ calcularEnvio() | currency:'MXN':'symbol' }}
+                </span>
+              </div>
+              
+              <div class="detalle-linea descuento" *ngIf="calcularDescuento() > 0">
+                <span class="detalle-label">Descuento</span>
+                <span class="detalle-valor">-{{ calcularDescuento() | currency:'MXN':'symbol' }}</span>
+              </div>
+              
+              <div class="detalle-linea cupon" *ngIf="cuponAplicado">
+                <span class="detalle-label">Cupón aplicado</span>
+                <span class="detalle-valor cupon-texto">{{ codigoCupon }}</span>
+              </div>
             </div>
             
-            <div class="resumen-linea">
-                <span>Envío:</span>
-                <span>{{ calcularEnvio() === 0 ? 'Gratis' : '$' + (calcularEnvio() | number:'1.2-2') }}</span>
-            </div>
-            
-            <div class="resumen-linea descuento">
-                <span>Descuento:</span>
-                <span>-${{ calcularDescuento() | number:'1.2-2' }}</span>
-            </div>
-            
-            <div class="resumen-total">
-                <span>Total:</span>
-                <span>${{ calcularTotal() | number:'1.2-2' }}</span>
-            </div>
-
-            <div class="resumen-actions">
-                <button class="btn-comprar" (click)="procederPago()">
-                🛍️ Proceder al Pago
-            </button>
-            <button class="btn-seguir" routerLink="/marketplace">
-                ← Seguir Comprando
+            <!-- Cupón -->
+            <div class="cupon-section" *ngIf="!cuponAplicado">
+              <div class="cupon-input">
+                <input type="text" 
+                       placeholder="Ingresa código de cupón" 
+                       [(ngModel)]="codigoCupon"
+                       class="form-input">
+                <button class="btn-cupon btn-glow-effect" (click)="aplicarCupon()">
+                  <i class="material-icons">local_offer</i>
+                  Aplicar
                 </button>
+              </div>
             </div>
-
+            
+            <!-- Total -->
+            <div class="resumen-total">
+              <div class="total-label">Total a pagar</div>
+              <div class="total-valor">{{ calcularTotal() | currency:'MXN':'symbol' }}</div>
+              <div class="total-nota">IVA incluido</div>
+            </div>
+            
+            <!-- Acciones -->
+            <div class="resumen-actions">
+              <button class="btn-comprar btn-glow-effect" (click)="procederPago()">
+                <i class="material-icons">shopping_cart_checkout</i>
+                <span class="btn-text">Proceder al Pago</span>
+              </button>
+              
+              <button class="btn-seguir btn-glow-subtle" routerLink="/marketplace">
+                <i class="material-icons">arrow_back</i>
+                <span class="btn-text">Seguir Comprando</span>
+              </button>
+            </div>
+            
             <!-- Métodos de pago -->
             <div class="metodos-pago">
-                <h4>Métodos de pago aceptados:</h4>
-                <div class="pago-icons">
-                    <span>💳</span>
-                    <span>📱</span>
-                    <span>🏦</span>
-                    <span>💰</span>
+              <h4 class="metodos-title">
+                <i class="material-icons">payment</i>
+                Métodos de pago aceptados
+              </h4>
+              <div class="pago-icons">
+                <div class="pago-icon">
+                  <i class="material-icons">credit_card</i>
+                  <span>Tarjetas</span>
                 </div>
+                <div class="pago-icon">
+                  <i class="material-icons">smartphone</i>
+                  <span>Móvil</span>
+                </div>
+                <div class="pago-icon">
+                  <i class="material-icons">account_balance</i>
+                  <span>Transferencia</span>
+                </div>
+                <div class="pago-icon">
+                  <i class="material-icons">payments</i>
+                  <span>Efectivo</span>
+                </div>
+              </div>
             </div>
+          </div>
+          
+          <!-- Información adicional -->
+          <div class="info-card">
+            <div class="info-icon">
+              <i class="material-icons">verified</i>
+            </div>
+            <div class="info-content">
+              <h4>Compra 100% Segura</h4>
+              <p>Tus datos están protegidos con encriptación SSL</p>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Cupón de descuento -->
-        <div class="cupon-card">
-            <h4>¿Tienes un cupón?</h4>
-            <div class="cupon-input">
-                <input type="text" placeholder="Ingresa código" [(ngModel)]="codigoCupon" class="form-input">
-                <button class="btn-cupon" (click)="aplicarCupon()">Aplicar</button>
-            </div>
-            <div *ngIf="cuponAplicado" class="cupon-success">
-                ✅ Cupón aplicado correctamente
-            </div>
-                </div>
-                </div>
-            </div>
+  <!-- CARRITO VACÍO -->
+  <div class="carrito-vacio" *ngIf="carrito.length === 0">
+    <div class="container">
+      <div class="vacio-content">
+        <div class="vacio-icon">
+          <i class="material-icons">shopping_cart</i>
         </div>
-    </main>
+        <h3 class="vacio-title">Tu carrito está vacío</h3>
+        <p class="vacio-desc">Agrega algunos productos artesanales para comenzar</p>
+        <div class="vacio-actions">
+          <button class="btn-explorar btn-glow-effect" routerLink="/marketplace">
+            <i class="material-icons">explore</i>
+            <span class="btn-text">Explorar Productos</span>
+          </button>
+          <button class="btn-ofertas btn-glow-subtle" routerLink="/ofertas">
+            <i class="material-icons">local_offer</i>
+            <span class="btn-text">Ver Ofertas</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

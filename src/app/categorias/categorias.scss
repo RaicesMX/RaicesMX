@@ -3,7 +3,6 @@
 @use '../../styles/variables' as vars;
 @use '../../styles/animations' as anim;
 @use '../../styles/typography' as typo;
-@use 'sass:color';
 
 /* ===== ESTILOS BASE UNIFICADOS ===== */
 .categorias-container {
@@ -14,7 +13,7 @@
   min-height: 100vh;
 }
 
-/* ===== HERO SECTION UNIFICADA ===== */
+/* ===== HERO SECTION ===== */
 .categorias-hero {
   position: relative;
   min-height: 65vh;
@@ -22,7 +21,6 @@
   align-items: center;
   justify-content: center;
   padding: 5rem 2rem 3rem;
-  // ✨ USAR COLORES DIRECTOS COMO EN MARKETPLACE
   background: linear-gradient(135deg, #5a1321 0%, #7A1A2C 100%);
   overflow: hidden;
   
@@ -86,7 +84,7 @@
         }
         
         .text-mx {
-          background: #D4AF37; // ✨ DORADO DIRECTO
+          background: #D4AF37;
           color: colors.$color-gray-800;
           padding: 0.3rem 1rem;
           border-radius: 10px;
@@ -118,7 +116,7 @@
           display: block;
           font-size: 2.2rem;
           font-weight: typo.$font-weight-extrabold;
-          color: #D4AF37; // ✨ DORADO DIRECTO
+          color: #D4AF37;
           line-height: 1;
           margin-bottom: 0.3rem;
         }
@@ -134,7 +132,7 @@
     
     .hero-cta {
       .btn-explorar {
-        @include mixins.btn-secondary; // ✨ USAR MIXIN
+        @include mixins.btn-secondary;
         padding: 1rem 2.5rem;
         border-radius: vars.$border-radius-xl;
         font-size: 1.1rem;
@@ -154,59 +152,29 @@
     }
   }
   
-  .hero-decoration {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-  
-  .decoration-item {
-    font-size: 3.5rem;
-    opacity: 0.8;
-    
-    // ✨ ANIMACIÓN DIRECTA (sin @extend)
-    animation: float 4s ease-in-out infinite;
-    
-    // ✨ MANTENER LOS DELAYS
-    &:nth-child(1) { animation-delay: 0s; }
-    &:nth-child(2) { animation-delay: 1s; }
-    &:nth-child(3) { animation-delay: 2s; }
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-  
   .scroll-indicator {
     position: absolute;
     bottom: 25px;
     left: 50%;
     transform: translateX(-50%);
     cursor: pointer;
-  // CAMBIAR @extend por animación directa:
-    animation: bounce 2s infinite; // ✨ ANIMACIÓN DIRECTA
-  
-  .arrow {
-    width: 25px;
-    height: 25px;
-    border-right: 3px solid colors.$color-white;
-    border-bottom: 3px solid colors.$color-white;
-    transform: rotate(45deg);
+    animation: bounce 2s infinite;
+    
+    .arrow {
+      width: 25px;
+      height: 25px;
+      border-right: 3px solid colors.$color-white;
+      border-bottom: 3px solid colors.$color-white;
+      transform: rotate(45deg);
+    }
   }
 }
-}
 
-/* ===== FILTROS UNIFICADOS ===== */
+/* ===== FILTROS - CORREGIDOS PARA IGUALAR MARKETPLACE ===== */
 .filtros-section {
   background: colors.$color-white;
   padding: 2rem 1rem;
-  border-bottom: 1px solid rgba(#7A1A2C, 0.1); // ✨ COLOR DIRECTO
+  border-bottom: 1px solid rgba(139, 69, 19, 0.1);
   box-shadow: vars.$shadow-sm;
   
   .container {
@@ -220,82 +188,149 @@
     gap: vars.$spacing-sm;
     margin-bottom: 1.5rem;
     
-    .filtro-card {
-      background: rgba(#7A1A2C, 0.03); // ✨ COLOR DIRECTO
-      border: 2px solid rgba(#7A1A2C, 0.15); // ✨ COLOR DIRECTO
-      border-radius: vars.$border-radius-md;
-      padding: 1.2rem;
-      cursor: pointer;
-      transition: all vars.$transition-normal;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      
-      &:hover {
-        transform: translateY(-3px);
-        border-color: rgba(#7A1A2C, 0.4); // ✨ COLOR DIRECTO
-        box-shadow: vars.$shadow-sm;
-      }
-      
-      &.active {
-        // ✨ COLORES DIRECTOS COMO EN MARKETPLACE
-        background: #7A1A2C !important; // VINO
-        border-color: #7A1A2C !important;
-        color: #D4AF37 !important; // DORADO
-        
-        .filtro-icon {
-          background: #D4AF37 !important; // DORADO
-          color: #7A1A2C !important; // VINO
-        }
-        
-        h4, p {
-          color: #D4AF37 !important; // DORADO
-        }
-      }
+    @include mixins.respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include mixins.respond-to(xs) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .filtro-card {
+    background: rgba(139, 69, 19, 0.03);
+    border: 2px solid rgba(139, 69, 19, 0.15);
+    border-radius: vars.$border-radius-md;
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: all vars.$transition-normal;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+    &:hover {
+      transform: translateY(-3px);
+      border-color: rgba(139, 69, 19, 0.4);
+      box-shadow: 0 4px 12px rgba(139, 69, 19, 0.1);
+      background: rgba(139, 69, 19, 0.05);
+    }
+    
+    /* FILTRO ACTIVO - COLORES COMO MARKETPLACE */
+    &.active {
+      background: #7A1A2C;
+      border-color: #7A1A2C;
       
       .filtro-icon {
-        width: 48px;
-        height: 48px;
-        background: rgba(#7A1A2C, 0.1); // ✨ COLOR DIRECTO
-        border-radius: vars.$border-radius-sm;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.6rem;
-        flex-shrink: 0;
+        background: #D4AF37;
+        
+        i.material-icons {
+          color: #7A1A2C;
+        }
       }
       
       .filtro-content {
         h4 {
-          font-size: 1.1rem;
-          color: #7A1A2C; // ✨ COLOR DIRECTO
-          margin: 0 0 0.3rem 0;
-          font-weight: typo.$font-weight-bold;
+          color: #D4AF37;
+          font-weight: 700;
         }
         
         p {
-          font-size: 0.85rem;
-          color: colors.$color-gray-600; // ✨ VARIABLE GLOBAL
-          margin: 0;
-          opacity: 0.8;
+          color: rgba(212, 175, 55, 0.9);
         }
       }
       
+      // Para el dropdown cuando está activo
       &.dropdown-filtro {
         .region-select {
-          width: 100%;
-          padding: 0.5rem;
-          border: none;
-          background: transparent;
-          font-size: 0.95rem;
-          font-weight: typo.$font-weight-semibold;
-          color: inherit;
-          cursor: pointer;
+          color: #D4AF37;
           
-          &:focus {
-            outline: none;
+          option {
+            color: #7A1A2C;
+            background: white;
           }
         }
+        
+        &::before {
+          color: #D4AF37;
+        }
+      }
+      
+      box-shadow: 
+        0 4px 12px rgba(122, 26, 44, 0.3),
+        0 0 0 1px rgba(212, 175, 55, 0.2);
+    }
+    
+    .filtro-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(139, 69, 19, 0.1);
+      border-radius: vars.$border-radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      
+      i.material-icons {
+        color: #8b4513;
+      }
+    }
+    
+    .filtro-content {
+      h4 {
+        font-size: 1.1rem;
+        color: #8b4513;
+        margin: 0 0 0.3rem 0;
+        font-weight: typo.$font-weight-bold;
+      }
+      
+      p {
+        font-size: 0.85rem;
+        color: rgba(26, 26, 26, 0.6);
+        margin: 0;
+      }
+    }
+    
+    /* DROPDOWN DE REGIÓN - ESTILIZADO COMO MARKETPLACE */
+    &.dropdown-filtro {
+      position: relative;
+      
+      .region-select {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 2.5rem;
+        border: none;
+        background: transparent;
+        font-size: 0.95rem;
+        font-weight: typo.$font-weight-semibold;
+        color: #8b4513;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238b4513'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 20px;
+        
+        &:focus {
+          outline: none;
+          background-color: rgba(212, 175, 55, 0.05);
+          border-radius: 8px;
+        }
+        
+        option {
+          background: white;
+          color: #333;
+        }
+      }
+      
+      &::before {
+        content: "📍";
+        position: absolute;
+        left: 4.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        z-index: 1;
+        opacity: 0.8;
       }
     }
   }
@@ -305,7 +340,7 @@
     justify-content: space-between;
     align-items: center;
     padding-top: 1.5rem;
-    border-top: 1px solid rgba(#7A1A2C, 0.1); // ✨ COLOR DIRECTO
+    border-top: 1px solid rgba(139, 69, 19, 0.1);
     flex-wrap: wrap;
     gap: 1rem;
     
@@ -316,13 +351,13 @@
       
       label {
         font-weight: typo.$font-weight-semibold;
-        color: #7A1A2C; // ✨ COLOR DIRECTO
+        color: #8b4513;
         font-size: typo.$font-size-sm;
       }
       
       .orden-select {
         padding: 0.6rem 1rem;
-        border: 2px solid rgba(#7A1A2C, 0.2); // ✨ COLOR DIRECTO
+        border: 2px solid rgba(139, 69, 19, 0.2);
         border-radius: vars.$border-radius-md;
         background: colors.$color-white;
         font-size: 0.9rem;
@@ -332,25 +367,32 @@
         
         &:focus {
           outline: none;
-          border-color: #7A1A2C; // ✨ COLOR DIRECTO
-          box-shadow: 0 0 0 3px rgba(122, 26, 44, 0.1);
+          border-color: #8b4513;
+          box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
         }
       }
     }
     
     .btn-filtros-avanzados,
     .btn-limpiar {
-      @include mixins.btn-outline; // ✨ USAR MIXIN
-      background: rgba(#7A1A2C, 0.08); // ✨ COLOR DIRECTO
-      color: #7A1A2C; // ✨ COLOR DIRECTO
-      border: 2px solid rgba(#7A1A2C, 0.2); // ✨ COLOR DIRECTO
+      @include mixins.btn-outline;
+      background: rgba(139, 69, 19, 0.08);
+      color: #8b4513;
+      border: 2px solid rgba(139, 69, 19, 0.2);
       padding: 0.6rem 1.2rem;
       border-radius: vars.$border-radius-md;
       font-weight: typo.$font-weight-semibold;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       
       &:hover {
-        background: rgba(#7A1A2C, 0.15); // ✨ COLOR DIRECTO
-        border-color: #7A1A2C; // ✨ COLOR DIRECTO
+        background: rgba(139, 69, 19, 0.15);
+        border-color: #8b4513;
+      }
+      
+      .btn-icon {
+        font-size: 1rem;
       }
     }
   }
@@ -358,15 +400,14 @@
   .filtros-avanzados {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid rgba(#7A1A2C, 0.1);
-    // CAMBIAR @extend por animación directa:
-    animation: slideUp 0.3s ease; // ✨ ANIMACIÓN DIRECTA
+    border-top: 1px solid rgba(139, 69, 19, 0.1);
+    animation: slideUp 0.3s ease;
     
     .filtro-avanzado {
       label {
         display: block;
         font-weight: typo.$font-weight-semibold;
-        color: #7A1A2C; // ✨ COLOR DIRECTO
+        color: #8b4513;
         margin-bottom: 0.75rem;
         font-size: typo.$font-size-sm;
       }
@@ -378,31 +419,38 @@
       flex-wrap: wrap;
       
       .rating-btn {
-        background: rgba(#7A1A2C, 0.05); // ✨ COLOR DIRECTO
-        border: 2px solid rgba(#7A1A2C, 0.2); // ✨ COLOR DIRECTO
+        background: rgba(139, 69, 19, 0.05);
+        border: 2px solid rgba(139, 69, 19, 0.2);
         padding: 0.6rem 1.2rem;
         border-radius: 20px;
         font-weight: typo.$font-weight-semibold;
         cursor: pointer;
         transition: all vars.$transition-normal;
-        color: #7A1A2C; // ✨ COLOR DIRECTO
+        color: #8b4513;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
         
         &:hover {
-          background: rgba(212, 175, 55, 0.1); // ✨ DORADO DIRECTO
-          border-color: rgba(212, 175, 55, 0.4); // ✨ DORADO DIRECTO
+          background: rgba(212, 175, 55, 0.1);
+          border-color: rgba(212, 175, 55, 0.4);
         }
         
         &.active {
-          background: #D4AF37 !important; // ✨ DORADO DIRECTO
-          color: colors.$color-gray-800 !important;
-          border-color: #D4AF37 !important; // ✨ DORADO DIRECTO
+          background: #D4AF37;
+          color: colors.$color-gray-800;
+          border-color: #D4AF37;
+        }
+        
+        .material-icons {
+          font-size: 1rem;
         }
       }
     }
   }
 }
 
-/* ===== GRID DE CATEGORÍAS UNIFICADO ===== */
+/* ===== GRID DE CATEGORÍAS ===== */
 .categorias-section {
   padding: 4rem 1rem;
   background: colors.$color-white;
@@ -418,7 +466,7 @@
     
     .section-title {
       font-size: typo.$font-size-3xl;
-      color: #7A1A2C; // ✨ COLOR DIRECTO
+      color: #7A1A2C;
       font-weight: typo.$font-weight-extrabold;
       margin-bottom: 1rem;
       position: relative;
@@ -432,7 +480,7 @@
         transform: translateX(-50%);
         width: 80px;
         height: 4px;
-        background: #D4AF37; // ✨ DORADO DIRECTO
+        background: #D4AF37;
         border-radius: 2px;
       }
     }
@@ -443,7 +491,7 @@
       
       .count-number {
         font-weight: typo.$font-weight-bold;
-        color: #7A1A2C; // ✨ COLOR DIRECTO
+        color: #7A1A2C;
       }
     }
   }
@@ -452,19 +500,18 @@
     text-align: center;
     padding: 4rem 1rem;
     
-  .spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid rgba(212, 175, 55, 0.2);
-    border-top-color: #D4AF37;
-    border-radius: 50%;
-    margin: 0 auto 1.5rem;
-    // CAMBIAR @extend por animación directa:
-    animation: spin 1s linear infinite; // ✨ ANIMACIÓN DIRECTA
-  }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(139, 69, 19, 0.2);
+      border-top-color: #8b4513;
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+      animation: spin 1s linear infinite;
+    }
     
     p {
-      color: colors.$color-gray-600;
+      color: rgba(26, 26, 26, 0.6);
       font-size: 1.1rem;
     }
   }
@@ -481,9 +528,9 @@
 }
 
 .categoria-card {
-  @include mixins.card-base; // ✨ USAR MIXIN
+  @include mixins.card-base;
   border-radius: 16px;
-  border: 1px solid rgba(212, 175, 55, 0.1); // ✨ DORADO DIRECTO
+  border: 1px solid rgba(139, 69, 19, 0.1);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -491,14 +538,19 @@
   &:hover {
     transform: translateY(-8px);
     box-shadow: vars.$shadow-lg;
-    border-color: rgba(212, 175, 55, 0.3); // ✨ DORADO DIRECTO
+    border-color: rgba(212, 175, 55, 0.3);
+    
+    .categoria-imagen img {
+      transform: scale(1.05);
+    }
     
     .btn-explorar-categoria {
-      background: #7A1A2C !important; // ✨ VINO DIRECTO
-      color: colors.$color-white !important;
+      background: #7A1A2C;
+      color: colors.$color-white;
       
-      .btn-arrow {
+      .material-icons {
         transform: translateX(4px);
+        color: colors.$color-white;
       }
     }
   }
@@ -533,18 +585,28 @@
         letter-spacing: 0.5px;
         
         &.badge-region {
-          background: rgba(122, 26, 44, 0.9); // ✨ VINO DIRECTO
+          background: rgba(122, 26, 44, 0.9);
           color: colors.$color-white;
         }
         
         &.badge-popular {
-          background: #D4AF37; // ✨ DORADO DIRECTO
+          background: #D4AF37;
           color: colors.$color-gray-800;
+          
+          .material-icons {
+            font-size: 0.9rem;
+            margin-right: 0.2rem;
+          }
         }
         
         &.badge-nuevo {
           background: #2ecc71;
           color: colors.$color-white;
+          
+          .material-icons {
+            font-size: 0.9rem;
+            margin-right: 0.2rem;
+          }
         }
       }
     }
@@ -559,13 +621,13 @@
     .categoria-nombre {
       font-size: 1.4rem;
       font-weight: typo.$font-weight-bold;
-      color: #7A1A2C; // ✨ COLOR DIRECTO
+      color: #7A1A2C;
       margin: 0 0 0.8rem 0;
       line-height: 1.3;
     }
     
     .categoria-descripcion {
-      color: colors.$color-gray-600;
+      color: rgba(26, 26, 26, 0.6);
       margin: 0 0 1.5rem 0;
       line-height: 1.5;
       font-size: 0.95rem;
@@ -573,33 +635,40 @@
     }
     
     .categoria-stats {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
       margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: rgba(139, 69, 19, 0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(212, 175, 55, 0.1);
       
       .stat {
         text-align: center;
-        flex: 1;
         
-        .stat-icon {
+        .material-icons {
+          font-size: 1.5rem;
+          margin-bottom: 0.5rem;
           display: block;
-          font-size: 1.3rem;
-          margin-bottom: 0.3rem;
+          color: #8b4513;
         }
         
         .stat-value {
           display: block;
+          font-size: 1.3rem;
           font-weight: typo.$font-weight-extrabold;
-          color: #D4AF37; // ✨ DORADO DIRECTO
-          font-size: 1.2rem;
+          color: #D4AF37;
           line-height: 1;
+          margin-bottom: 0.2rem;
         }
         
         .stat-label {
-          font-size: 0.75rem;
-          color: colors.$color-gray-600;
+          font-size: 0.7rem;
+          color: rgba(26, 26, 26, 0.6);
           text-transform: uppercase;
           letter-spacing: 0.5px;
+          font-weight: typo.$font-weight-semibold;
         }
       }
     }
@@ -615,38 +684,98 @@
         border-radius: 15px;
         font-size: 0.75rem;
         font-weight: typo.$font-weight-semibold;
-        color: darken(#7A1A2C, 10%); // ✨ VINO DIRECTO
-        background: rgba(122, 26, 44, 0.1); // ✨ VINO DIRECTO
+        color: darken(#7A1A2C, 10%);
+        background: rgba(122, 26, 44, 0.1);
         transition: all vars.$transition-normal;
         
         &:hover {
           transform: translateY(-2px);
-          background: rgba(122, 26, 44, 0.2); // ✨ VINO DIRECTO
+          background: rgba(122, 26, 44, 0.2);
         }
       }
     }
     
     .btn-explorar-categoria {
-      @include mixins.btn-outline; // ✨ USAR MIXIN
-      color: #7A1A2C !important; // ✨ COLOR DIRECTO
-      border: 2px solid #7A1A2C !important; // ✨ COLOR DIRECTO
+      @include mixins.btn-outline;
+      color: #7A1A2C;
+      border: 1px solid rgba(122, 26, 44, 0.2);
       padding: 0.8rem 1.5rem;
-      border-radius: 25px;
-      font-weight: typo.$font-weight-bold;
+      border-radius: vars.$border-radius-md;
+      font-weight: typo.$font-weight-semibold;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: auto;
+      transition: all vars.$transition-normal;
       
-      .btn-arrow {
-        transition: transform vars.$transition-normal;
+      .material-icons {
         font-size: 1.1rem;
+        transition: transform vars.$transition-normal;
+      }
+      
+      &:hover {
+        background: rgba(122, 26, 44, 0.05);
+        border-color: #7A1A2C;
       }
     }
   }
 }
 
-/* ===== SECCIÓN INFORMACIÓN UNIFICADA ===== */
+/* ===== NO RESULTADOS ===== */
+.no-resultados {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, rgba(122, 26, 44, 0.03), rgba(212, 175, 55, 0.03));
+  border-radius: 16px;
+  border: 1px solid rgba(139, 69, 19, 0.1);
+  margin: 2rem 0;
+  
+  &-icon {
+    margin-bottom: 1.5rem;
+    
+    .material-icons {
+      font-size: 4rem;
+      color: #8b4513;
+      opacity: 0.7;
+    }
+  }
+  
+  h3 {
+    color: #7A1A2C;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+  }
+  
+  p {
+    color: rgba(26, 26, 26, 0.6);
+    margin-bottom: 1.5rem;
+  }
+  
+  .btn-limpiar {
+    @include mixins.btn-outline;
+    background: rgba(139, 69, 19, 0.1);
+    color: #8b4513;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+    padding: 0.8rem 2rem;
+    border-radius: vars.$border-radius-md;
+    font-weight: typo.$font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 auto;
+    
+    &:hover {
+      background: rgba(139, 69, 19, 0.2);
+      border-color: #8b4513;
+    }
+    
+    .material-icons {
+      color: #8b4513;
+    }
+  }
+}
+
+/* ===== INFO SECTION ===== */
 .info-section {
   background: linear-gradient(135deg, colors.$color-gray-100, colors.$color-white);
   padding: 4rem 1rem;
@@ -660,7 +789,7 @@
   .info-title {
     text-align: center;
     font-size: typo.$font-size-3xl;
-    color: #7A1A2C; // ✨ COLOR DIRECTO
+    color: #7A1A2C;
     margin-bottom: 3rem;
     font-weight: typo.$font-weight-extrabold;
   }
@@ -671,32 +800,35 @@
     gap: vars.$spacing-lg;
     
     .info-card {
-      @include mixins.card-base; // ✨ USAR MIXIN
+      @include mixins.card-base;
       border-radius: 16px;
       padding: 2rem;
       text-align: center;
-      border: 1px solid rgba(212, 175, 55, 0.1); // ✨ DORADO DIRECTO
+      border: 1px solid rgba(139, 69, 19, 0.1);
       
       &:hover {
         transform: translateY(-5px);
         box-shadow: vars.$shadow-md;
-        border-color: rgba(212, 175, 55, 0.3); // ✨ DORADO DIRECTO
+        border-color: rgba(212, 175, 55, 0.3);
       }
       
       .info-icon {
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
+        .material-icons {
+          font-size: 3rem;
+          color: #8b4513;
+          margin-bottom: 1.5rem;
+        }
       }
       
       h3 {
-        color: #7A1A2C; // ✨ COLOR DIRECTO
+        color: #7A1A2C;
         margin-bottom: 0.8rem;
         font-size: 1.4rem;
         font-weight: typo.$font-weight-bold;
       }
       
       p {
-        color: colors.$color-gray-600;
+        color: rgba(26, 26, 26, 0.6);
         line-height: 1.5;
         font-size: 0.95rem;
         margin: 0;
@@ -705,7 +837,7 @@
   }
 }
 
-/* ===== RESPONSIVE UNIFICADO ===== */
+/* ===== RESPONSIVE ===== */
 @include mixins.respond-to(md) {
   .categorias-hero {
     padding: 4rem 1rem 2rem;
@@ -716,17 +848,13 @@
     }
     
     .hero-title {
-      font-size: 2.2rem !important;
+      font-size: 2.2rem;
     }
     
     .hero-stats {
       gap: 1.5rem;
       justify-content: center;
     }
-  }
-  
-  .filtros-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
   }
   
   .filtros-footer {
@@ -746,18 +874,14 @@
   }
   
   .categoria-stats {
-    flex-direction: column;
-    gap: 1rem !important;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
 
 @include mixins.respond-to(xs) {
-  .filtros-grid {
-    grid-template-columns: 1fr !important;
-  }
-  
   .hero-title {
-    font-size: 1.8rem !important;
+    font-size: 1.8rem;
     
     .hero-line-2 {
       flex-direction: column;
@@ -776,19 +900,8 @@
     }
   }
 }
-// ✨ AÑADIR AL FINAL DEL ARCHIVO (antes del responsive o al final)
 
-// Animación float (para los elementos decorativos)
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-// Animación bounce (ya debería existir, pero por si acaso)
+/* ===== ANIMACIONES ===== */
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% {
     transform: translateY(0) translateX(-50%);
@@ -801,14 +914,12 @@
   }
 }
 
-// Animación spin
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-// Animación slideUp (para filtros avanzados)
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -817,39 +928,5 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* Añade o actualiza estas reglas para los íconos nuevos */
-.categoria-stats .material-icons {
-  font-size: 28px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-.info-icon .material-icons {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.no-resultados-icon .material-icons {
-  font-size: 64px;
-  color: #999;
-}
-
-/* Botón explorar categoría - más consistente con Marketplace */
-.btn-explorar-categoria {
-  background: transparent;
-  color: #7A1A2C;
-  border: 2px solid #7A1A2C;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: #7A1A2C;
-    color: white;
-
-    .material-icons {
-      transform: translateX(4px);
-    }
   }
 }

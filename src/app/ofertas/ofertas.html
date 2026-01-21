@@ -34,18 +34,13 @@
           </div>
           
           <div class="hero-cta">
-            <button class="btn-explorar" (click)="scrollToOfertas()">
-              <span class="btn-icon">🔥</span>
+            <button class="btn-explorar btn-glow-effect" (click)="scrollToOfertas()">
+              <i class="material-icons btn-icon">local_offer</i>
               <span class="btn-text">Ver Ofertas</span>
             </button>
           </div>
         </div>
-        
-        <div class="hero-decoration">
-        <div class="decoration-item">🏺</div> <!-- Cerámica -->
-        <div class="decoration-item">🧵</div> <!-- Textil -->
-        <div class="decoration-item">🎨</div> <!-- Arte -->
-        </div>
+        <!-- ELIMINADA LA SECCIÓN HERO-DECORATION CON EMOJIS -->
       </div>
     </div>
     
@@ -62,7 +57,9 @@
         <div class="filtro-card" 
             [class.active]="filtroRapido === 'todas'"
             (click)="aplicarFiltroRapido('todas')">
-          <div class="filtro-icon">🎯</div>
+          <div class="filtro-icon">
+            <i class="material-icons">all_inclusive</i>
+          </div>
           <div class="filtro-content">
             <h4>Todas</h4>
             <p>Todas las ofertas</p>
@@ -72,7 +69,9 @@
         <div class="filtro-card" 
             [class.active]="filtroRapido === 'destacadas'"
             (click)="aplicarFiltroRapido('destacadas')">
-          <div class="filtro-icon">🏆</div> <!-- Trofeo en lugar de fuego -->
+          <div class="filtro-icon">
+            <i class="material-icons">whatshot</i>
+          </div>
           <div class="filtro-content">
             <h4>Destacadas</h4>
             <p>Ofertas especiales</p>
@@ -82,7 +81,9 @@
         <div class="filtro-card"
             [class.active]="filtroRapido === 'exclusivas'"
             (click)="aplicarFiltroRapido('exclusivas')">
-          <div class="filtro-icon">⭐</div>
+          <div class="filtro-icon">
+            <i class="material-icons">star</i>
+          </div>
           <div class="filtro-content">
             <h4>Exclusivas</h4>
             <p>Solo en RaícesMX</p>
@@ -91,7 +92,9 @@
         
         <!-- Dropdown de categorías -->
         <div class="filtro-card dropdown-filtro">
-          <div class="filtro-icon">🏺</div>
+          <div class="filtro-icon">
+            <i class="material-icons">category</i>
+          </div>
           <div class="filtro-content">
             <select [(ngModel)]="filtroCategoria" (change)="filtrarOfertas()" class="categoria-select">
               <option value="">Todas las categorías</option>
@@ -115,32 +118,32 @@
           </select>
         </div>
         
-        <button class="btn-filtros-avanzados" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+        <button class="btn-filtros-avanzados btn-glow-subtle" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
           {{ mostrarFiltrosAvanzados ? 'Menos filtros' : 'Más filtros' }}
         </button>
         
-        <button class="btn-limpiar" (click)="limpiarFiltros()" *ngIf="filtroActivo">
-          🗑️ Limpiar filtros
+        <button class="btn-limpiar btn-glow-effect btn-glow-subtle" (click)="limpiarFiltros()" *ngIf="filtroActivo">
+          <i class="material-icons btn-icon">refresh</i>
+          Limpiar filtros
         </button>
       </div>
       
       <!-- Filtros avanzados -->
       <div class="filtros-avanzados" *ngIf="mostrarFiltrosAvanzados">
         <div class="filtro-avanzado">
-          <div role="group" aria-labelledby="descuentoLabel">
-              <div id="descuentoLabel" class="sr-only">Descuento mínimo</div>
-              <div class="descuento-options">
-        <button *ngFor="let desc of ['10', '20', '30', '40', '50']"
-                class="descuento-btn"
-                [class.active]="filtroDescuento === desc"
-                (click)="filtroDescuento = filtroDescuento === desc ? '' : desc; filtrarOfertas()"
-                type="button">
-            {{ desc }}%+
-          </button>
+          <span>Descuento mínimo</span>
+          <div class="descuento-options">
+            <button *ngFor="let desc of ['10', '20', '30', '40', '50']"
+                    class="descuento-btn"
+                    [class.active]="filtroDescuento === desc"
+                    (click)="filtroDescuento = filtroDescuento === desc ? '' : desc; filtrarOfertas()">
+              {{ desc }}%+
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- SECCIÓN DE OFERTAS -->
   <section class="ofertas-section" id="ofertas" #ofertasSection>
@@ -178,10 +181,18 @@
             <!-- Badges -->
             <div class="oferta-badges">
               <span class="badge badge-descuento">-{{ oferta.descuento }}%</span>
-              <span class="badge badge-destacada" *ngIf="oferta.destacada">🔥 Destacada</span>
-              <span class="badge badge-exclusiva" *ngIf="oferta.exclusivo">⭐ Exclusiva</span>
-              <span class="badge badge-agotado" *ngIf="oferta.stock === 0">😔 Agotado</span>
-              <span class="badge badge-stock" *ngIf="oferta.stock <= 5 && oferta.stock > 0">⏳ Últimas {{ oferta.stock }}</span>
+              <span class="badge badge-destacada" *ngIf="oferta.destacada">
+                <i class="material-icons">whatshot</i> Destacada
+              </span>
+              <span class="badge badge-exclusiva" *ngIf="oferta.exclusivo">
+                <i class="material-icons">star</i> Exclusiva
+              </span>
+              <span class="badge badge-agotado" *ngIf="oferta.stock === 0">
+                <i class="material-icons">mood_bad</i> Agotado
+              </span>
+              <span class="badge badge-stock" *ngIf="oferta.stock <= 5 && oferta.stock > 0">
+                <i class="material-icons">schedule</i> Últimas {{ oferta.stock }}
+              </span>
             </div>
             
             <!-- Timer -->
@@ -190,7 +201,7 @@
                 <div class="progress-bar" [style.width]="calcularProgresoTiempo(oferta) + '%'"></div>
               </div>
               <div class="timer-text">
-                ⏰ {{ oferta.tiempoRestante.dias }}d {{ oferta.tiempoRestante.horas }}h
+                <i class="material-icons">schedule</i> {{ oferta.tiempoRestante.dias }}d {{ oferta.tiempoRestante.horas }}h
               </div>
             </div>
           </div>
@@ -203,7 +214,7 @@
             
             <!-- Artesano y región -->
             <div class="oferta-artesano">
-              <span class="artesano-icon">👨‍🎨</span>
+              <i class="material-icons">palette</i>
               <span class="artesano-nombre">{{ oferta.artesano }}</span>
               <span class="artesano-region">· {{ oferta.region }}</span>
             </div>
@@ -211,17 +222,17 @@
             <!-- Stats -->
             <div class="oferta-stats">
               <div class="stat">
-                <span class="stat-icon">⭐</span>
+                <i class="material-icons">star</i>
                 <span class="stat-value">{{ oferta.rating }}</span>
                 <span class="stat-label">Rating</span>
               </div>
               <div class="stat">
-                <span class="stat-icon">📦</span>
+                <i class="material-icons">inventory_2</i>
                 <span class="stat-value">{{ oferta.stock }}</span>
                 <span class="stat-label">Stock</span>
               </div>
               <div class="stat">
-                <span class="stat-icon">🛒</span>
+                <i class="material-icons">shopping_cart</i>
                 <span class="stat-value">{{ oferta.vendidos }}</span>
                 <span class="stat-label">Vendidos</span>
               </div>
@@ -236,28 +247,30 @@
                 {{ oferta.precio | currency:'MXN':'symbol' }}
               </div>
               <div class="ahorro">
-                Ahorras {{ calcularAhorro(oferta) | currency:'MXN':'symbol' }}
+                <i class="material-icons">savings</i> Ahorras {{ calcularAhorro(oferta) | currency:'MXN':'symbol' }}
               </div>
             </div>
             
             <!-- Acciones -->
             <div class="oferta-actions">
-              <button class="btn-agregar-carrito" 
+              <button class="btn-agregar-carrito btn-glow-effect" 
                       (click)="agregarAlCarrito(oferta)"
                       [disabled]="oferta.stock === 0">
-                <span *ngIf="oferta.stock > 0">🛒 Agregar</span>
-                <span *ngIf="oferta.stock === 0">😔 Agotado</span>
+                <i class="material-icons">shopping_cart</i>
+                <span *ngIf="oferta.stock > 0">Agregar</span>
+                <span *ngIf="oferta.stock === 0">Agotado</span>
               </button>
               
-              <button class="btn-comprar-ahora" 
+              <button class="btn-comprar-ahora btn-glow-effect" 
                       (click)="comprarAhora(oferta)"
                       [disabled]="oferta.stock === 0">
-                <span *ngIf="oferta.stock > 0">⚡ Comprar</span>
+                <i class="material-icons">shopping_bag</i>
+                <span *ngIf="oferta.stock > 0">Comprar</span>
                 <span *ngIf="oferta.stock === 0">No disponible</span>
               </button>
               
-              <button class="btn-favorito" (click)="toggleFavorito(oferta)">
-                {{ oferta.enFavoritos ? '❤️' : '🤍' }}
+              <button class="btn-favorito btn-glow-subtle" (click)="toggleFavorito(oferta)">
+                <i class="material-icons">{{ oferta.enFavoritos ? 'favorite' : 'favorite_border' }}</i>
               </button>
             </div>
           </div>
@@ -266,10 +279,13 @@
       
       <!-- Sin resultados -->
       <div class="no-resultados" *ngIf="!cargando && ofertasFiltradas.length === 0">
-        <div class="no-resultados-icon">🔍</div>
+        <div class="no-resultados-icon">
+          <i class="material-icons">search_off</i>
+        </div>
         <h3>No encontramos ofertas</h3>
         <p>Prueba con otros filtros o revisa más tarde</p>
-        <button class="btn-limpiar" (click)="limpiarFiltros()">
+        <button class="btn-limpiar btn-glow-effect btn-glow-subtle" (click)="limpiarFiltros()">
+          <i class="material-icons btn-icon">refresh</i>
           Ver todas las ofertas
         </button>
       </div>
@@ -282,17 +298,23 @@
       <h2 class="info-title">¿Cómo funcionan nuestras ofertas?</h2>
       <div class="info-grid">
         <div class="info-card">
-          <div class="info-icon">⏰</div>
+          <div class="info-icon">
+            <i class="material-icons">schedule</i>
+          </div>
           <h3>Tiempo Limitado</h3>
           <p>Cada oferta tiene una duración específica</p>
         </div>
         <div class="info-card">
-          <div class="info-icon">🏆</div>
+          <div class="info-icon">
+            <i class="material-icons">verified</i>
+          </div>
           <h3>Calidad Garantizada</h3>
           <p>Misma calidad que nuestros productos regulares</p>
         </div>
         <div class="info-card">
-          <div class="info-icon">📦</div>
+          <div class="info-icon">
+            <i class="material-icons">local_shipping</i>
+          </div>
           <h3>Envío Gratis</h3>
           <p>En ofertas especiales sobre $500 MXN</p>
         </div>
