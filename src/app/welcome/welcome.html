@@ -1,76 +1,129 @@
 <!-- src/app/welcome/welcome.component.html -->
-<div class="welcome-landing">
-  <!-- Fondo vino + textura -->
-  <div class="bg-landing"></div>
-  <div class="overlay-landing"></div>
-
-  <!-- Franjas Doradas Diagonales -->
-  <div class="franjas-doradas">
-    <div class="franja f1"></div>
-    <div class="franja f2"></div>
-    <div class="franja f3"></div>
-  </div>
-
-  <!-- Partículas -->
-  <div class="particulas">
-    <div class="particula large"></div>
-    <div class="particula medium"></div>
-    <div class="particula large"></div>
-    <div class="particula small"></div>
-    <div class="particula medium"></div>
-  </div>
-
-  <!-- HEADER FLOTANTE -->
+<div class="scroll-container">
+  <!-- HEADER FIJO -->
   <header class="header-landing">
     <div class="header-content">
       <div class="header-left">
         <span class="logo-text">RaícesMX</span>
         <span class="separator">•</span>
         <span class="header-desc">
-          Conecta con compradores en todo México: disfruta de ventas directas y apoyo a
-          emprendedores
+          Conecta con compradores en todo México
         </span>
       </div>
       <a routerLink="/login" class="btn-unete">
         <span>Únete ahora</span>
-        <div class="btn-ripple"></div>
       </a>
     </div>
   </header>
 
-  <!-- CONTENIDO CENTRAL (AHORA VISIBLE) -->
-  <main class="landing-content">
-    <!-- Logo y Título -->
-    <div class="logo-section">
-      <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="logo-landing" />
-      <h1 class="titulo-landing"><span class="vino">Raíces</span><span class="dorado">MX</span></h1>
-    </div>
+  <!-- SECCIÓN 1 - HERO (SIN botón) -->
+  <section class="hero-section" data-bgcolor="#9d2449" data-textcolor="#FFFFFF">
+    <div class="hero-bg"></div>
+    
+    <div class="hero-content">
+      <!-- Logo grande -->
+      <div class="logo-container" data-scroll data-scroll-speed="1.8">
+        <img src="assets/images/Logo_RMX.png" alt="RaícesMX" class="main-logo" />
+      </div>
 
-    <!-- Texto Descriptivo -->
-    <div class="text-section">
-      <p class="descripcion-landing">
-        Conecta con compradores en todo México. Únete a nuestra comunidad y transforma tu negocio
-        hoy mismo.
-      </p>
+      <!-- Texto a la derecha -->
+      <div class="hero-text-container">
+        <div class="hero-text" data-scroll data-scroll-speed="1.5">
+          <h1 class="main-title">
+            <span class="title-part-1">Raíces</span>
+            <span class="title-part-2">MX</span>
+          </h1>
+          
+          <div class="description-container">
+            <p class="hero-description">
+              Conecta con compradores en todo México.<br>
+              <span class="highlight-text">Únete a nuestra comunidad</span> y transforma<br>
+              tu negocio hoy mismo.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- Imágenes Horizontales -->
-    <div class="images-section">
-      <img src="assets/images/Jaguar_ceramico.jpg" alt="Jaguar cerámico" class="img-card img-1" />
-      <img src="assets/images/Prendas_textiles.jpg" alt="Prendas textiles" class="img-card img-2" />
-      <img
-        src="assets/images/Ceramica_Cubiertos.jpg"
-        alt="Cerámica y cubiertos"
-        class="img-card img-3"
-      />
+  <!-- SECCIÓN 2 - PRODUCTOS -->
+  <section class="product-section" data-bgcolor="#1a1a1a" data-textcolor="#FFFFFF">
+    <div class="section-content">
+      <div class="text-side" data-scroll data-scroll-speed="1.2">
+        <h2 class="section-title">
+          Arte Cerámico<br>Mexicano
+        </h2>
+        <p class="section-description">
+          Piezas únicas que combinan tradición<br>
+          y diseño contemporáneo.
+        </p>
+      </div>
+      <div class="image-side" data-scroll data-scroll-speed="0.8">
+        <img src="assets/images/Jaguar_ceramico.jpg" alt="Cerámica" class="section-img" />
+        <div class="img-overlay"></div>
+      </div>
     </div>
+  </section>
 
-    <!-- Botón Principal -->
-    <div class="button-section">
-      <a routerLink="/marketplace" class="btn-explorar">
-        <span>Explorar Ahora</span>
-        <div class="btn-ripple"></div>
-      </a>
+  <!-- SECCIÓN 3 - TEXTILES -->
+  <section class="textile-section" data-bgcolor="#DDC9A3" data-textcolor="#000000">
+    <div class="section-content reversed">
+      <div class="image-side" data-scroll data-scroll-speed="0.8">
+        <img src="assets/images/Prendas_textiles.jpg" alt="Textiles" class="section-img" />
+        <div class="img-overlay"></div>
+      </div>
+      <div class="text-side" data-scroll data-scroll-speed="1.2">
+        <h2 class="section-title dark-text">
+          Textiles<br>Tradicionales
+        </h2>
+        <p class="section-description dark-text">
+          Color y tradición en cada hilo.<br>
+          Prendas con historia y autenticidad.
+        </p>
+      </div>
     </div>
-  </main>
+  </section>
+
+  <!-- SECCIÓN 4 - VAJILLAS -->
+  <section class="tableware-section" data-bgcolor="#2c1810" data-textcolor="#FFFFFF">
+    <div class="section-content">
+      <div class="text-side" data-scroll data-scroll-speed="1.2">
+        <h2 class="section-title light-text">
+          Elegancia para<br>tu mesa mexicana
+        </h2>
+        <p class="section-description light-text">
+          Vajillas artesanales que transforman<br>
+          cada comida en una experiencia única.
+        </p>
+      </div>
+      <div class="image-side" data-scroll data-scroll-speed="0.8">
+        <img src="assets/images/Ceramica_Cubiertos.jpg" alt="Vajillas" class="section-img" />
+        <div class="img-overlay"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 5 - CTA FINAL (con UN solo botón) -->
+  <section class="final-section" data-bgcolor="#9d2449" data-textcolor="#FFFFFF">
+    <div class="final-content">
+      <div class="final-text" data-scroll data-scroll-speed="1">
+        <h2 class="final-title">
+          ¿Listo para vender tus<br>
+          <span class="highlight">productos artesanales</span>?
+        </h2>
+        <p class="final-subtitle">
+          Únete a miles de emprendedores que ya están<br>
+          creciendo con RaícesMX
+        </p>
+        
+        <!-- UN SOLO BOTÓN -->
+        <div class="final-buttons">
+          <a routerLink="/marketplace" class="btn-explorar-final">
+            <span>Explorar Productos</span>
+            <div class="btn-glow"></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

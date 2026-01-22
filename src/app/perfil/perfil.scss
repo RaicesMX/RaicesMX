@@ -1,46 +1,53 @@
 // Importar estilos globales
-@import '../../styles/colors';
-@import '../../styles/variables';
-@import '../../styles/typography';
-@import '../../styles/mixins';
-@import '../../styles/animations';
+@use '../../styles/colors' as colors;
+@use '../../styles/mixins' as mixins;
+@use '../../styles/variables' as vars;
+@use '../../styles/animations' as anim;
+@use '../../styles/typography' as typo;
 
-/* PERFIL */
+// ✅ Definir variables de acento si no existen
+$color-accent: #8b4513 !default;
+$color-accent-light: rgba(139, 69, 19, 0.1) !default;
+
+/* PERFIL - CON ESTILOS UNIFICADOS */
 .perfil-container {
   min-height: 100vh;
-  background: $color-gray-100;
-  font-family: $font-family-primary;
+  background: linear-gradient(180deg, colors.$color-gray-100 0%, colors.$color-white 100%);
+  font-family: typo.$font-family-primary;
 }
 
 .perfil-main {
-  margin-top: 100px;
-  padding: $spacing-lg;
-  
-  @include respond-to(sm) {
-    margin-top: 120px;
-    padding: $spacing-md;
+  margin-top: 80px;   /* 🔥 altura REAL del header */
+  padding: vars.$spacing-lg;
+}
+
+@include mixins.respond-to(sm) {
+  .perfil-main {
+    margin-top: 64px;
+    padding: vars.$spacing-md;
   }
-} 
+}
+
 
 .perfil-content {
   max-width: 1200px;
   margin: 0 auto;
-  @include flex-column;
-  gap: $spacing-lg;
+  @include mixins.flex-column;
+  gap: vars.$spacing-lg;
 }
 
 /* Banner superior */
 .banner-superior {
-  background: linear-gradient(135deg, $color-primary, $color-primary-dark);
-  color: $color-white;
-  padding: $spacing-xl;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-lg;
+  background: linear-gradient(135deg, colors.$color-primary, colors.$color-primary-dark);
+  color: colors.$color-white;
+  padding: vars.$spacing-xl;
+  border-radius: vars.$border-radius-lg;
+  box-shadow: vars.$shadow-lg;
   position: relative;
   overflow: hidden;
   
-  @include respond-to(sm) {
-    padding: $spacing-md;
+  @include mixins.respond-to(sm) {
+    padding: vars.$spacing-md;
   }
   
   &::before {
@@ -50,226 +57,281 @@
     right: 0;
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle, rgba($color-secondary, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(colors.$color-secondary, 0.1) 0%, transparent 70%);
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(colors.$color-secondary, 0.05) 0%, transparent 70%);
   }
 }
 
-/* Banner superior */
 .banner-content {
-  @include flex-between;
+  @include mixins.flex-between;
   align-items: flex-start;
-  margin-bottom: $spacing-lg;
+  margin-bottom: vars.$spacing-lg;
   flex-wrap: wrap;
-  gap: $spacing-md;
+  gap: vars.$spacing-md;
+  position: relative;
+  z-index: 2;
   
   .bienvenida {
     h1 {
-      margin: 0 0 $spacing-xs 0;
-      @include text-title;
-      color: $color-white;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin: 0 0 vars.$spacing-xs 0;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: typo.$font-weight-extrabold;
+      color: colors.$color-white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       
-      @include respond-to(sm) {
-        font-size: $font-size-2xl;
+      @include mixins.respond-to(sm) {
+        font-size: typo.$font-size-2xl;
       }
     }
     
     .bienvenida-subtitle {
       margin: 0;
-      @include text-caption;
-      color: $color-white; // CAMBIADO: blanco en lugar de gris
-      opacity: 0.9;
-      font-size: $font-size-base;
+      font-size: typo.$font-size-lg;
+      color: rgba(colors.$color-white, 0.85);
+      font-weight: typo.$font-weight-normal;
+      
+      @include mixins.respond-to(sm) {
+        font-size: typo.$font-size-base;
       }
     }
+  }
 }
 
 /* Botones de acción rápida */
 .acciones-rapidas {
   display: flex;
-  gap: $spacing-sm;
+  gap: vars.$spacing-sm;
   flex-wrap: wrap;
   
   .btn-accion {
-    @include btn-base;
-    border: 1px solid rgba($color-white, 0.2);
-    color: $color-white;
-    padding: $spacing-sm $spacing-md;
-    border-radius: $border-radius-md;
+    @include mixins.flex-center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border: 2px solid rgba(colors.$color-white, 0.2);
+    color: colors.$color-white;
+    border-radius: vars.$border-radius-md;
+    font-weight: typo.$font-weight-semibold;
+    cursor: pointer;
+    transition: all vars.$transition-normal;
+    background: transparent;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: vars.$shadow-md;
+    }
     
     &.btn-accion-primary {
-      background: rgba($color-info, 0.8);
+      background: linear-gradient(135deg, rgba(colors.$color-info, 0.9), rgba(colors.$color-info, 0.7));
+      border-color: rgba(colors.$color-info, 0.4);
+      
       &:hover:not(:disabled) {
-        background: rgba($color-info, 0.9);
+        background: linear-gradient(135deg, rgba(colors.$color-info, 1), rgba(colors.$color-info, 0.8));
+        box-shadow: 0 6px 20px rgba(colors.$color-info, 0.4);
       }
     }
+
+  .material-icons.btn-icon {
+      font-family: 'Material Icons' !important;
+      display: inline-block;
+      overflow: visible !important;
+      text-transform: none !important; /* importante por si algún CSS lo cambia */
+      width: auto !important;
+      min-width: 24px;
+}
     
     &.btn-accion-secondary {
-      background: rgba($color-success, 0.8);
+      background: linear-gradient(135deg, rgba(colors.$color-success, 0.9), rgba(colors.$color-success, 0.7));
+      border-color: rgba(colors.$color-success, 0.4);
+      
       &:hover:not(:disabled) {
-        background: rgba($color-success, 0.9);
+        background: linear-gradient(135deg, rgba(colors.$color-success, 1), rgba(colors.$color-success, 0.8));
+        box-shadow: 0 6px 20px rgba(colors.$color-success, 0.4);
       }
     }
     
-    &.btn-accion-danger {
-      background: rgba($color-error, 0.8);
-      border-color: rgba($color-error, 0.3);
-      &:hover:not(:disabled) {
-        background: rgba($color-error, 0.9);
-      }
+    .material-icons {
+      font-size: 1.2rem;
     }
   }
+}
+
+.material-symbols-outlined {
+  font-size: 1.2rem; /* o el tamaño que quieras */
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
 /* Estadísticas grid */
 .estadisticas-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: $spacing-md;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: vars.$spacing-md;
+  position: relative;
+  z-index: 2;
   
-  @include respond-to(xs) {
+  @include mixins.respond-to(xs) {
     grid-template-columns: 1fr;
   }
 }
 
 .estadistica-card {
-  background: rgba($color-white, 0.1);
+  background: rgba(colors.$color-white, 0.1);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba($color-white, 0.15);
-  border-radius: $border-radius-md;
-  padding: $spacing-md;
-  @include flex-center;
-  gap: $spacing-sm;
-  transition: all $transition-normal;
+  border: 2px solid rgba(colors.$color-white, 0.15);
+  border-radius: vars.$border-radius-md;
+  padding: vars.$spacing-md;
+  @include mixins.flex-center;
+  gap: vars.$spacing-sm;
+  transition: all vars.$transition-normal;
   
   &:hover {
-    background: rgba($color-white, 0.2);
-    transform: translateY(-3px);
+    background: rgba(colors.$color-white, 0.2);
+    transform: translateY(-5px);
+    border-color: rgba(colors.$color-white, 0.3);
+    box-shadow: vars.$shadow-md;
   }
   
   .estadistica-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: $border-radius-sm;
-    @include flex-center;
+    width: 56px;
+    height: 56px;
+    border-radius: vars.$border-radius-md;
+    @include mixins.flex-center;
     
-    i {
-      font-size: $font-size-xl;
-      color: $color-white;
+    .material-icons {
+      font-size: 1.8rem;
+      color: colors.$color-white;
     }
     
     &.estadistica-icon-1 {
-      background: rgba($color-info, 0.3);
-      border: 1px solid rgba($color-info, 0.4);
+      background: linear-gradient(135deg, rgba(colors.$color-info, 0.3), rgba(colors.$color-info, 0.1));
+      border: 2px solid rgba(colors.$color-info, 0.4);
     }
     
     &.estadistica-icon-2 {
-      background: rgba($color-success, 0.3);
-      border: 1px solid rgba($color-success, 0.4);
+      background: linear-gradient(135deg, rgba(colors.$color-success, 0.3), rgba(colors.$color-success, 0.1));
+      border: 2px solid rgba(colors.$color-success, 0.4);
     }
     
     &.estadistica-icon-3 {
-      background: rgba($color-warning, 0.3);
-      border: 1px solid rgba($color-warning, 0.4);
+      background: linear-gradient(135deg, rgba(colors.$color-warning, 0.3), rgba(colors.$color-warning, 0.1));
+      border: 2px solid rgba(colors.$color-warning, 0.4);
     }
     
     &.estadistica-icon-4 {
-      background: rgba($color-primary, 0.3);
-      border: 1px solid rgba($color-primary, 0.4);
+      background: linear-gradient(135deg, rgba(colors.$color-primary, 0.3), rgba(colors.$color-primary, 0.1));
+      border: 2px solid rgba(colors.$color-primary, 0.4);
     }
   }
   
   .estadistica-info {
-    @include flex-column;
+    @include mixins.flex-column;
+    flex: 1;
     
     .numero {
-      font-size: $font-size-2xl;
-      font-weight: $font-weight-bold;
+      font-size: typo.$font-size-2xl;
+      font-weight: typo.$font-weight-extrabold;
       line-height: 1;
+      color: colors.$color-white;
     }
     
     .label {
-      font-size: $font-size-sm;
-      opacity: 0.9;
+      font-size: typo.$font-size-sm;
+      color: rgba(colors.$color-white, 0.9);
+      font-weight: typo.$font-weight-medium;
     }
   }
 }
 
-/* Panel principal */
+/* PANEL PRINCIPAL */
 .panel-principal {
-  background: $color-white;
-  border-radius: $border-radius-lg;
-  overflow: hidden;
-  box-shadow: $shadow-md;
+  background: colors.$color-crema;
+  border-radius: vars.$border-radius-lg;
+  box-shadow: vars.$shadow-lg;
+  border: 1px solid rgba($color-accent, 0.15);
 }
+
 
 /* Navegación por pestañas */
 .tabs-navigation {
   display: flex;
-  background: $color-gray-100;
-  border-bottom: 1px solid $color-gray-200;
+  background: colors.$color-gray-100;
+  border-bottom: 1px solid colors.$color-gray-200;
   padding: 0;
   flex-wrap: wrap;
   
-  @include respond-to(sm) {
+  @include mixins.respond-to(sm) {
     flex-direction: column;
   }
   
   .tab-btn {
     background: none;
     border: none;
-    padding: $spacing-md $spacing-lg;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: $color-gray-600;
+    padding: 1rem 1.5rem;
+    font-size: typo.$font-size-base;
+    font-weight: typo.$font-weight-medium;
+    color: colors.$color-gray-600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
-    transition: all $transition-normal;
+    gap: vars.$spacing-sm;
+    transition: all vars.$transition-normal;
     position: relative;
+    flex: 1;
+    justify-content: center;
     
-    @include respond-to(sm) {
-      padding: $spacing-sm;
+    @include mixins.respond-to(sm) {
+      padding: vars.$spacing-md;
       justify-content: flex-start;
     }
     
     &:hover {
-      color: $color-primary;
-      background: rgba($color-primary, 0.05);
+      color: colors.$color-primary;
+      background: rgba(colors.$color-primary, 0.05);
     }
     
     &.active {
-      color: $color-primary;
-      font-weight: $font-weight-semibold;
+      color: colors.$color-primary;
+      font-weight: typo.$font-weight-semibold;
+      background: colors.$color-white;
       
       &::after {
         content: '';
         position: absolute;
         bottom: 0;
-        left: 0;
-        right: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
         height: 3px;
-        background: $color-primary;
+        background: colors.$color-primary;
+        border-radius: vars.$border-radius-sm;
         
-        @include respond-to(sm) {
+        @include mixins.respond-to(sm) {
           height: 100%;
           width: 4px;
           right: auto;
           bottom: auto;
           left: 0;
           top: 0;
+          transform: none;
         }
       }
       
-      i {
-        color: $color-primary;
+      .material-icons {
+        color: colors.$color-primary;
       }
     }
     
-    i {
-      font-size: $font-size-lg;
-      color: $color-gray-600;
+    .material-icons {
+      font-size: typo.$font-size-lg;
+      color: colors.$color-gray-600;
     }
   }
 }
@@ -277,53 +339,87 @@
 /* Contenido de pestañas */
 .tabs-content {
   padding: 0;
+  animation: fadeIn 0.5s ease-out;
 }
 
-.tab-pane {
-  padding: $spacing-xl;
-  
-  @include respond-to(sm) {
-    padding: $spacing-md;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
+.tab-pane {
+  background: colors.$color-white;
+  border-radius: vars.$border-radius-md;
+  padding: vars.$spacing-xl;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+
 .pane-header {
-  @include flex-between;
+  @include mixins.flex-between;
   align-items: center;
-  margin-bottom: $spacing-lg;
-  padding-bottom: $spacing-sm;
-  border-bottom: 1px solid $color-gray-200;
+  margin-bottom: vars.$spacing-lg;
+  padding-bottom: vars.$spacing-md;
+  border-bottom: 2px solid rgba($color-accent, 0.1); // ✅ CORREGIDO
   flex-wrap: wrap;
-  gap: $spacing-sm;
+  gap: vars.$spacing-sm;
   
   h2 {
-    @include text-subtitle;
+    font-size: typo.$font-size-2xl;
+    font-weight: typo.$font-weight-extrabold;
+    color: colors.$color-primary;
     margin: 0;
-    @include flex-center;
-    gap: $spacing-sm;
+    @include mixins.flex-center;
+    gap: vars.$spacing-sm;
     
-    i {
-      color: $color-secondary;
+    .material-icons {
+      color: colors.$color-secondary;
+      font-size: 1.8rem;
+    }
+    
+    @include mixins.respond-to(sm) {
+      font-size: typo.$font-size-xl;
     }
   }
   
   .pane-acciones {
-    @include flex-center;
-    gap: $spacing-sm;
+    @include mixins.flex-center;
+    gap: vars.$spacing-sm;
     
-    @include respond-to(sm) {
+    @include mixins.respond-to(sm) {
       flex-direction: column;
       width: 100%;
     }
     
     .btn-secundario, .btn-editar, .btn-primary {
-      min-width: 150px; // Mismo ancho mínimo
-      height: 44px; // Misma altura
-      padding: $spacing-sm $spacing-md; // Mismo padding
-      @include flex-center;
+      @include mixins.btn-base;
+      min-width: 160px;
+      height: 48px;
+      padding: vars.$spacing-sm vars.$spacing-md;
+      @include mixins.flex-center;
+      gap: 0.5rem;
+      font-weight: typo.$font-weight-semibold;
+      border-radius: vars.$border-radius-md;
       
-      i {
-        font-size: $font-size-base;
+      .material-icons {
+        font-size: typo.$font-size-base;
+      }
+    }
+    
+    .btn-logout {
+      border: 2px solid rgba(colors.$color-error, 0.2);
+      color: colors.$color-error;
+      background: transparent;
+      
+      &:hover:not(:disabled) {
+        background: rgba(colors.$color-error, 0.05);
+        border-color: colors.$color-error;
       }
     }
   }
@@ -331,14 +427,17 @@
 
 /* Formularios */
 .formulario-perfil {
+  animation: slideIn 0.6s ease-out;
+  
   .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: $spacing-md;
-    margin-bottom: $spacing-lg;
+    gap: vars.$spacing-lg;
+    margin-bottom: vars.$spacing-lg;
     
-    @include respond-to(sm) {
+    @include mixins.respond-to(sm) {
       grid-template-columns: 1fr;
+      gap: vars.$spacing-md;
     }
     
     .form-group {
@@ -348,127 +447,178 @@
       
       label {
         display: block;
-        font-weight: $font-weight-semibold;
-        color: $color-gray-700;
-        margin-bottom: $spacing-xs;
-        font-size: $font-size-sm;
+        font-weight: typo.$font-weight-semibold;
+        color: colors.$color-primary;
+        margin-bottom: vars.$spacing-xs;
+        font-size: typo.$font-size-sm;
       }
       
       .info-display {
-        padding: $spacing-sm;
-        background: $color-gray-100;
-        border-radius: $border-radius-sm;
-        border: 1px solid $color-gray-200;
-        font-size: $font-size-sm;
-        color: $color-black;
+        padding: vars.$spacing-sm vars.$spacing-md;
+        background: colors.$color-gray-100;
+        border-radius: vars.$border-radius-sm;
+        border: 1px solid colors.$color-gray-200;
+        font-size: typo.$font-size-base;
+        color: colors.$color-gray-800;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
       }
     }
   }
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .form-input {
-  @include input-base;
-  border: 2px solid $color-gray-300;
+  @include mixins.input-base;
+  border: 2px solid colors.$color-gray-300;
+  border-radius: vars.$border-radius-md;
+  padding: 0.8rem 1rem;
+  font-size: typo.$font-size-base;
+  transition: all vars.$transition-normal;
   
   &:focus {
-    border-color: $color-primary;
+    border-color: colors.$color-primary;
+    box-shadow: 0 0 0 3px rgba(colors.$color-primary, 0.1);
+    outline: none;
+  }
+  
+  &:hover {
+    border-color: colors.$color-gray-400;
   }
 }
 
 .form-actions {
   display: flex;
-  gap: $spacing-sm;
-  margin-top: $spacing-lg;
-  padding-top: $spacing-md;
-  border-top: 1px solid $color-gray-200;
+  gap: vars.$spacing-sm;
+  margin-top: vars.$spacing-xl;
+  padding-top: vars.$spacing-lg;
+  border-top: 2px solid rgba($color-accent, 0.1); // ✅ CORREGIDO
+  
+  @include mixins.respond-to(sm) {
+    flex-direction: column;
+  }
 }
 
 /* Botones específicos */
 .btn-editar, .btn-primary {
-  @include btn-primary;
-  min-width: 120px;
+  @include mixins.btn-primary;
+  min-width: 160px;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: vars.$shadow-md;
+  }
 }
 
 .btn-password {
-  @include btn-secondary;
-  min-width: 120px;
+  @include mixins.btn-secondary;
+  min-width: 160px;
 }
 
 .btn-guardar {
-  @include btn-secondary;
-  min-width: 120px;
+  @include mixins.btn-secondary;
+  min-width: 160px;
 }
 
 .btn-cancelar {
-  @include btn-base;
-  background: $color-gray-600;
-  color: $color-white;
-  min-width: 120px;
+  @include mixins.btn-base;
+  background: colors.$color-gray-600;
+  color: colors.$color-white;
+  min-width: 160px;
+  border: none;
+  border-radius: vars.$border-radius-md;
   
   &:hover:not(:disabled) {
-    background: darken($color-gray-600, 10%);
+    background: darken(colors.$color-gray-600, 10%);
+    transform: translateY(-2px);
   }
 }
 
 .btn-secundario {
-  @include btn-outline;
+  @include mixins.btn-outline;
+  min-width: 160px;
 }
 
 .btn-icon {
-  @include btn-base;
+  @include mixins.btn-base;
   background: transparent;
-  border: 1px solid $color-gray-300;
-  color: $color-gray-600;
-  width: 36px;
-  height: 36px;
+  border: 2px solid colors.$color-gray-300;
+  color: colors.$color-gray-600;
+  width: 40px;
+  height: 40px;
   padding: 0;
-  border-radius: $border-radius-sm;
+  border-radius: vars.$border-radius-sm;
+  @include mixins.flex-center;
   
   &:hover:not(:disabled) {
-    background: $color-gray-100;
-    border-color: $color-primary;
-    color: $color-primary;
+    background: colors.$color-gray-100;
+    border-color: colors.$color-primary;
+    color: colors.$color-primary;
+    transform: translateY(-2px);
   }
   
   &.btn-icon-warning {
-    border-color: $color-warning;
-    color: $color-warning;
+    border-color: colors.$color-warning;
+    color: colors.$color-warning;
     
     &:hover:not(:disabled) {
-      background: $color-warning;
-      color: $color-white;
+      background: colors.$color-warning;
+      color: colors.$color-white;
+      box-shadow: 0 4px 12px rgba(colors.$color-warning, 0.3);
     }
   }
   
   &.btn-icon-info {
-    border-color: $color-info;
-    color: $color-info;
+    border-color: colors.$color-info;
+    color: colors.$color-info;
     
     &:hover:not(:disabled) {
-      background: $color-info;
-      color: $color-white;
+      background: colors.$color-info;
+      color: colors.$color-white;
+      box-shadow: 0 4px 12px rgba(colors.$color-info, 0.3);
     }
   }
   
   &.btn-icon-danger {
-    border-color: $color-error;
-    color: $color-error;
+    border-color: colors.$color-error;
+    color: colors.$color-error;
     
     &:hover:not(:disabled) {
-      background: $color-error;
-      color: $color-white;
+      background: colors.$color-error;
+      color: colors.$color-white;
+      box-shadow: 0 4px 12px rgba(colors.$color-error, 0.3);
     }
+  }
+  
+  .material-icons {
+    font-size: typo.$font-size-base;
   }
 }
 
 .btn-danger {
-  @include btn-base;
-  background: linear-gradient(135deg, $color-error, darken($color-error, 10%));
-  color: $color-white;
-  min-width: 120px;
+  @include mixins.btn-base;
+  background: linear-gradient(135deg, colors.$color-error, darken(colors.$color-error, 10%));
+  color: colors.$color-white;
+  min-width: 160px;
+  border: none;
+  border-radius: vars.$border-radius-md;
+  font-weight: typo.$font-weight-semibold;
   
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, lighten($color-error, 5%), $color-error);
+    background: linear-gradient(135deg, lighten(colors.$color-error, 5%), colors.$color-error);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(colors.$color-error, 0.3);
   }
 }
 
@@ -476,132 +626,212 @@
 .direcciones-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: $spacing-md;
+  gap: vars.$spacing-md;
   
-  @include respond-to(sm) {
+  @include mixins.respond-to(sm) {
     grid-template-columns: 1fr;
   }
 }
 
 .direccion-card {
-  @include card-base;
-  padding: $spacing-md;
+  @include mixins.card-base;
+  padding: vars.$spacing-md;
+  border: 2px solid rgba($color-accent, 0.1); // ✅ CORREGIDO
+  border-radius: vars.$border-radius-md;
+  transition: all vars.$transition-normal;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: vars.$shadow-lg;
+    border-color: rgba(colors.$color-secondary, 0.2);
+  }
   
   .direccion-header {
-    @include flex-between;
+    @include mixins.flex-between;
     align-items: flex-start;
-    margin-bottom: $spacing-sm;
+    margin-bottom: vars.$spacing-sm;
   }
   
   .direccion-titulo {
-    @include flex-center;
-    gap: $spacing-sm;
+    @include mixins.flex-center;
+    gap: vars.$spacing-sm;
     flex-wrap: wrap;
     
     h3 {
       margin: 0;
-      @include text-subtitle;
-      font-size: $font-size-base;
+      font-size: typo.$font-size-base;
+      font-weight: typo.$font-weight-semibold;
+      color: colors.$color-primary;
     }
   }
   
   .badge-principal {
-    @include btn-secondary;
-    padding: $spacing-xs $spacing-sm;
-    font-size: $font-size-xs;
+    @include mixins.btn-secondary;
+    padding: vars.$spacing-xs vars.$spacing-sm;
+    font-size: typo.$font-size-xs;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: vars.$border-radius-full;
+    
+    .material-icons {
+      font-size: 0.9rem;
+    }
   }
   
   .direccion-acciones {
-    @include flex-center;
-    gap: $spacing-xs;
+    @include mixins.flex-center;
+    gap: vars.$spacing-xs;
   }
   
   .direccion-info {
     p {
-      margin: $spacing-xs 0;
-      @include text-body;
-      font-size: $font-size-sm;
+      margin: vars.$spacing-xs 0;
+      font-size: typo.$font-size-sm;
+      color: colors.$color-gray-700;
       
       strong {
-        color: $color-black;
+        color: colors.$color-primary;
+        font-weight: typo.$font-weight-semibold;
       }
     }
   }
   
   .direccion-footer {
-    margin-top: $spacing-sm;
-    padding-top: $spacing-sm;
-    border-top: 1px solid $color-gray-200;
+    margin-top: vars.$spacing-sm;
+    padding-top: vars.$spacing-sm;
+    border-top: 1px solid colors.$color-gray-200;
   }
 }
 
 .sin-direcciones, .sin-productos {
   text-align: center;
-  padding: $spacing-xl;
-  color: $color-gray-600;
+  padding: vars.$spacing-xl;
+  color: colors.$color-gray-600;
+  background: colors.$color-gray-100;
+  border-radius: vars.$border-radius-md;
+  border: 2px dashed colors.$color-gray-300;
   
-  i {
-    font-size: $font-size-3xl;
-    color: $color-gray-400;
-    margin-bottom: $spacing-sm;
+  .icon-large {
+    font-size: 4rem;
+    color: colors.$color-gray-400;
+    margin-bottom: vars.$spacing-sm;
+    opacity: 0.5;
   }
   
   h3 {
-    @include text-subtitle;
-    margin: $spacing-xs 0;
+    font-size: typo.$font-size-xl;
+    font-weight: typo.$font-weight-semibold;
+    color: colors.$color-primary;
+    margin: vars.$spacing-xs 0;
   }
   
   p {
-    margin-bottom: $spacing-md;
-    @include text-body;
+    margin-bottom: vars.$spacing-lg;
+    font-size: typo.$font-size-base;
+    color: colors.$color-gray-600;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Alerta vendedor */
+.alerta-vendedor {
+  background: rgba(colors.$color-warning, 0.1);
+  border: 2px solid rgba(colors.$color-warning, 0.3);
+  border-radius: vars.$border-radius-md;
+  padding: vars.$spacing-lg;
+  @include mixins.flex-center;
+  gap: vars.$spacing-md;
+  margin-bottom: vars.$spacing-lg;
+  
+  .alerta-icon {
+    flex-shrink: 0;
+    
+    .material-icons {
+      font-size: 2.5rem;
+      color: colors.$color-warning;
+    }
+  }
+  
+  .alerta-content {
+    flex: 1;
+    
+    h3 {
+      margin: 0 0 vars.$spacing-xs 0;
+      color: colors.$color-warning;
+      font-size: typo.$font-size-lg;
+      font-weight: typo.$font-weight-semibold;
+    }
+    
+    p {
+      margin: 0;
+      color: colors.$color-gray-700;
+      font-size: typo.$font-size-base;
+      
+      .link-vendedor {
+        color: colors.$color-primary;
+        text-decoration: none;
+        font-weight: typo.$font-weight-semibold;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 }
 
 /* Productos */
 .productos-filtros {
-  @include flex-between;
+  @include mixins.flex-between;
   align-items: center;
-  margin-bottom: $spacing-md;
+  margin-bottom: vars.$spacing-lg;
   flex-wrap: wrap;
-  gap: $spacing-sm;
+  gap: vars.$spacing-sm;
   
   .filtros-group {
-    @include flex-center;
-    gap: $spacing-xs;
+    @include mixins.flex-center;
+    gap: vars.$spacing-xs;
     flex-wrap: wrap;
   }
   
   .filtro-btn {
-    @include btn-base;
-    border: 1px solid $color-gray-300;
-    background: $color-white;
-    color: $color-gray-700;
-    padding: $spacing-xs $spacing-sm;
-    border-radius: $border-radius-xl;
-    font-size: $font-size-sm;
+    @include mixins.btn-base;
+    border: 2px solid colors.$color-gray-300;
+    background: colors.$color-white;
+    color: colors.$color-gray-700;
+    padding: vars.$spacing-xs vars.$spacing-sm;
+    border-radius: vars.$border-radius-full;
+    font-size: typo.$font-size-sm;
+    font-weight: typo.$font-weight-medium;
     
     &:hover:not(:disabled) {
-      border-color: $color-primary;
-      color: $color-primary;
+      border-color: colors.$color-primary;
+      color: colors.$color-primary;
+      transform: translateY(-1px);
     }
     
     &.active {
-      @include btn-primary;
-      padding: $spacing-xs $spacing-sm;
-      font-size: $font-size-sm;
+      @include mixins.btn-primary;
+      padding: vars.$spacing-xs vars.$spacing-sm;
+      font-size: typo.$font-size-sm;
+      border-radius: vars.$border-radius-full;
     }
   }
   
   .busqueda-productos {
-    @include flex-center;
-    gap: $spacing-xs;
+    @include mixins.flex-center;
+    gap: vars.$spacing-xs;
     
     .search-input {
-      @include input-base;
+      @include mixins.input-base;
       min-width: 250px;
-      border-radius: $border-radius-xl;
+      border-radius: vars.$border-radius-full;
+      padding: 0.6rem 1.2rem;
       
-      @include respond-to(sm) {
+      @include mixins.respond-to(sm) {
         min-width: auto;
         flex: 1;
       }
@@ -612,94 +842,114 @@
 .productos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: $spacing-md;
+  gap: vars.$spacing-lg;
   
-  @include respond-to(sm) {
+  @include mixins.respond-to(sm) {
     grid-template-columns: 1fr;
   }
 }
 
 .producto-card {
-  @include card-base;
+  @include mixins.card-base;
+  border: 2px solid rgba($color-accent, 0.1); // ✅ CORREGIDO
+  border-radius: vars.$border-radius-lg;
+  overflow: hidden;
+  transition: all vars.$transition-normal;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: vars.$shadow-xl;
+    border-color: rgba(colors.$color-secondary, 0.3);
+  }
   
   .producto-imagen {
     position: relative;
-    height: 180px;
+    height: 200px;
     overflow: hidden;
     
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    
+    &:hover img {
+      transform: scale(1.05);
     }
     
     .producto-estado {
       position: absolute;
       top: 0.75rem;
       right: 0.75rem;
-      padding: $spacing-xs $spacing-sm;
-      border-radius: $border-radius-xl;
-      font-size: $font-size-xs;
-      font-weight: $font-weight-semibold;
+      padding: vars.$spacing-xs vars.$spacing-sm;
+      border-radius: vars.$border-radius-full;
+      font-size: typo.$font-size-xs;
+      font-weight: typo.$font-weight-bold;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
       
       &.activo {
-        background: $color-success;
-        color: $color-white;
+        background: linear-gradient(135deg, colors.$color-success, darken(colors.$color-success, 10%));
+        color: colors.$color-white;
       }
       
       &.pausado {
-        background: $color-warning;
-        color: $color-white;
+        background: linear-gradient(135deg, colors.$color-warning, darken(colors.$color-warning, 10%));
+        color: colors.$color-white;
       }
       
       &.vendido {
-        background: $color-gray-600;
-        color: $color-white;
+        background: linear-gradient(135deg, colors.$color-gray-600, darken(colors.$color-gray-600, 10%));
+        color: colors.$color-white;
       }
     }
   }
   
   .producto-info {
-    padding: $spacing-md;
+    padding: vars.$spacing-md;
     flex: 1;
     
     h3 {
-      margin: 0 0 $spacing-xs 0;
-      @include text-subtitle;
-      font-size: $font-size-base;
+      margin: 0 0 vars.$spacing-xs 0;
+      font-size: typo.$font-size-base;
+      font-weight: typo.$font-weight-bold;
+      color: colors.$color-primary;
+      line-height: 1.3;
     }
     
     .producto-descripcion {
-      @include text-body;
-      font-size: $font-size-sm;
-      margin-bottom: $spacing-sm;
+      font-size: typo.$font-size-sm;
+      color: colors.$color-gray-600;
+      margin-bottom: vars.$spacing-sm;
+      line-height: 1.5;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      line-clamp: 2;
     }
     
     .producto-detalles {
-      @include flex-center;
+      @include mixins.flex-center;
       flex-wrap: wrap;
-      gap: $spacing-sm;
+      gap: vars.$spacing-sm;
       align-items: center;
       
       .producto-precio {
-        font-size: $font-size-lg;
-        font-weight: $font-weight-bold;
-        color: $color-primary;
+        font-size: typo.$font-size-lg;
+        font-weight: typo.$font-weight-extrabold;
+        color: colors.$color-primary;
       }
       
       .producto-stock, .producto-visitas {
-        @include flex-center;
-        gap: $spacing-xs;
-        font-size: $font-size-sm;
-        color: $color-gray-600;
+        @include mixins.flex-center;
+        gap: vars.$spacing-xs;
+        font-size: typo.$font-size-sm;
+        color: colors.$color-gray-600;
         
-        i {
-          color: $color-secondary;
+        .material-icons {
+          font-size: 1rem;
+          color: colors.$color-secondary;
         }
       }
     }
@@ -707,37 +957,40 @@
   
   .producto-acciones {
     display: flex;
-    padding: $spacing-sm $spacing-md;
-    border-top: 1px solid $color-gray-200;
-    background: $color-gray-100;
-    gap: $spacing-xs;
+    padding: vars.$spacing-sm;
+    border-top: 1px solid colors.$color-gray-200;
+    background: colors.$color-gray-100;
+    gap: vars.$spacing-xs;
   }
 }
 
 /* Configuraciones */
 .configuraciones-list {
-  @include flex-column;
-  gap: $spacing-sm;
+  @include mixins.flex-column;
+  gap: vars.$spacing-md;
 }
 
 .config-item {
-  @include flex-between;
+  @include mixins.flex-between;
   align-items: center;
-  padding: $spacing-md;
-  border: 1px solid $color-gray-200;
-  border-radius: $border-radius-md;
-  transition: all $transition-normal;
+  padding: vars.$spacing-lg;
+  border: 2px solid colors.$color-gray-200;
+  border-radius: vars.$border-radius-lg;
+  transition: all vars.$transition-normal;
+  background: colors.$color-white;
   
   &:hover {
-    border-color: $color-secondary;
+    border-color: colors.$color-secondary;
+    box-shadow: vars.$shadow-md;
+    transform: translateY(-3px);
   }
   
   &.danger {
-    border-color: rgba($color-error, 0.3);
-    background: rgba($color-error, 0.05);
+    border-color: rgba(colors.$color-error, 0.3);
+    background: linear-gradient(135deg, rgba(colors.$color-error, 0.02), rgba(colors.$color-error, 0.05));
     
     &:hover {
-      border-color: $color-error;
+      border-color: colors.$color-error;
     }
   }
   
@@ -745,26 +998,29 @@
     flex: 1;
     
     h3 {
-      @include text-subtitle;
-      margin: 0 0 $spacing-xs 0;
-      font-size: $font-size-base;
-      @include flex-center;
-      gap: $spacing-xs;
+      font-size: typo.$font-size-base;
+      font-weight: typo.$font-weight-bold;
+      color: colors.$color-primary;
+      margin: 0 0 vars.$spacing-xs 0;
+      @include mixins.flex-center;
+      gap: vars.$spacing-xs;
       
-      i {
-        color: $color-secondary;
+      .material-icons {
+        color: colors.$color-secondary;
+        font-size: 1.2rem;
       }
     }
     
     p {
       margin: 0;
-      @include text-body;
-      font-size: $font-size-sm;
+      font-size: typo.$font-size-sm;
+      color: colors.$color-gray-600;
+      max-width: 500px;
     }
   }
 }
 
-/* Toggle switch */
+/* Toggle switch mejorado */
 .toggle-switch {
   position: relative;
   display: inline-block;
@@ -777,11 +1033,15 @@
     height: 0;
     
     &:checked + .toggle-slider {
-      background-color: $color-primary;
+      background-color: colors.$color-primary;
     }
     
     &:checked + .toggle-slider:before {
       transform: translateX(26px);
+    }
+    
+    &:focus + .toggle-slider {
+      box-shadow: 0 0 0 3px rgba(colors.$color-primary, 0.2);
     }
   }
   
@@ -792,8 +1052,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: $color-gray-400;
-    transition: $transition-normal;
+    background-color: colors.$color-gray-400;
+    transition: vars.$transition-normal;
     border-radius: 34px;
     
     &:before {
@@ -803,31 +1063,32 @@
       width: 26px;
       left: 4px;
       bottom: 4px;
-      background-color: $color-white;
-      transition: $transition-normal;
+      background-color: colors.$color-white;
+      transition: vars.$transition-normal;
       border-radius: 50%;
-      box-shadow: $shadow-sm;
+      box-shadow: vars.$shadow-sm;
     }
   }
 }
 
 .notificaciones-opciones {
-  @include flex-column;
-  gap: $spacing-sm;
+  @include mixins.flex-column;
+  gap: vars.$spacing-sm;
 }
 
 .checkbox-label {
-  @include flex-center;
-  gap: $spacing-xs;
+  @include mixins.flex-center;
+  gap: vars.$spacing-sm;
   cursor: pointer;
-  font-size: $font-size-sm;
+  font-size: typo.$font-size-base;
+  color: colors.$color-gray-700;
   
   input {
     display: none;
     
     &:checked + .checkmark {
-      background: $color-primary;
-      border-color: $color-primary;
+      background: colors.$color-primary;
+      border-color: colors.$color-primary;
       
       &::after {
         content: '';
@@ -836,7 +1097,7 @@
         top: 2px;
         width: 5px;
         height: 10px;
-        border: solid $color-white;
+        border: solid colors.$color-white;
         border-width: 0 2px 2px 0;
         transform: rotate(45deg);
       }
@@ -844,32 +1105,38 @@
   }
   
   .checkmark {
-    width: 20px;
-    height: 20px;
-    border: 2px solid $color-gray-300;
-    border-radius: $border-radius-sm;
+    width: 22px;
+    height: 22px;
+    border: 2px solid colors.$color-gray-300;
+    border-radius: vars.$border-radius-sm;
     position: relative;
-    transition: all $transition-normal;
+    transition: all vars.$transition-normal;
+    
+    &:hover {
+      border-color: colors.$color-primary;
+    }
   }
 }
 
 /* Responsive */
-@include respond-to(sm) {
+@include mixins.respond-to(sm) {
   .perfil-main {
     margin-top: 70px;
   }
   
   .banner-superior {
-    padding: $spacing-md;
+    padding: vars.$spacing-md;
   }
   
   .banner-content {
     flex-direction: column;
+    align-items: stretch;
   }
   
   .pane-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: vars.$spacing-md;
   }
   
   .pane-acciones {
@@ -883,35 +1150,118 @@
   
   .config-item {
     flex-direction: column;
-    gap: $spacing-sm;
-    align-items: flex-start;
+    gap: vars.$spacing-md;
+    align-items: stretch;
   }
   
   .productos-filtros {
     flex-direction: column;
     align-items: stretch;
+    gap: vars.$spacing-md;
     
     .busqueda-productos {
       width: 100%;
     }
   }
+  
+  .form-actions {
+    button {
+      width: 100%;
+    }
+  }
 }
 
-@include respond-to(xs) {
+@include mixins.respond-to(xs) {
   .estadisticas-grid {
     grid-template-columns: 1fr;
   }
   
   .tabs-navigation .tab-btn {
-    padding: $spacing-sm;
-    font-size: $font-size-sm;
+    padding: vars.$spacing-sm;
+    font-size: typo.$font-size-sm;
   }
   
-  .form-actions {
-    flex-direction: column;
+  .direcciones-grid,
+  .productos-grid {
+    grid-template-columns: 1fr;
   }
   
-  .btn-editar, .btn-guardar, .btn-primary, .btn-cancelar {
+  .btn-editar, .btn-guardar, .btn-primary, .btn-cancelar, .btn-secundario {
     width: 100%;
   }
+}
+
+/* Efectos especiales */
+.btn-glow-effect {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transition: 0.8s;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+
+/* Animación para cards */
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.direccion-card, .producto-card, .config-item {
+  animation: cardAppear 0.4s ease-out;
+  animation-fill-mode: both;
+}
+
+/* Retraso escalonado para animaciones */
+.direccion-card:nth-child(2) { animation-delay: 0.1s; }
+.direccion-card:nth-child(3) { animation-delay: 0.2s; }
+.direccion-card:nth-child(4) { animation-delay: 0.3s; }
+
+.producto-card:nth-child(2) { animation-delay: 0.1s; }
+.producto-card:nth-child(3) { animation-delay: 0.2s; }
+.producto-card:nth-child(4) { animation-delay: 0.3s; }
+
+.config-item:nth-child(2) { animation-delay: 0.1s; }
+.config-item:nth-child(3) { animation-delay: 0.2s; }
+.config-item:nth-child(4) { animation-delay: 0.3s; }
+
+/* FIX ICONO HISTORIAL COMPRAS */
+.acciones-rapidas .btn-accion {
+  min-height: 52px;
+}
+
+.acciones-rapidas .btn-accion .btn-icon {
+  font-size: 1.4rem;       /* 🔥 icono más grande */
+  min-width: 28px;         /* 🔥 fuerza espacio horizontal */
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.acciones-rapidas .btn-accion span:last-child {
+  line-height: 1;
 }

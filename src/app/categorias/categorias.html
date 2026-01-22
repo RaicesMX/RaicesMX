@@ -9,14 +9,15 @@
           <h1 class="hero-title">
             <span class="hero-line-1">Tradiciones</span>
             <span class="hero-line-2">
-              <span class="text-mexicanas">Mexicanas</span>
-              <span class="text-categorias">Categorías</span>
-            </span>
-          </h1>
-          
-          <p class="hero-subtitle">
-            Explora nuestras categorías artesanales y conecta con tradiciones centenarias
-          </p>
+            <span class="text-mexicanas">Mexicanas</span>
+            <span class="text-categorias">Categorías</span>
+          </span>
+      </h1>
+    
+      <p class="hero-subtitle">
+        Explora nuestras categorías artesanales y conecta con tradiciones centenarias
+      </p>
+      
           
           <div class="hero-stats">
             <div class="hero-stat">
@@ -34,22 +35,10 @@
           </div>
           
           <div class="hero-cta">
-            <button class="btn-explorar btn-glow-effect" (click)="scrollToCategorias()">
+            <button class="btn-explorar btn-glow-effect"(click)="scrollToCategorias()">
               <i class="material-icons btn-icon">search</i>
               <span class="btn-text">Explorar Categorías</span>
             </button>
-          </div>
-        </div>
-        
-        <div class="hero-decoration">
-          <div class="decoration-item">
-            <i class="material-icons icon-xl">auto_awesome</i>
-          </div>
-          <div class="decoration-item">
-            <i class="material-icons icon-xl">palette</i>
-          </div>
-          <div class="decoration-item">
-            <i class="material-icons icon-xl">brush</i>
           </div>
         </div>
       </div>
@@ -64,9 +53,7 @@
   <section class="filtros-section">
     <div class="container">
       <div class="filtros-grid">
-        <div class="filtro-card" 
-            [class.active]="filtroRapido === 'todos'"
-            (click)="aplicarFiltroRapido('todos')">
+        <div class="filtro-card" (click)="aplicarFiltroRapido('todos')" [class.active]="filtroRapido === 'todos'">
           <div class="filtro-icon">
             <i class="material-icons">category</i>
           </div>
@@ -76,9 +63,7 @@
           </div>
         </div>
         
-        <div class="filtro-card"
-            [class.active]="filtroRapido === 'populares'"
-            (click)="aplicarFiltroRapido('populares')">
+        <div class="filtro-card" (click)="aplicarFiltroRapido('populares')" [class.active]="filtroRapido === 'populares'">
           <div class="filtro-icon">
             <i class="material-icons icon-mexican-red">whatshot</i>
           </div>
@@ -88,9 +73,7 @@
           </div>
         </div>
         
-        <div class="filtro-card"
-            [class.active]="filtroRapido === 'nuevos'"
-            (click)="aplicarFiltroRapido('nuevos')">
+        <div class="filtro-card" (click)="aplicarFiltroRapido('nuevos')" [class.active]="filtroRapido === 'nuevos'">
           <div class="filtro-icon">
             <i class="material-icons icon-mexican-green">fiber_new</i>
           </div>
@@ -102,7 +85,7 @@
         
         <div class="filtro-card dropdown-filtro">
           <div class="filtro-icon">
-            <i class="material-icons">location_on</i>
+            <i class="material-icons icon-mexican-brown">location_on</i>
           </div>
           <div class="filtro-content">
             <select [(ngModel)]="filtroRegion" (change)="filtrarCategorias()" class="region-select">
@@ -201,7 +184,7 @@
                 <span class="stat-label">Productos</span>
               </div>
               <div class="stat">
-                <i class="material-icons icon-mexican-gold">person</i>
+                <i class="material-icons icon-mexican-gold">groups</i>
                 <span class="stat-value">{{ categoria.artesanos }}</span>
                 <span class="stat-label">Artesanos</span>
               </div>
@@ -218,7 +201,7 @@
               </span>
             </div>
             
-            <button class="btn-explorar-categoria btn-glow-effect" (click)="verCategoria(categoria)">
+            <button class="btn-details btn-glow-effect btn-glow-subtle" (click)="verCategoria(categoria)">
               <span>Explorar Categoría</span>
               <i class="material-icons">arrow_forward</i>
             </button>
@@ -247,7 +230,7 @@
       <div class="info-grid">
         <div class="info-card">
           <div class="info-icon">
-            <i class="material-icons icon-mexican-brown icon-xl">person_apron</i>
+            <i class="material-icons icon-mexican-brown icon-xl">alette</i>
           </div>
           <h3>Artesanos Expertos</h3>
           <p>Trabajamos con maestros artesanos certificados</p>

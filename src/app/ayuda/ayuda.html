@@ -9,7 +9,6 @@
             <span class="hero-line-2">
               <span class="text-ayuda">Ayuda</span>
               <span class="text-centro">Centro</span>
-              <span class="hero-icon">❓</span>
             </span>
           </h1>
           
@@ -32,52 +31,48 @@
             </div>
           </div>
         </div>
-        
-        <div class="hero-visual">
-          <div class="floating-elements">
-            <div class="floating-item item-1">❓</div>
-            <div class="floating-item item-2">💬</div>
-            <div class="floating-item item-3">📞</div>
-            <div class="floating-item item-4">✨</div>
-          </div>
-        </div>
       </div>
     </div>
     
-    <!-- MOVER scroll-indicator FUERA del hero-content-wrapper -->
     <div class="scroll-indicator" (click)="scrollToSeccion('busqueda-rapida')">
       <div class="arrow"></div>
     </div>
   </section>
 
-  <!-- EL RESTO DEL HTML SIGUE IGUAL... -->
-
   <!-- BÚSQUEDA RÁPIDA -->
-  <section class="busqueda-rapida">
+  <section class="busqueda-rapida" id="busqueda-rapida">
     <div class="busqueda-container">
       <h2>¿En qué podemos ayudarte?</h2>
       
       <div class="busqueda-grid">
         <div class="busqueda-card" (click)="filtrarPorCategoria('pedidos')">
-          <div class="card-icon">📦</div>
+          <div class="card-icon">
+            <i class="material-icons icon-mexican-brown icon-xl">inventory_2</i>
+          </div>
           <h3>Pedidos y Envíos</h3>
           <p>Seguimiento, tiempos de entrega y políticas de envío</p>
         </div>
-        
+  
         <div class="busqueda-card" (click)="filtrarPorCategoria('pagos')">
-          <div class="card-icon">💳</div>
+          <div class="card-icon">
+          <i class="material-icons icon-mexican-gold icon-xl">payment</i>
+        </div>
           <h3>Pagos y Facturación</h3>
           <p>Métodos de pago, facturas y reembolsos</p>
         </div>
-        
+  
         <div class="busqueda-card" (click)="filtrarPorCategoria('devoluciones')">
-          <div class="card-icon">🔄</div>
+          <div class="card-icon">
+            <i class="material-icons icon-mexican-red icon-xl">swap_horiz</i>
+          </div>
           <h3>Devoluciones</h3>
           <p>Políticas de cambio y garantías de productos</p>
         </div>
-        
+  
         <div class="busqueda-card" (click)="filtrarPorCategoria('cuenta')">
-          <div class="card-icon">👤</div>
+          <div class="card-icon">
+            <i class="material-icons icon-mexican-brown icon-xl">account_circle</i>
+          </div>
           <h3>Mi Cuenta</h3>
           <p>Gestión de perfil, contraseña y preferencias</p>
         </div>
@@ -96,8 +91,9 @@
           placeholder="Buscar en preguntas frecuentes..." 
           class="busqueda-input"
         >
-        <button class="btn-buscar" (click)="filtrarContenido()">
-          🔍 Buscar
+        <button class="btn-buscar btn-glow-effect" (click)="filtrarContenido()">
+          <i class="material-icons">search</i>
+          Buscar
         </button>
       </div>
       <p class="busqueda-hint">
@@ -121,22 +117,17 @@
           <div *ngIf="resultado.abierta" class="respuesta">
             <p>{{ resultado.respuesta }}</p>
             <div class="respuesta-actions">
-              <button class="btn-util" (click)="marcarUtil(resultado)">
-                👍 {{ resultado.util ? 'Útil' : '¿Te resultó útil?' }}
+              <button class="btn-util btn-glow-subtle" (click)="marcarUtil(resultado)">
+                <i class="material-icons">thumb_up</i>
+                {{ resultado.util ? 'Útil' : '¿Te resultó útil?' }}
               </button>
-              <button class="btn-compartir" (click)="compartirPregunta(resultado)">
-                📤 Compartir
+              <button class="btn-compartir btn-glow-subtle" (click)="compartirPregunta(resultado)">
+                <i class="material-icons">share</i>
+                Compartir
               </button>
             </div>
           </div>
         </div>
-      </div>
-      
-      <div *ngIf="resultadosBusqueda.length === 0" class="sin-resultados">
-        <p>No encontramos resultados para "{{ terminoBusqueda }}"</p>
-        <button class="btn-limpiar" (click)="terminoBusqueda = ''; resultadosBusqueda = []">
-          Limpiar búsqueda
-        </button>
       </div>
     </div>
   </section>
@@ -149,23 +140,25 @@
       <div *ngFor="let categoria of categoriasAyuda; let i = index" class="categoria-preguntas">
         <h3 class="categoria-titulo" (click)="toggleCategoria(categoria)">
           {{ categoria.nombre }}
-          <span class="categoria-icon">{{ categoria.abierta ? '−' : '+' }}</span>
+          <i class="material-icons icon-mexican-gold">{{ categoria.abierta ? 'expand_less' : 'expand_more' }}</i>
         </h3>
         
         <div *ngIf="categoria.abierta" class="preguntas-list">
           <div *ngFor="let pregunta of categoria.preguntas" class="pregunta-item">
             <div class="pregunta-header" (click)="togglePregunta(pregunta)">
               <h4>{{ pregunta.pregunta }}</h4>
-              <span class="pregunta-icon">{{ pregunta.abierta ? '−' : '+' }}</span>
+              <i class="material-icons icon-mexican-gold">{{ pregunta.abierta ? 'expand_less' : 'expand_more' }}</i>
             </div>
             <div *ngIf="pregunta.abierta" class="pregunta-respuesta">
               <p>{{ pregunta.respuesta }}</p>
               <div class="pregunta-actions">
-                <button class="btn-util" (click)="marcarUtil(pregunta)">
-                  👍 {{ pregunta.util ? 'Útil' : '¿Te resultó útil?' }}
+                <button class="btn-util btn-glow-subtle" (click)="marcarUtil(pregunta)">
+                  <i class="material-icons">thumb_up</i>
+                  {{ pregunta.util ? 'Útil' : '¿Te resultó útil?' }}
                 </button>
-                <button class="btn-compartir" (click)="compartirPregunta(pregunta)">
-                  📤 Compartir
+                <button class="btn-compartir btn-glow-subtle" (click)="compartirPregunta(pregunta)">
+                  <i class="material-icons">share</i>
+                  Compartir
                 </button>
               </div>
             </div>
@@ -184,33 +177,39 @@
         
         <div class="contacto-metodos">
           <div class="metodo-contacto">
-            <div class="metodo-icon">💬</div>
+            <div class="metodo-icon">
+              <i class="material-icons icon-mexican-red icon-xl">chat</i>
+            </div>
             <div class="metodo-info">
               <h4>Chat en Vivo</h4>
               <p>Disponible 24/7</p>
-              <button class="btn-contacto" (click)="iniciarChat()">
+              <button class="btn-contacto btn-glow-effect" (click)="iniciarChat()">
                 Iniciar Chat
               </button>
             </div>
           </div>
           
           <div class="metodo-contacto">
-            <div class="metodo-icon">📧</div>
+            <div class="metodo-icon">
+              <i class="material-icons icon-mexican-brown icon-xl">email</i>
+            </div>
             <div class="metodo-info">
               <h4>Correo Electrónico</h4>
               <p>Respuesta en 24 horas</p>
-              <button class="btn-contacto" (click)="abrirEmail()">
-                soporte&#64;raicesmx.com
+              <button class="btn-contacto btn-glow-effect" (click)="abrirEmail()">
+                soporte@raicesmx.com
               </button>
             </div>
           </div>
           
           <div class="metodo-contacto">
-            <div class="metodo-icon">📞</div>
+            <div class="metodo-icon">
+              <i class="material-icons icon-mexican-green icon-xl">phone</i>
+            </div>
             <div class="metodo-info">
               <h4>Teléfono</h4>
               <p>Lun-Vie 9:00-18:00</p>
-              <button class="btn-contacto" (click)="llamarSoporte()">
+              <button class="btn-contacto btn-glow-effect" (click)="llamarSoporte()">
                 +52 55 1234 5678
               </button>
             </div>
@@ -278,8 +277,9 @@
             ></textarea>
           </div>
           
-          <button type="submit" class="btn-enviar" [disabled]="enviando">
-            {{ enviando ? 'Enviando...' : '📤 Enviar Mensaje' }}
+          <button type="submit" class="btn-enviar btn-glow-effect" [disabled]="enviando">
+            <i class="material-icons">send</i>
+            {{ enviando ? 'Enviando...' : 'Enviar Mensaje' }}
           </button>
         </form>
       </div>
@@ -292,28 +292,34 @@
       <h2>Recursos Adicionales</h2>
       <div class="recursos-grid">
         <div class="recurso-card">
-          <div class="recurso-icon">📚</div>
+          <div class="recurso-icon">
+            <i class="material-icons icon-mexican-brown icon-xl">menu_book</i>
+          </div>
           <h3>Guías de Compra</h3>
           <p>Aprende a elegir la artesanía perfecta para ti</p>
-          <button class="btn-recurso" (click)="verGuias()">
+          <button class="btn-recurso btn-glow-effect" (click)="verGuias()">
             Ver Guías
           </button>
         </div>
         
         <div class="recurso-card">
-          <div class="recurso-icon">🎥</div>
+          <div class="recurso-icon">
+            <i class="material-icons icon-mexican-gold icon-xl">play_circle</i>
+          </div>
           <h3>Video Tutoriales</h3>
           <p>Aprende sobre el cuidado de artesanías mexicanas</p>
-          <button class="btn-recurso" (click)="verTutoriales()">
+          <button class="btn-recurso btn-glow-effect" (click)="verTutoriales()">
             Ver Videos
           </button>
         </div>
         
         <div class="recurso-card">
-          <div class="recurso-icon">📋</div>
+          <div class="recurso-icon">
+            <i class="material-icons icon-mexican-red icon-xl">description</i>
+          </div>
           <h3>Políticas y Términos</h3>
           <p>Conoce nuestras políticas de servicio</p>
-          <button class="btn-recurso" (click)="verPoliticas()">
+          <button class="btn-recurso btn-glow-effect" (click)="verPoliticas()">
             Ver Políticas
           </button>
         </div>

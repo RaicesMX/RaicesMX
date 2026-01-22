@@ -11,18 +11,17 @@
 
           <div class="acciones-rapidas">
             <button
-              class="btn-accion btn-accion-primary"
+              class="btn-accion btn-accion-primary btn-glow-effect"
               [routerLink]="['/publicar_producto']"
               *ngIf="puedePublicarProductos"
             >
-              <i class="icon-publish">📦</i>
+              <span class="material-icons btn-icon">inventory_2</span>
               <span>Publicar Producto</span>
             </button>
-            <button class="btn-accion btn-accion-secondary" [routerLink]="['/historial_compras']">
-              <i class="icon-history">🛒</i>
+            <button class="btn-accion btn-accion-secondary btn-glow-effect" [routerLink]="['/historial_compras']">
+              <span class="material-icons btn-icon">history</span>
               <span>Historial de Compras</span>
             </button>
-            <!-- ELIMINADO: Botón Cerrar Sesión del banner -->
           </div>
         </div>
 
@@ -30,7 +29,7 @@
         <div class="estadisticas-grid">
           <div class="estadistica-card">
             <div class="estadistica-icon estadistica-icon-1">
-              <i class="icon-package">📦</i>
+              <i class="material-icons">local_shipping</i>
             </div>
             <div class="estadistica-info">
               <span class="numero">5</span>
@@ -40,7 +39,7 @@
 
           <div class="estadistica-card">
             <div class="estadistica-icon estadistica-icon-2">
-              <i class="icon-star">⭐</i>
+              <i class="material-icons">star</i>
             </div>
             <div class="estadistica-info">
               <span class="numero">12</span>
@@ -50,7 +49,7 @@
 
           <div class="estadistica-card">
             <div class="estadistica-icon estadistica-icon-3">
-              <i class="icon-box">🎁</i>
+              <i class="material-icons">inventory</i>
             </div>
             <div class="estadistica-info">
               <span class="numero">3</span>
@@ -60,7 +59,7 @@
 
           <div class="estadistica-card">
             <div class="estadistica-icon estadistica-icon-4">
-              <i class="icon-credit-card">💳</i>
+              <i class="material-icons">credit_card</i>
             </div>
             <div class="estadistica-info">
               <span class="numero">2</span>
@@ -79,7 +78,7 @@
             [class.active]="tabActiva === 'informacion'"
             (click)="cambiarTab('informacion')"
           >
-            <i class="icon-user">👤</i>
+            <i class="material-icons">person</i>
             Información Personal
           </button>
           <button
@@ -87,7 +86,7 @@
             [class.active]="tabActiva === 'direcciones'"
             (click)="cambiarTab('direcciones')"
           >
-            <i class="icon-location">📍</i>
+            <i class="material-icons">location_on</i>
             Direcciones
           </button>
           <button
@@ -95,7 +94,7 @@
             [class.active]="tabActiva === 'productos'"
             (click)="cambiarTab('productos')"
           >
-            <i class="icon-package">📦</i>
+            <i class="material-icons">package</i>
             Mis Productos
           </button>
           <button
@@ -103,7 +102,7 @@
             [class.active]="tabActiva === 'seguridad'"
             (click)="cambiarTab('seguridad')"
           >
-            <i class="icon-shield">🛡️</i>
+            <i class="material-icons">security</i>
             Seguridad
           </button>
         </nav>
@@ -113,12 +112,13 @@
           <!-- Pestaña: Información Personal -->
           <div *ngIf="tabActiva === 'informacion'" class="tab-pane">
             <div class="pane-header">
-              <h2><i class="icon-user">👤</i> Información Personal</h2>
+              <h2><i class="material-icons">person</i> Información Personal</h2>
               <div class="pane-acciones">
-                <button class="btn-secundario" (click)="cerrarSesion()">
-                  <i class="icon-logout">🚪</i> Cerrar Sesión
+                <button class="btn-secundario btn-logout" (click)="cerrarSesion()">
+                  <i class="material-icons">logout</i> Cerrar Sesión
                 </button>
-                <button class="btn-editar" (click)="toggleEdicion()">
+                <button class="btn-editar btn-glow-effect" (click)="toggleEdicion()">
+                  <i class="material-icons">{{ editando ? 'close' : 'edit' }}</i>
                   {{ editando ? 'Cancelar' : 'Editar Perfil' }}
                 </button>
               </div>
@@ -196,8 +196,8 @@
 
               <!-- Acciones del formulario -->
               <div *ngIf="editando" class="form-actions">
-                <button class="btn-guardar" (click)="guardarCambios()">
-                  <i class="icon-save">💾</i> Guardar Cambios
+                <button class="btn-guardar btn-glow-effect" (click)="guardarCambios()">
+                  <i class="material-icons">save</i> Guardar Cambios
                 </button>
                 <button class="btn-cancelar" (click)="toggleEdicion()">Cancelar</button>
               </div>
@@ -207,13 +207,13 @@
           <!-- Pestaña: Direcciones -->
           <div *ngIf="tabActiva === 'direcciones'" class="tab-pane">
             <div class="pane-header">
-              <h2><i class="icon-location">📍</i> Mis Direcciones</h2>
+              <h2><i class="material-icons">location_on</i> Mis Direcciones</h2>
               <div class="pane-acciones">
-                <button class="btn-secundario" (click)="cerrarSesion()">
-                  <i class="icon-logout">🚪</i> Cerrar Sesión
+                <button class="btn-secundario btn-logout" (click)="cerrarSesion()">
+                  <i class="material-icons">logout</i> Cerrar Sesión
                 </button>
-                <button class="btn-primary" (click)="agregarDireccion()">
-                  <i class="icon-plus">➕</i> Agregar Dirección
+                <button class="btn-primary btn-glow-effect" (click)="agregarDireccion()">
+                  <i class="material-icons">add</i> Agregar Dirección
                 </button>
               </div>
             </div>
@@ -224,15 +224,15 @@
                   <div class="direccion-titulo">
                     <h3>{{ direccion.nombre }}</h3>
                     <span *ngIf="direccion.principal" class="badge-principal">
-                      <i class="icon-check">✅</i> Principal
+                      <i class="material-icons">check_circle</i> Principal
                     </span>
                   </div>
                   <div class="direccion-acciones">
                     <button class="btn-icon" (click)="editarDireccion(i)" title="Editar">
-                      <i class="icon-edit">✏️</i>
+                      <i class="material-icons">edit</i>
                     </button>
                     <button class="btn-icon" (click)="eliminarDireccion(i)" title="Eliminar">
-                      <i class="icon-trash">🗑️</i>
+                      <i class="material-icons">delete</i>
                     </button>
                   </div>
                 </div>
@@ -258,11 +258,11 @@
             </div>
 
             <div *ngIf="direcciones.length === 0" class="sin-direcciones">
-              <i class="icon-location-off">📍</i>
+              <i class="material-icons icon-large">location_off</i>
               <h3>No hay direcciones guardadas</h3>
               <p>Agrega una dirección para recibir tus pedidos</p>
-              <button class="btn-primary" (click)="agregarDireccion()">
-                <i class="icon-plus">➕</i> Agregar primera dirección
+              <button class="btn-primary btn-glow-effect" (click)="agregarDireccion()">
+                <i class="material-icons">add</i> Agregar primera dirección
               </button>
             </div>
           </div>
@@ -270,24 +270,24 @@
           <!-- Pestaña: Mis Productos -->
           <div *ngIf="tabActiva === 'productos'" class="tab-pane">
             <div class="pane-header">
-              <h2><i class="icon-package">📦</i> Mis Productos</h2>
+              <h2><i class="material-icons">package</i> Mis Productos</h2>
               <div class="pane-acciones">
-                <button class="btn-secundario" (click)="cerrarSesion()">
-                  <i class="icon-logout">🚪</i> Cerrar Sesión
+                <button class="btn-secundario btn-logout" (click)="cerrarSesion()">
+                  <i class="material-icons">logout</i> Cerrar Sesión
                 </button>
                 <button
-                  class="btn-primary"
+                  class="btn-primary btn-glow-effect"
                   [routerLink]="['/publicar_producto']"
                   *ngIf="puedePublicarProductos"
                 >
-                  <i class="icon-plus">➕</i> Publicar Nuevo Producto
+                  <i class="material-icons">add</i> Publicar Nuevo Producto
                 </button>
               </div>
             </div>
 
-            <!-- ✨ AGREGADO: Mensaje si NO es vendedor aprobado -->
+            <!-- Mensaje si NO es vendedor aprobado -->
             <div *ngIf="!puedePublicarProductos" class="alerta-vendedor">
-              <div class="alerta-icon">⚠️</div>
+              <div class="alerta-icon"><i class="material-icons">warning</i></div>
               <div class="alerta-content">
                 <h3>Acceso restringido</h3>
                 <p *ngIf="estadoSolicitud === null">
@@ -315,7 +315,7 @@
               <div class="busqueda-productos">
                 <input type="text" placeholder="Buscar producto..." class="search-input" />
                 <button class="btn-icon">
-                  <i class="icon-search">🔍</i>
+                  <i class="material-icons">search</i>
                 </button>
               </div>
             </div>
@@ -335,21 +335,6 @@
                     }}
                   </span>
                 </div>
-                <div
-                  *ngIf="!puedePublicarProductos && productos.length === 0"
-                  class="sin-productos"
-                >
-                  <i class="icon-package-off">📦</i>
-                  <h3>No tienes permisos para publicar productos</h3>
-                  <p>Solicita ser vendedor para comenzar a vender en la plataforma</p>
-                  <button
-                    class="btn-primary"
-                    routerLink="/vendedor"
-                    *ngIf="estadoSolicitud === null"
-                  >
-                    <i class="icon-plus">➕</i> Solicitar ser vendedor
-                  </button>
-                </div>
 
                 <div class="producto-info">
                   <h3>{{ producto.nombre }}</h3>
@@ -357,10 +342,10 @@
                   <div class="producto-detalles">
                     <span class="producto-precio">${{ producto.precio | number }}</span>
                     <span class="producto-stock">
-                      <i class="icon-box">📦</i> {{ producto.stock }} disponibles
+                      <i class="material-icons">inventory</i> {{ producto.stock }} disponibles
                     </span>
                     <span class="producto-visitas">
-                      <i class="icon-eye">👁️</i> {{ producto.visitas }} vistas
+                      <i class="material-icons">visibility</i> {{ producto.visitas }} vistas
                     </span>
                   </div>
                 </div>
@@ -371,32 +356,32 @@
                     (click)="editarProducto(i)"
                     title="Editar"
                   >
-                    <i class="icon-edit">✏️</i>
+                    <i class="material-icons">edit</i>
                   </button>
                   <button
                     class="btn-icon btn-icon-info"
                     (click)="pausarProducto(i)"
                     [title]="producto.estado === 'activo' ? 'Pausar' : 'Activar'"
                   >
-                    <i class="icon-pause">⏸️</i>
+                    <i class="material-icons">{{ producto.estado === 'activo' ? 'pause' : 'play_arrow' }}</i>
                   </button>
                   <button
                     class="btn-icon btn-icon-danger"
                     (click)="eliminarProducto(i)"
                     title="Eliminar"
                   >
-                    <i class="icon-trash">🗑️</i>
+                    <i class="material-icons">delete</i>
                   </button>
                 </div>
               </div>
             </div>
 
-            <div *ngIf="productos.length === 0" class="sin-productos">
-              <i class="icon-package-off">📦</i>
+            <div *ngIf="puedePublicarProductos && productos.length === 0" class="sin-productos">
+              <i class="material-icons icon-large">inventory_2</i>
               <h3>No hay productos publicados</h3>
               <p>Comienza a publicar tus productos para vender en la plataforma</p>
-              <button class="btn-primary" [routerLink]="['/publicar_producto']">
-                <i class="icon-plus">➕</i> Publicar primer producto
+              <button class="btn-primary btn-glow-effect" [routerLink]="['/publicar_producto']">
+                <i class="material-icons">add</i> Publicar primer producto
               </button>
             </div>
           </div>
@@ -404,10 +389,10 @@
           <!-- Pestaña: Seguridad -->
           <div *ngIf="tabActiva === 'seguridad'" class="tab-pane">
             <div class="pane-header">
-              <h2><i class="icon-shield">🛡️</i> Seguridad y Privacidad</h2>
+              <h2><i class="material-icons">security</i> Seguridad y Privacidad</h2>
               <div class="pane-acciones">
-                <button class="btn-secundario" (click)="cerrarSesion()">
-                  <i class="icon-logout">🚪</i> Cerrar Sesión
+                <button class="btn-secundario btn-logout" (click)="cerrarSesion()">
+                  <i class="material-icons">logout</i> Cerrar Sesión
                 </button>
               </div>
             </div>
@@ -415,17 +400,17 @@
             <div class="configuraciones-list">
               <div class="config-item">
                 <div class="config-info">
-                  <h3><i class="icon-lock">🔒</i> Cambiar Contraseña</h3>
+                  <h3><i class="material-icons">lock</i> Cambiar Contraseña</h3>
                   <p>Actualiza tu contraseña regularmente para mantener tu cuenta segura</p>
                 </div>
-                <button class="btn-primary btn-password" (click)="cambiarContrasena()">
-                  <i class="icon-key">🔑</i> Cambiar Contraseña
+                <button class="btn-primary btn-password btn-glow-effect" (click)="cambiarContrasena()">
+                  <i class="material-icons">key</i> Cambiar Contraseña
                 </button>
               </div>
 
               <div class="config-item">
                 <div class="config-info">
-                  <h3><i class="icon-shield-check">✅</i> Verificación en dos pasos</h3>
+                  <h3><i class="material-icons">verified_user</i> Verificación en dos pasos</h3>
                   <p>Añade una capa extra de seguridad a tu cuenta</p>
                 </div>
                 <label class="toggle-switch">
@@ -440,7 +425,7 @@
 
               <div class="config-item">
                 <div class="config-info">
-                  <h3><i class="icon-bell">🔔</i> Notificaciones</h3>
+                  <h3><i class="material-icons">notifications</i> Notificaciones</h3>
                   <p>Configura cómo recibir notificaciones sobre tus actividades</p>
                 </div>
                 <div class="notificaciones-opciones">
@@ -467,11 +452,11 @@
 
               <div class="config-item danger">
                 <div class="config-info">
-                  <h3><i class="icon-alert-triangle">⚠️</i> Eliminar cuenta</h3>
+                  <h3><i class="material-icons">warning</i> Eliminar cuenta</h3>
                   <p>Elimina permanentemente tu cuenta y todos tus datos</p>
                 </div>
                 <button class="btn-danger" (click)="eliminarCuenta()">
-                  <i class="icon-trash">🗑️</i> Eliminar Cuenta
+                  <i class="material-icons">delete_forever</i> Eliminar Cuenta
                 </button>
               </div>
             </div>
