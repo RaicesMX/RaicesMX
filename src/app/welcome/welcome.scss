@@ -1,12 +1,10 @@
 /* Variables de color */
 $primary: #9d2449;
 $gold: #DDC9A3;
-$gold-yellow: #FFD700; /* Amarillo dorado brillante para MX */
+$gold-yellow: #FFD700;
 $white: #FFFFFF;
 $black: #000000;
 $dark: #1a1a1a;
-
-/* Crear version oscura del color primario manualmente */
 $primary-dark: #6c1934;
 
 /* Estilos base */
@@ -28,7 +26,7 @@ body {
   overflow: hidden;
 }
 
-/* HEADER MEJORADO */
+/* HEADER */
 .header-landing {
   position: fixed;
   top: 0;
@@ -37,7 +35,6 @@ body {
   z-index: 1000;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba($gold, 0.15);
   padding: 1rem 3rem;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
@@ -126,10 +123,10 @@ body {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  gap: 5rem; /* Reducido para acomodar logo más grande */
+  gap: 5rem;
 }
 
-/* LOGO MÁS GRANDE (450px) */
+/* LOGO GRANDE */
 .logo-container {
   flex: 1;
   display: flex;
@@ -137,10 +134,10 @@ body {
   align-items: center;
   
   .main-logo {
-    width: 450px;   /* AUMENTADO a 450px */
-    height: 450px;  /* AUMENTADO a 450px */
+    width: 450px;
+    height: 450px;
     object-fit: contain;
-    filter: drop-shadow(0 0 60px rgba($gold-yellow, 0.8)); /* Más brillo */
+    filter: drop-shadow(0 0 60px rgba($gold-yellow, 0.8));
     animation: logo-float 6s ease-in-out infinite;
   }
 }
@@ -166,7 +163,7 @@ body {
   text-align: left;
   
   .main-title {
-    font-size: 5.8rem; /* Aumentado un poco */
+    font-size: 5.8rem;
     font-weight: 900;
     line-height: 1;
     margin-bottom: 2.5rem;
@@ -179,7 +176,7 @@ body {
     
     .title-part-2 {
       color: $gold-yellow;
-      text-shadow: 0 0 35px rgba($gold-yellow, 0.7); /* Más brillo */
+      text-shadow: 0 0 35px rgba($gold-yellow, 0.7);
       display: block;
     }
   }
@@ -204,10 +201,10 @@ body {
 
 /* ESTILOS PARA SECCIONES */
 section {
-  min-height: 100vh;
+  min-height: 80vh; /* REDUCIDO: de 100vh a 80vh */
   width: 100%;
   position: relative;
-  padding: 0 5vw;
+  padding: 4rem 5vw; /* REDUCIDO: menos padding */
   display: flex;
   align-items: center;
 }
@@ -246,7 +243,7 @@ section {
   }
 }
 
-/* CLASES PARA MEJOR VISIBILIDAD */
+/* CLASES PARA VISIBILIDAD */
 .dark-text {
   color: #000000;
   opacity: 0.95;
@@ -265,17 +262,17 @@ section {
   
   .section-img {
     width: 100%;
-    height: 500px;
+    height: 450px; /* REDUCIDO */
     object-fit: cover;
-    border-radius: 20px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    border-radius: 15px; /* REDUCIDO */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* REDUCIDO */
   }
   
   .img-overlay {
     position: absolute;
     inset: 0;
     background: linear-gradient(45deg, rgba($primary, 0.15), transparent);
-    border-radius: 20px;
+    border-radius: 15px;
     pointer-events: none;
   }
 }
@@ -313,11 +310,12 @@ section {
   }
 }
 
-/* SECCIÓN FINAL - UN SOLO BOTÓN */
+/* SECCIÓN FINAL - MÍNIMO ESPACIO */
 .final-section {
   background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
   text-align: center;
-  padding: 10rem 5vw;
+  padding: 5rem 5vw; /* MÍNIMO */
+  min-height: 60vh; /* MUY REDUCIDO */
 
   .final-content {
     max-width: 800px;
@@ -325,42 +323,42 @@ section {
   }
 
   .final-title {
-    font-size: 3.8rem;
+    font-size: 3.2rem; /* REDUCIDO */
     font-weight: 800;
     line-height: 1.2;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem; /* REDUCIDO */
     color: #FFFFFF;
     
     .highlight {
       color: $gold-yellow;
-      text-shadow: 0 0 20px rgba($gold-yellow, 0.4);
+      text-shadow: 0 0 15px rgba($gold-yellow, 0.4);
     }
   }
 
   .final-subtitle {
-    font-size: 1.5rem;
+    font-size: 1.3rem; /* REDUCIDO */
     color: rgba($white, 0.9);
-    margin-bottom: 3rem;
-    line-height: 1.6;
+    margin-bottom: 2rem; /* REDUCIDO */
+    line-height: 1.5;
   }
 }
 
-/* UN SOLO BOTÓN - Explorar Productos */
+/* BOTÓN */
 .btn-explorar-final {
   position: relative;
   display: inline-block;
-  padding: 1.4rem 4rem;
+  padding: 1.2rem 3.5rem; /* REDUCIDO */
   background: linear-gradient(135deg, $gold 0%, $gold-yellow 100%);
   color: $primary;
   border: none;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 1.2rem; /* REDUCIDO */
   cursor: pointer;
   overflow: hidden;
   text-decoration: none;
   transition: all 0.4s ease;
-  box-shadow: 0 15px 35px rgba($gold-yellow, 0.3);
+  box-shadow: 0 10px 25px rgba($gold-yellow, 0.3); /* REDUCIDO */
 
   span {
     position: relative;
@@ -375,8 +373,8 @@ section {
   }
 
   &:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 20px 45px rgba($gold-yellow, 0.5);
+    transform: translateY(-2px) scale(1.03); /* REDUCIDO */
+    box-shadow: 0 15px 35px rgba($gold-yellow, 0.4);
     
     .btn-glow {
       opacity: 1;
@@ -396,7 +394,7 @@ section {
   transition: transform 0.1s linear;
 }
 
-//* RESPONSIVE - CORREGIDO */
+/* RESPONSIVE - AJUSTADO */
 @media (max-width: 1400px) {
   .main-logo {
     width: 400px;
@@ -412,7 +410,12 @@ section {
   }
   
   .section-img {
-    height: 480px; /* Ajustado */
+    height: 420px;
+  }
+  
+  section {
+    min-height: 75vh;
+    padding: 3.5rem 5vw;
   }
 }
 
@@ -435,7 +438,12 @@ section {
   }
   
   .section-img {
-    height: 450px; /* Ajustado */
+    height: 400px;
+  }
+  
+  section {
+    min-height: 70vh;
+    padding: 3rem 5vw;
   }
 }
 
@@ -443,7 +451,7 @@ section {
   .hero-content,
   .section-content {
     flex-direction: column;
-    gap: 3rem;
+    gap: 2.5rem;
     text-align: center;
   }
   
@@ -465,13 +473,8 @@ section {
     height: 320px;
   }
   
-  .final-title {
-    font-size: 3rem;
-  }
-  
-  /* CORRECCIÓN IMPORTANTE: Imágenes en móvil */
   .section-img {
-    height: 400px; /* Ajustado para tablet */
+    height: 350px;
     max-width: 600px;
     margin: 0 auto;
   }
@@ -486,9 +489,22 @@ section {
     }
   }
   
-  /* Asegurar que .reversed no cause problemas en móvil */
   .section-content.reversed {
-    flex-direction: column; /* Forzar columna en móvil */
+    flex-direction: column;
+  }
+  
+  .final-section {
+    padding: 4rem 5vw;
+    min-height: 50vh;
+  }
+  
+  .final-title {
+    font-size: 2.8rem;
+  }
+  
+  section {
+    min-height: auto;
+    padding: 2.5rem 5vw;
   }
 }
 
@@ -515,15 +531,19 @@ section {
     font-size: 1.1rem;
   }
   
-  /* CORRECCIÓN: Imágenes más pequeñas en móvil */
   .section-img {
-    height: 350px;
+    height: 300px;
     max-width: 500px;
   }
   
   .btn-explorar-final {
-    padding: 1.1rem 2.5rem;
+    padding: 1rem 2.5rem;
     font-size: 1.1rem;
+  }
+  
+  .final-section {
+    padding: 3.5rem 3vw;
+    min-height: 45vh;
   }
   
   .final-title {
@@ -532,11 +552,11 @@ section {
   
   .final-subtitle {
     font-size: 1.2rem;
+    margin-bottom: 1.8rem;
   }
   
-  /* Asegurar que todas las secciones se vean igual en móvil */
   section {
-    padding: 0 3vw;
+    padding: 2rem 3vw;
   }
   
   .section-content {
@@ -563,14 +583,14 @@ section {
     font-size: 2.2rem;
   }
   
-  /* CORRECCIÓN: Imágenes para móviles pequeños */
   .section-img {
-    height: 300px;
+    height: 250px;
     max-width: 400px;
   }
   
   .final-section {
-    padding: 8rem 3vw;
+    padding: 3rem 3vw;
+    min-height: 40vh;
   }
   
   .final-title {
@@ -598,7 +618,7 @@ section {
   }
   
   .btn-explorar-final {
-    padding: 1rem 2rem;
+    padding: 0.9rem 2rem;
     font-size: 1rem;
   }
   
@@ -606,35 +626,26 @@ section {
     font-size: 2rem;
   }
   
-  /* CORRECCIÓN: Imágenes para móviles muy pequeños */
   .section-img {
-    height: 250px;
+    height: 220px;
     max-width: 350px;
   }
   
   .section-description {
     font-size: 1rem;
-    padding: 0 1rem;
-  }
-}
-
-@media (max-width: 360px) {
-  .main-logo {
-    width: 180px;
-    height: 180px;
   }
   
-  .main-title {
-    font-size: 2.2rem;
+  .final-section {
+    padding: 2.5rem 3vw;
+    min-height: 35vh;
   }
   
-  /* CORRECCIÓN: Imágenes para pantallas muy pequeñas */
-  .section-img {
-    height: 220px;
-    max-width: 300px;
+  .final-title {
+    font-size: 2rem;
   }
   
-  .section-title {
-    font-size: 1.8rem;
+  .final-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
   }
 }
