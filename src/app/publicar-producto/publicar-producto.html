@@ -73,11 +73,14 @@
             </div>
           </div>
         </div>
-        <div
-          *ngIf="archivosImagenes.length === 0 && productoForm.get('titulo')?.touched"
-          class="error-message"
-        >
-          Debes subir al menos una imagen
+
+        <!-- ✅ VALIDACIÓN MEJORADA DE IMÁGENES -->
+        <div *ngIf="archivosImagenes.length === 0 && productoForm.touched" class="error-message">
+          <i class="fas fa-exclamation-triangle"></i> Debes subir al menos una imagen
+        </div>
+        <div *ngIf="archivosImagenes.length > 0" class="success-message">
+          <i class="fas fa-check-circle"></i> {{ archivosImagenes.length }} imagen(es) cargada(s)
+          correctamente
         </div>
       </div>
     </div>
@@ -227,15 +230,19 @@
       <div class="form-row">
         <div class="form-group">
           <label for="estado" class="form-label">Estado *</label>
-          <select id="estado" formControlName="estado" class="input-base">
-            <option value="" disabled selected>Selecciona tu estado</option>
-            <option *ngFor="let estado of estadosMexico" [value]="estado">{{ estado }}</option>
-          </select>
+          <input
+            type="text"
+            id="estado"
+            formControlName="estado"
+            class="input-base"
+            placeholder="Se llenará automáticamente"
+            readonly
+          />
           <div
             *ngIf="productoForm.get('estado')?.invalid && productoForm.get('estado')?.touched"
             class="error-message"
           >
-            Selecciona tu estado
+            El estado es requerido
           </div>
         </div>
 
@@ -244,12 +251,13 @@
           <input
             type="text"
             id="ciudad"
-            formControlName="ciudad"
+            formControlName="municipio"
             class="input-base"
-            placeholder="Ej: Oaxaca de Juárez"
+            placeholder="Se llenará automáticamente"
+            readonly
           />
           <div
-            *ngIf="productoForm.get('ciudad')?.invalid && productoForm.get('ciudad')?.touched"
+            *ngIf="productoForm.get('municipio')?.invalid && productoForm.get('municipio')?.touched"
             class="error-message"
           >
             La ciudad es requerida
@@ -258,7 +266,37 @@
       </div>
 
       <div class="form-row">
-        <!-- ✅ DESPUÉS: Select con lista de colonias -->
+        <!-- Código Postal PRIMERO para que sea lo primero que llenen -->
+        <div class="form-group">
+          <label for="codigoPostal" class="form-label">Código Postal *</label>
+          <input
+            type="text"
+            id="codigoPostal"
+            formControlName="codigoPostal"
+            class="input-base"
+            placeholder="Ingresa tu código postal (5 dígitos)"
+            maxlength="5"
+          />
+          <small class="text-caption">
+            <i class="fas fa-info-circle"></i> Los campos de estado y ciudad se llenarán
+            automáticamente
+          </small>
+          <div
+            *ngIf="
+              productoForm.get('codigoPostal')?.invalid && productoForm.get('codigoPostal')?.touched
+            "
+            class="error-message"
+          >
+            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['required']"
+              >El código postal es requerido</span
+            >
+            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['pattern']"
+              >Ingresa 5 dígitos válidos</span
+            >
+          </div>
+        </div>
+
+        <!-- Colonia -->
         <div class="form-group">
           <label for="colonia" class="form-label">Colonia *</label>
 
@@ -298,33 +336,7 @@
             La colonia es requerida
           </div>
         </div>
-
-        <div class="form-group">
-          <label for="codigoPostal" class="form-label">Código Postal *</label>
-          <input
-            type="text"
-            id="codigoPostal"
-            formControlName="codigoPostal"
-            class="input-base"
-            placeholder="5 dígitos"
-            maxlength="5"
-          />
-          <div
-            *ngIf="
-              productoForm.get('codigoPostal')?.invalid && productoForm.get('codigoPostal')?.touched
-            "
-            class="error-message"
-          >
-            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['required']"
-              >El código postal es requerido</span
-            >
-            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['pattern']"
-              >Ingresa 5 dígitos válidos</span
-            >
-          </div>
-        </div>
       </div>
-      <!-- Después del código postal (en el HTML) -->
 
       <!-- Mapa con API real (Geoapify Free Tier) -->
       <div class="form-group">
@@ -368,6 +380,7 @@
               </div>
             </div>
           </div>
+
           <!-- Dirección detallada -->
           <div class="direccion-detallada mt-3">
             <h3 class="text-subtitle">Dirección detallada</h3>
@@ -398,13 +411,16 @@
                 <input
                   type="text"
                   id="numero"
-                  formControlName="numero"
+                  formControlName="numeroExterior"
                   class="input-base"
                   placeholder="Ej: 123"
                 />
 
                 <div
-                  *ngIf="productoForm.get('numero')?.invalid && productoForm.get('numero')?.touched"
+                  *ngIf="
+                    productoForm.get('numeroExterior')?.invalid &&
+                    productoForm.get('numeroExterior')?.touched
+                  "
                   class="error-message"
                 >
                   El número es requerido
@@ -414,7 +430,7 @@
 
             <!-- Referencia -->
             <div class="form-group">
-              <label for="referencia" class="form-label">Referencia</label>
+              <label for="referencia" class="form-label">Referencia (opcional)</label>
               <input
                 type="text"
                 id="referencia"
@@ -455,7 +471,7 @@
 
       <div class="form-group checkbox-group">
         <label class="checkbox-label">
-          <input type="checkbox" id="terminos" required />
+          <input type="checkbox" id="terminos" (change)="onTerminosChange($event)" />
           <span class="text-body">
             Acepto los
             <a href="/terminos" target="_blank" class="text-primary">Términos y Condiciones</a>
@@ -467,7 +483,7 @@
       </div>
       <div class="form-group checkbox-group">
         <label class="checkbox-label">
-          <input type="checkbox" id="autenticidad" required />
+          <input type="checkbox" id="autenticidad" (change)="onAutenticidadChange($event)" />
           <span class="text-body">
             Certifico que este producto es auténtico y hecho en México, siguiendo técnicas
             tradicionales *
@@ -476,7 +492,7 @@
       </div>
       <div class="form-group checkbox-group">
         <label class="checkbox-label">
-          <input type="checkbox" id="responsabilidad" required />
+          <input type="checkbox" id="responsabilidad" (change)="onResponsabilidadChange($event)" />
           <span class="text-body">
             Me responsabilizo de la veracidad de la información proporcionada y de la calidad del
             producto *
@@ -485,18 +501,70 @@
       </div>
     </div>
 
-    <!-- Botones de acción -->
+    <!-- ✅ NUEVO BOTÓN PERSONALIZADO CON MEJOR VALIDACIÓN -->
     <div class="form-actions">
       <button type="button" class="btn-outline" (click)="navigateToMarketplace()">
         <i class="fas fa-times"></i> Cancelar
       </button>
+
+      <!-- Botón personalizado con validación completa -->
       <button
         type="submit"
-        class="btn-primary"
-        [disabled]="productoForm.invalid || archivosImagenes.length === 0"
+        class="btn-primary btn-publicar-custom"
+        [disabled]="!puedePublicar"
+        [class.btn-disabled]="!puedePublicar"
       >
-        <i class="fas fa-upload"></i> Publicar Producto
+        <i class="fas fa-upload"></i>
+        <span *ngIf="puedePublicar">Publicar Producto</span>
+        <span *ngIf="!puedePublicar">Completa todos los campos</span>
       </button>
+    </div>
+
+    <!-- ✅ INDICADOR DE VALIDACIÓN VISUAL -->
+    <div class="validation-status mt-3" *ngIf="!puedePublicar">
+      <div class="status-card">
+        <h4 class="status-title"><i class="fas fa-clipboard-check"></i> Checklist de validación</h4>
+        <ul class="status-list">
+          <li [class.completed]="productoForm.valid">
+            <i
+              class="fas"
+              [class.fa-check-circle]="productoForm.valid"
+              [class.fa-circle]="!productoForm.valid"
+            ></i>
+            Formulario completo
+          </li>
+          <li [class.completed]="archivosImagenes.length > 0">
+            <i
+              class="fas"
+              [class.fa-check-circle]="archivosImagenes.length > 0"
+              [class.fa-circle]="archivosImagenes.length === 0"
+            ></i>
+            Al menos 1 imagen ({{ archivosImagenes.length }}/5)
+          </li>
+          <li [class.completed]="ubicacionSeleccionada !== null">
+            <i
+              class="fas"
+              [class.fa-check-circle]="ubicacionSeleccionada !== null"
+              [class.fa-circle]="ubicacionSeleccionada === null"
+            ></i>
+            Ubicación seleccionada
+          </li>
+          <li
+            [class.completed]="terminosAceptados && autenticidadAceptada && responsabilidadAceptada"
+          >
+            <i
+              class="fas"
+              [class.fa-check-circle]="
+                terminosAceptados && autenticidadAceptada && responsabilidadAceptada
+              "
+              [class.fa-circle]="
+                !(terminosAceptados && autenticidadAceptada && responsabilidadAceptada)
+              "
+            ></i>
+            Términos aceptados
+          </li>
+        </ul>
+      </div>
     </div>
   </form>
 
@@ -572,7 +640,8 @@
       <li>Usa fotos bien iluminadas y desde diferentes ángulos</li>
       <li>Describe bien los materiales y técnicas artesanales</li>
       <li>Menciona las medidas exactas del producto</li>
-      <li>Se específico en la ubicación</li>
+      <li>Ingresa primero tu código postal para autocompletar dirección</li>
+      <li>Haz clic en el mapa para marcar tu ubicación exacta</li>
       <li>Se honesto sobre el estado y disponibilidad del producto</li>
       <li>Responde rápidamente a las consultas de los compradores</li>
     </ul>
