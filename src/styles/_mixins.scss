@@ -149,3 +149,46 @@
     box-shadow: $shadow-lg;
     }
 }
+// ===== ANIMATION MIXINS =====
+@mixin pulse-animation($duration: 2s) {
+  animation: pulse $duration infinite ease-in-out;
+}
+
+@mixin typing-animation {
+  animation: typing 1.4s infinite ease-in-out;
+  
+  &:nth-child(1) { animation-delay: -0.32s; }
+  &:nth-child(2) { animation-delay: -0.16s; }
+}
+
+@mixin slide-up-animation {
+  animation: slideUp 0.4s ease;
+}
+
+@mixin fade-in-animation {
+  animation: fadeIn 0.5s ease;
+}
+
+// ===== TEXT MIXINS =====
+@mixin text-truncate($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// ===== EFFECT MIXINS =====
+@mixin button-hover-effect {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+@mixin card-hover-effect {
+  transform: translateY(-5px);
+  box-shadow: $shadow-lg;
+}

@@ -1,0 +1,230 @@
+<!-- chatbot.component.html -->
+<div class="chatbot-page">
+  <!-- Header -->
+  <header class="chatbot-header">
+    <div class="header-content">
+      <button class="back-button" routerLink="/marketplace">
+        <span class="material-icons">arrow_back</span>
+        <span>Volver al inicio</span>
+      </button>
+      <div class="header-title">
+        <h1>Asistente Virtual</h1>
+        <p class="subtitle">RaícesMX - Conectando artesanos y compradores</p>
+      </div>
+      <div class="header-status">
+        <span class="status-dot"></span>
+        <span class="status-text">En línea</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="chatbot-main">
+    <div class="chatbot-container">
+      <!-- Panel lateral izquierdo -->
+      <aside class="chatbot-sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-avatar">
+            <span class="material-symbols-outlined">robot_2</span>
+          </div>
+          <h2>RaícesBot</h2>
+          <p class="sidebar-subtitle">Tu asistente virtual</p>
+        </div>
+
+        <div class="sidebar-section">
+          <h3 class="section-title">
+            <span class="material-symbols-outlined icon-sm">category</span>
+            Categorías de Ayuda
+          </h3>
+          <div class="help-categories">
+            <button 
+              *ngFor="let category of helpCategories" 
+              class="category-btn"
+              (click)="selectHelpCategory(category.title)">
+              <span class="material-symbols-outlined">{{ category.icon }}</span>
+              <div class="category-info">
+                <span class="category-title">{{ category.title }}</span>
+                <span class="category-desc">{{ category.desc }}</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3 class="section-title">
+            <span class="material-symbols-outlined icon-sm">question_answer</span>
+            Preguntas Frecuentes
+          </h3>
+          <div class="quick-questions-sidebar">
+            <button 
+              *ngFor="let question of quickQuestions" 
+              class="quick-question-sidebar"
+              (click)="selectQuickQuestion(question)">
+              {{ question }}
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <p class="footer-text">¿Necesitas ayuda humana?</p>
+          <div class="contact-info">
+            <p>
+              <span class="material-symbols-outlined icon-xs">mail</span>
+              soporte@raicesmx.com
+            </p>
+            <p>
+              <span class="material-symbols-outlined icon-xs">call</span>
+              55-1234-5678
+            </p>
+          </div>
+          <button class="clear-chat-btn btn-secondary" (click)="clearChat()">
+            <span class="material-symbols-outlined">delete</span>
+            Limpiar conversación
+          </button>
+        </div>
+      </aside>
+
+      <!-- Área principal del chat -->
+      <div class="chatbot-content">
+        <!-- Encabezado del chat -->
+        <div class="chat-header">
+          <div class="chat-header-left">
+            <div class="chat-avatar-main">
+              <span class="material-symbols-outlined">chat</span>
+            </div>
+            <div class="chat-info">
+              <h2>Chat en vivo</h2>
+              <p class="chat-description">Conversación con nuestro asistente virtual</p>
+            </div>
+          </div>
+          <div class="chat-stats">
+            <span class="stat-item">
+              <span class="material-symbols-outlined icon-xs">message</span>
+              {{ messages.length }} mensajes
+            </span>
+            <span class="stat-separator">●</span>
+            <span class="stat-item">
+              <span class="material-symbols-outlined icon-xs">bolt</span>
+              Respuesta rápida
+            </span>
+          </div>
+        </div>
+
+        <!-- Área de mensajes -->
+        <div class="chat-messages-area" #chatContainer>
+          <!-- Mensaje de bienvenida -->
+          <div class="welcome-message">
+            <div class="welcome-content">
+              <h3>
+                <span class="material-symbols-outlined icon-lg">waving_hand</span>
+                ¡Bienvenido al asistente de RaícesMX!
+              </h3>
+              <p>Puedo ayudarte con información sobre productos artesanales, ventas, registro y más.</p>
+              <p>Selecciona una categoría o escribe tu pregunta directamente.</p>
+            </div>
+          </div>
+
+          <!-- Historial de mensajes -->
+          <div class="messages-history">
+            <div class="message-container" *ngFor="let message of messages">
+              <div class="message" [class.user]="message.sender === 'user'" [class.bot]="message.sender === 'bot'">
+                <div class="message-avatar" *ngIf="message.sender === 'bot'">
+                  <span class="material-symbols-outlined">smart_toy</span>
+                </div>
+                <div class="message-content">
+                  <div class="message-bubble">
+                    <p class="message-text">{{ message.text }}</p>
+                    <div class="message-footer">
+                      <span class="message-time">
+                        <span class="material-symbols-outlined icon-micro">schedule</span>
+                        {{ formatTime(message.timestamp) }}
+                      </span>
+                      <span class="message-sender">{{ message.sender === 'user' ? 'Tú' : 'RaícesBot' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Indicador de escritura -->
+            <div class="typing-indicator" *ngIf="isTyping">
+              <div class="typing-avatar">
+                <span class="material-symbols-outlined">smart_toy</span>
+              </div>
+              <div class="typing-content">
+                <div class="typing-dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <span class="typing-text">RaícesBot está escribiendo...</span>
+              </div>
+            </div>
+
+            <!-- Preguntas sugeridas -->
+            <div class="suggested-questions" *ngIf="getSuggestedQuestions().length > 0">
+              <p class="suggested-title">
+                <span class="material-symbols-outlined icon-xs">lightbulb</span>
+                ¿Te interesa saber también sobre...
+              </p>
+              <div class="suggested-buttons">
+                <button 
+                  *ngFor="let question of getSuggestedQuestions()" 
+                  class="suggested-btn"
+                  (click)="selectQuickQuestion(question)">
+                  {{ question }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Área de entrada -->
+        <div class="chat-input-area">
+          <div class="input-container">
+            <div class="input-wrapper">
+              <textarea 
+                [(ngModel)]="userMessage"
+                (keydown)="onKeyPress($event)"
+                placeholder="Escribe tu pregunta aquí... Presiona Enter para enviar."
+                class="chat-input"
+                rows="2"
+                #messageInput>
+              </textarea>
+              <button 
+                class="send-button" 
+                (click)="sendMessage()" 
+                [disabled]="!userMessage.trim()"
+                [class.active]="userMessage.trim()">
+                <span class="material-symbols-outlined">send</span>
+                <span class="send-text">Enviar</span>
+              </button>
+            </div>
+            <div class="input-hints">
+              <span class="hint-item">
+                <span class="material-symbols-outlined icon-micro">lightbulb</span>
+                Puedes preguntar sobre productos, ventas o registro
+              </span>
+              <span class="hint-item">
+                <span class="material-symbols-outlined icon-micro">bolt</span>
+                Respuesta en menos de 2 segundos
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="chatbot-footer">
+    <div class="footer-content">
+      <p class="footer-copyright">© 2024 RaícesMX - Asistente Virtual</p>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Términos de servicio</a>
+        <a href="#" class="footer-link">Política de privacidad</a>
+        <a href="#" class="footer-link">Centro de ayuda</a>
+      </div>
+    </div>
+  </footer>
+</div>

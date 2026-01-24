@@ -16,6 +16,7 @@ import { AyudaComponent } from './ayuda/ayuda';
 import { PublicarProducto } from './publicar-producto/publicar-producto';
 import { HistorialCompras } from './historial-compras/historial-compras';
 import { VendedorFormulario } from './vendedor-formulario/vendedor-formulario';
+import { Chatbot } from './chatbot/chatbot';
 
 export const routes: Routes = [
   // === Grupo 1: Ruta sin HEADER y FOOTER ===
@@ -23,6 +24,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'recuperar', component: RecuperarComponent },
+  { path: 'chatbot',  component: Chatbot },
 
   // --- GRUPO 2: RUTAS CON HEADER Y FOOTER (Envueltas en el Layout) ---
   {
