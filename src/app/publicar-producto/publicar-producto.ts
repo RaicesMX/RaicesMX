@@ -1,45 +1,46 @@
-import { Component, inject, OnInit, ViewChild, ElementRef } from '@angular/core';
+// publicar-producto.component.ts
+import { Component, inject, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import * as maplibregl from 'maplibre-gl';
+import { environment } from '../../enviroments/enviroment';
 
 @Component({
   selector: 'app-publicar-producto',
   standalone: true,
-  imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    RouterModule, 
-    FormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './publicar-producto.html',
-  styleUrls: ['./publicar-producto.scss']
+  styleUrls: ['./publicar-producto.scss'],
 })
-export class PublicarProducto implements OnInit {
+export class PublicarProducto implements OnInit, AfterViewInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private http = inject(HttpClient);
 
   @ViewChild('mapaContainer') mapaContainer!: ElementRef;
 
   productoForm: FormGroup;
-  
-  // Usando las categorías de tu marketplace
-  categorias: string[] = [
-    'Artesanías Mexicanas',
-    'Textiles y Bordados',
-    'Cerámica y Barro',
-    'Joyería Tradicional',
-    'Muebles Típicos',
-    'Dulces Mexicanos',
-    'Bebidas Tradicionales',
-    'Instrumentos Musicales',
-    'Ropa Tradicional',
-    'Decoración Mexicana',
-    'Otros Productos'
-  ];
+  mapa: maplibregl.Map | null = null;
+  marcador: maplibregl.Marker | null = null;
 
-  // Estados de México para ubicación
+  // API Backend
+  API_URL = 'http://localhost:3000';
+
+  // 🗺️ MapTiler API Key - REEMPLAZA CON LA TUYA
+  MAPTILER_API_KEY = environment.maptilerApiKey; // 👈 Pega tu API key aquí
+
+  // Estados de carga
+  cargandoCodigoPostal = false;
+  coloniasDisponibles: string[] = [];
+  categoriasDisponibles: any[] = [];
+
+  // Manejo de imágenes
+  imagenesPrevisualizacion: string[] = [];
+  archivosImagenes: File[] = [];
+
+  // Estados de México
   estadosMexico: string[] = [
     'Aguascalientes',
     'Baja California',
@@ -72,126 +73,275 @@ export class PublicarProducto implements OnInit {
     'Tlaxcala',
     'Veracruz',
     'Yucatán',
-    'Zacatecas'
+    'Zacatecas',
   ];
 
-  // Para manejo de imágenes
-  imagenesPrevisualizacion: string[] = [];
-  archivosImagenes: File[] = [];
-
-  // Variables para el sistema de envíos
-  costoEnvioLocal = 50;
-  paqueteriaSeleccionada = 'estafeta';
-  pesoProducto = 1.0;
-
-  dimensiones = {
-    largo: 20,
-    ancho: 15,
-    alto: 10
-  };
-
-  // Variables para cálculo de envío nacional
-  costoBaseEnvio = 80;
-  costoPorPeso = 0;
-  costoSeguro = 20;
-
-  // Variables para el mapa y ubicación
+  categorias: string[] = [];
   ubicacionSeleccionada: { lat: number; lng: number } | null = null;
   mostrarMarcador = false;
   marcadorPosicion = { x: 0, y: 0 };
-  mapaCoordenadas = {
-    lat: 19.4326,
-    lng: -99.1332,
-    zoom: 12
-  };
 
-  // Variables para modal de comisión
+  // Modal de comisión
   mostrarModalComision = false;
-  
-  // Porcentaje de comisión (10%)
-  porcentajeComision = 0.10;
+  porcentajeComision = 0.1; // 10%
 
   constructor() {
     this.productoForm = this.fb.group({
-      titulo: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(100)]],
-      descripcion: ['', [Validators.required, Validators.minLength(50), Validators.maxLength(2000)]],
-      categoria: ['', Validators.required],
+      titulo: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(255)]],
+      descripcion: [
+        '',
+        [Validators.required, Validators.minLength(50), Validators.maxLength(2000)],
+      ],
+      categoryId: ['', Validators.required],
+      categoria: [''],
       precio: ['', [Validators.required, Validators.min(1)]],
       stock: ['', [Validators.required, Validators.min(1)]],
-      envioDisponible: [true],
-      envioNacional: [false],
-      estado: ['', Validators.required],
-      ciudad: ['', Validators.required],
+      unidad: ['', Validators.required],
+
+      calle: ['', Validators.required],
+      numeroExterior: ['', Validators.required],
+      numeroInterior: [''],
+      numero: [''],
       colonia: ['', Validators.required],
       codigoPostal: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
-      contacto: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-      email: ['', [Validators.required, Validators.email]],
-      latitud: [''],
-      longitud: ['']
+      municipio: [{ value: '', disabled: true }, Validators.required],
+      ciudad: [{ value: '', disabled: true }],
+      estado: [{ value: '', disabled: true }, Validators.required],
+      referencia: [''],
+
+      latitud: ['', Validators.required],
+      longitud: ['', Validators.required],
+    });
+
+    // Listener para código postal
+    this.productoForm.get('codigoPostal')?.valueChanges.subscribe((cp) => {
+      if (cp && /^[0-9]{5}$/.test(cp)) {
+        this.buscarCodigoPostal(cp);
+      }
+    });
+
+    // Sincronizar campos duplicados
+    this.productoForm.get('numeroExterior')?.valueChanges.subscribe((val) => {
+      this.productoForm.get('numero')?.setValue(val, { emitEvent: false });
+    });
+
+    this.productoForm.get('municipio')?.valueChanges.subscribe((val) => {
+      this.productoForm.get('ciudad')?.setValue(val, { emitEvent: false });
     });
   }
 
   ngOnInit(): void {
-    // Si el navegador soporta geolocalización, obtener ubicación actual
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.ubicacionSeleccionada = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          this.mapaCoordenadas.lat = position.coords.latitude;
-          this.mapaCoordenadas.lng = position.coords.longitude;
-          this.actualizarCoordenadasFormulario();
-        },
-        (error) => {
-          console.log('Error obteniendo geolocalización:', error);
-          // Usar coordenadas por defecto (CDMX)
-          this.ubicacionSeleccionada = { lat: 19.4326, lng: -99.1332 };
-          this.actualizarCoordenadasFormulario();
-        }
-      );
-    } else {
-      // Coordenadas por defecto (CDMX)
-      this.ubicacionSeleccionada = { lat: 19.4326, lng: -99.1332 };
-      this.actualizarCoordenadasFormulario();
+    this.cargarCategorias();
+  }
+
+  ngAfterViewInit(): void {
+    this.inicializarMapa();
+  }
+
+  /**
+   * Cargar categorías desde el backend
+   */
+  async cargarCategorias(): Promise<void> {
+    try {
+      const response: any = await this.http.get(`${this.API_URL}/products/categories`).toPromise();
+
+      if (response.success) {
+        this.categoriasDisponibles = response.categories;
+        this.categorias = response.categories.map((c: any) => c.nombre);
+        console.log('✅ Categorías cargadas:', this.categoriasDisponibles.length);
+      }
+    } catch (error) {
+      console.error('❌ Error cargando categorías:', error);
+      alert('Error al cargar las categorías');
     }
   }
 
+  /**
+   * Inicializar mapa con MapLibre + MapTiler
+   */
+  inicializarMapa(): void {
+    if (!this.mapaContainer) return;
+
+    // ✅ Usar MapTiler para ver nombres de calles
+    this.mapa = new maplibregl.Map({
+      container: this.mapaContainer.nativeElement,
+      style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${this.MAPTILER_API_KEY}`,
+      center: [-102.5528, 23.6345], // Centro de México
+      zoom: 5,
+    });
+
+    // Controles de navegación
+    this.mapa.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+    // Evento de clic en el mapa
+    this.mapa.on('click', (e) => {
+      this.agregarMarcador(e.lngLat.lng, e.lngLat.lat);
+      this.geocodificarInversa(e.lngLat.lat, e.lngLat.lng);
+    });
+
+    console.log('🗺️ Mapa inicializado con MapTiler');
+  }
+
+  /**
+   * Agregar marcador en el mapa
+   */
+  agregarMarcador(lng: number, lat: number): void {
+    if (!this.mapa) return;
+
+    // Eliminar marcador anterior
+    if (this.marcador) {
+      this.marcador.remove();
+    }
+
+    // Crear nuevo marcador rojo
+    this.marcador = new maplibregl.Marker({ color: '#e63946' })
+      .setLngLat([lng, lat])
+      .addTo(this.mapa);
+
+    // Actualizar coordenadas en formulario
+    this.productoForm.patchValue({ latitud: lat, longitud: lng });
+    this.ubicacionSeleccionada = { lat, lng };
+    this.mostrarMarcador = true;
+
+    // Centrar mapa en el marcador
+    this.mapa.flyTo({ center: [lng, lat], zoom: 14 });
+
+    console.log(`📍 Marcador colocado en: ${lat}, ${lng}`);
+  }
+
+  /**
+   * Buscar código postal (autocompleta formulario + mueve mapa)
+   */
+  async buscarCodigoPostal(cp: string): Promise<void> {
+    // Limpiar y validar
+    const cpLimpio = cp.replace(/\D/g, '').trim().substring(0, 5);
+
+    if (cpLimpio.length !== 5) {
+      console.warn('CP inválido:', cp);
+      return;
+    }
+
+    this.cargandoCodigoPostal = true;
+
+    try {
+      const response: any = await this.http
+        .get(`${this.API_URL}/geocoding/codigo-postal?cp=${cpLimpio}`)
+        .toPromise();
+
+      if (response.success) {
+        const { estado, municipio, colonia, colonias, latitud, longitud } = response.data;
+
+        // Actualizar formulario
+        this.productoForm.patchValue({
+          estado,
+          municipio,
+          ciudad: municipio,
+          colonia,
+          latitud,
+          longitud,
+        });
+
+        this.coloniasDisponibles = colonias || [colonia];
+
+        // ✅ ESTABLECER UBICACIÓN (crítico para habilitar el botón)
+        this.ubicacionSeleccionada = { lat: latitud, lng: longitud };
+
+        // 🗺️ Mover mapa y marcador a la ubicación
+        if (this.mapa && latitud && longitud) {
+          this.agregarMarcador(longitud, latitud);
+        }
+
+        console.log('✅ CP encontrado:', response.data);
+        console.log('✅ Ubicación establecida:', this.ubicacionSeleccionada);
+      }
+    } catch (error: any) {
+      console.error('❌ Error:', error);
+      alert('Código postal no encontrado');
+
+      this.productoForm.patchValue({
+        estado: '',
+        municipio: '',
+        ciudad: '',
+        colonia: '',
+      });
+      this.coloniasDisponibles = [];
+    } finally {
+      this.cargandoCodigoPostal = false;
+    }
+  }
+
+  /**
+   * Geocodificación inversa (cuando haces clic en el mapa)
+   */
+  async geocodificarInversa(lat: number, lng: number): Promise<void> {
+    try {
+      const response: any = await this.http
+        .get(`${this.API_URL}/geocoding/reverse?lat=${lat}&lng=${lng}`)
+        .toPromise();
+
+      if (response.success) {
+        this.productoForm.patchValue({
+          estado: response.data.estado,
+          municipio: response.data.municipio,
+          ciudad: response.data.municipio,
+          colonia: response.data.colonia || '',
+        });
+
+        console.log('📍 Dirección obtenida:', response.data);
+      }
+    } catch (error) {
+      console.error('Error en geocodificación inversa:', error);
+    }
+  }
+
+  /**
+   * Seleccionar ubicación manual (para compatibilidad con HTML viejo)
+   */
+  seleccionarUbicacionManual(event: MouseEvent): void {
+    console.log('Usa el mapa interactivo con clic directo');
+  }
+
+  /**
+   * Obtener URL del mapa estático (para HTML viejo)
+   */
+  getMapaUrl(): string {
+    if (this.ubicacionSeleccionada) {
+      const { lat, lng } = this.ubicacionSeleccionada;
+      return `https://api.maptiler.com/maps/streets-v2/static/${lng},${lat},14/600x400.png?key=${this.MAPTILER_API_KEY}&markers=${lng},${lat},red`;
+    }
+    return `https://api.maptiler.com/maps/streets-v2/static/-99.1332,19.4326,5/600x400.png?key=${this.MAPTILER_API_KEY}`;
+  }
+
+  /**
+   * Manejo de imágenes
+   */
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const files = input.files;
-    
-    if (files) {
-      for (const file of Array.from(files)) {
-        if (this.archivosImagenes.length >= 5) {
-          alert('Máximo 5 imágenes permitidas');
-          break;
-        }
-        
-        // Validar tipo de archivo
-        if (!file.type.match('image.*')) {
-          alert('Solo se permiten imágenes (JPG, PNG, etc.)');
-          continue;
-        }
+    if (!input.files) return;
 
-        // Validar tamaño (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          alert('La imagen es muy grande. Máximo 5MB por imagen');
-          continue;
-        }
-
-        this.archivosImagenes.push(file);
-        
-        // Crear previsualización
-        const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>) => {
-          if (e.target?.result) {
-            this.imagenesPrevisualizacion.push(e.target.result as string);
-          }
-        };
-        reader.readAsDataURL(file);
+    for (const file of Array.from(input.files)) {
+      if (this.archivosImagenes.length >= 5) {
+        alert('Máximo 5 imágenes');
+        break;
       }
+
+      if (!file.type.match('image.*')) {
+        alert('Solo imágenes');
+        continue;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Máx 5MB por imagen');
+        continue;
+      }
+
+      this.archivosImagenes.push(file);
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagenesPrevisualizacion.push(e.target.result);
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -200,90 +350,9 @@ export class PublicarProducto implements OnInit {
     this.archivosImagenes.splice(index, 1);
   }
 
-  // MÉTODOS PARA EL SISTEMA DE ENVÍOS
-
-  seleccionarEnvioLocal(): void {
-    this.productoForm.get('envioDisponible')?.setValue(true);
-    this.productoForm.get('envioNacional')?.setValue(false);
-  }
-
-  seleccionarEnvioNacional(): void {
-    this.productoForm.get('envioDisponible')?.setValue(true);
-    this.productoForm.get('envioNacional')?.setValue(true);
-  }
-
-  calcularCostoEnvioLocal(): number {
-    return this.costoEnvioLocal;
-  }
-
-  calcularCostoEnvioNacional(): number {
-    // Cálculo basado en peso y paquetería
-    this.costoPorPeso = this.pesoProducto * 25; // $25 por kg
-    
-    let costoPaqueteria = 0;
-    switch (this.paqueteriaSeleccionada) {
-      case 'dhl': costoPaqueteria = 30; break;
-      case 'fedex': costoPaqueteria = 35; break;
-      case 'correos': costoPaqueteria = 15; break;
-      case 'paqueteexpress': costoPaqueteria = 20; break;
-      default: costoPaqueteria = 25; // estafeta
-    }
-    
-    return this.costoBaseEnvio + this.costoPorPeso + this.costoSeguro + costoPaqueteria;
-  }
-
-  calcularTiempoEntrega(): number {
-    switch (this.paqueteriaSeleccionada) {
-      case 'dhl': return 2;
-      case 'fedex': return 3;
-      case 'correos': return 7;
-      case 'paqueteexpress': return 5;
-      default: return 4; // estafeta
-    }
-  }
-
-  // MÉTODOS PARA EL MAPA
-
-  getMapaUrl(): string {
-    // En producción usarías: https://maps.googleapis.com/maps/api/staticmap?center=...
-    // Por ahora usamos un placeholder más realista
-    if (this.ubicacionSeleccionada) {
-      const lat = this.ubicacionSeleccionada.lat.toFixed(6);
-      const lng = this.ubicacionSeleccionada.lng.toFixed(6);
-      return `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=800&height=400&center=lonlat:${lng},${lat}&zoom=14&marker=lonlat:${lng},${lat};color:%23ff0000;size:medium&apiKey=demo`;
-    }
-    return 'https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=800&height=400&center=lonlat:-99.1332,19.4326&zoom=12&apiKey=demo';
-  }
-
-  seleccionarUbicacionManual(event: MouseEvent): void {
-    if (!this.mapaContainer) return;
-    
-    const elemento = this.mapaContainer.nativeElement;
-    const rect = elemento.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    
-    // Calcular coordenadas basadas en la posición del clic
-    const lat = this.mapaCoordenadas.lat + ((y / rect.height) - 0.5) * 0.1;
-    const lng = this.mapaCoordenadas.lng + ((x / rect.width) - 0.5) * 0.1;
-    
-    this.ubicacionSeleccionada = { lat, lng };
-    this.actualizarCoordenadasFormulario();
-    
-    // Mostrar feedback visual
-    this.mostrarMarcador = true;
-    this.marcadorPosicion = { x, y };
-  }
-
-  centrarMapa(): void {
-    if (this.ubicacionSeleccionada) {
-      this.mapaCoordenadas.lat = this.ubicacionSeleccionada.lat;
-      this.mapaCoordenadas.lng = this.ubicacionSeleccionada.lng;
-    }
-  }
-
-  // MÉTODOS PARA MODAL DE COMISIÓN
-
+  /**
+   * Modal de comisión
+   */
   abrirModalComision(): void {
     this.mostrarModalComision = true;
   }
@@ -292,96 +361,28 @@ export class PublicarProducto implements OnInit {
     this.mostrarModalComision = false;
   }
 
-  // MÉTODOS EXISTENTES
-
-  actualizarCoordenadasFormulario(): void {
-    if (this.ubicacionSeleccionada) {
-      this.productoForm.patchValue({
-        latitud: this.ubicacionSeleccionada.lat,
-        longitud: this.ubicacionSeleccionada.lng
-      });
-    }
+  calcularComision(): number {
+    const precio = parseFloat(this.productoForm.get('precio')?.value || 0);
+    return precio * this.porcentajeComision;
   }
 
-  usarUbicacionActual(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.ubicacionSeleccionada = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          this.mapaCoordenadas.lat = position.coords.latitude;
-          this.mapaCoordenadas.lng = position.coords.longitude;
-          this.actualizarCoordenadasFormulario();
-          
-          // Posicionar marcador en el centro
-          this.mostrarMarcador = true;
-          this.marcadorPosicion = { x: 400, y: 200 };
-          
-          alert('Ubicación actual establecida');
-        },
-        (error) => {
-          alert('No se pudo obtener la ubicación actual. Error: ' + error.message);
-        }
-      );
-    } else {
-      alert('Tu navegador no soporta geolocalización');
-    }
+  calcularPrecioTotal(): number {
+    const precio = parseFloat(this.productoForm.get('precio')?.value || 0);
+    return precio - this.calcularComision();
   }
 
-  onSubmit(): void {
-    if (this.productoForm.valid && this.archivosImagenes.length > 0) {
-      // Validar que se haya seleccionado ubicación en el mapa
-      if (!this.ubicacionSeleccionada) {
-        alert('Por favor, selecciona una ubicación en el mapa');
-        return;
-      }
-
-      // Validar checkboxes de términos
-      const terminosCheckbox = document.getElementById('terminos') as HTMLInputElement;
-      const autenticidadCheckbox = document.getElementById('autenticidad') as HTMLInputElement;
-      const responsabilidadCheckbox = document.getElementById('responsabilidad') as HTMLInputElement;
-
-      if (!terminosCheckbox?.checked || !autenticidadCheckbox?.checked || !responsabilidadCheckbox?.checked) {
-        alert('Debes aceptar todos los términos y condiciones');
-        return;
-      }
-
-      // Aquí iría la lógica para enviar el formulario al backend
-      const productoData = {
-        ...this.productoForm.value,
-        imagenes: this.archivosImagenes,
-        fechaPublicacion: new Date().toISOString(),
-        ubicacion: this.ubicacionSeleccionada,
-        comision: this.calcularComision(),
-        precioFinal: this.calcularPrecioTotal()
-      };
-      
-      console.log('Producto listo para publicar:', productoData);
-      
-      // Simular publicación exitosa
-      alert('¡Producto publicado exitosamente!');
-      this.router.navigate(['/marketplace']);
-    } else {
-      // Marcar todos los campos como touched para mostrar errores
-      this.markFormGroupTouched(this.productoForm);
-      if (this.archivosImagenes.length === 0) {
-        alert('Debes subir al menos una imagen del producto');
-      }
-    }
+  formatNumber(value: number): string {
+    return value.toFixed(2);
   }
 
-  private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.values(formGroup.controls).forEach(control => {
-      control.markAsTouched();
-      if (control instanceof FormGroup) {
-        this.markFormGroupTouched(control);
-      }
-    });
+  getEjemploComision(): { precio: number; comision: number; ganancia: number } {
+    return {
+      precio: 250,
+      comision: 250 * this.porcentajeComision,
+      ganancia: 250 - 250 * this.porcentajeComision,
+    };
   }
 
-  // Método para formatear precio
   formatPrice(event: Event): void {
     const input = event.target as HTMLInputElement;
     let value = input.value.replace(/[^0-9.]/g, '');
@@ -391,40 +392,80 @@ export class PublicarProducto implements OnInit {
     }
   }
 
-  // Método público para navegación
+  /**
+   * Enviar formulario al backend
+   */
+  async onSubmit(): Promise<void> {
+    if (this.productoForm.invalid || this.archivosImagenes.length === 0) {
+      alert('Por favor completa todos los campos y sube al menos una imagen');
+      this.markFormGroupTouched(this.productoForm);
+      return;
+    }
+
+    if (!this.ubicacionSeleccionada) {
+      alert('Por favor selecciona una ubicación en el mapa');
+      return;
+    }
+
+    const formData = new FormData();
+
+    // Obtener valores (incluyendo disabled)
+    const productoData = {
+      titulo: this.productoForm.get('titulo')?.value,
+      descripcion: this.productoForm.get('descripcion')?.value,
+      categoryId: this.productoForm.get('categoryId')?.value || this.obtenerCategoryId(),
+      precio: parseFloat(this.productoForm.get('precio')?.value),
+      stock: parseInt(this.productoForm.get('stock')?.value),
+      unidad: this.productoForm.get('unidad')?.value,
+      calle: this.productoForm.get('calle')?.value,
+      numeroExterior:
+        this.productoForm.get('numeroExterior')?.value || this.productoForm.get('numero')?.value,
+      numeroInterior: this.productoForm.get('numeroInterior')?.value || '',
+      colonia: this.productoForm.get('colonia')?.value,
+      codigoPostal: this.productoForm.get('codigoPostal')?.value,
+      municipio: this.productoForm.get('municipio')?.value,
+      estado: this.productoForm.get('estado')?.value,
+      referencia: this.productoForm.get('referencia')?.value || '',
+      latitud: parseFloat(this.productoForm.get('latitud')?.value),
+      longitud: parseFloat(this.productoForm.get('longitud')?.value),
+    };
+
+    // Agregar datos al FormData
+    Object.keys(productoData).forEach((key) => {
+      formData.append(key, (productoData as any)[key]);
+    });
+
+    // Agregar imágenes
+    this.archivosImagenes.forEach((file) => {
+      formData.append('imagenes', file);
+    });
+
+    try {
+      const response: any = await this.http.post(`${this.API_URL}/products`, formData).toPromise();
+
+      if (response.success) {
+        alert('✅ ¡Producto publicado exitosamente!');
+        this.router.navigate(['/marketplace']);
+      }
+    } catch (error: any) {
+      console.error('❌ Error:', error);
+      alert('Error al publicar: ' + (error.error?.message || error.message));
+    }
+  }
+
+  private obtenerCategoryId(): number {
+    const nombreCategoria = this.productoForm.get('categoria')?.value;
+    const categoria = this.categoriasDisponibles.find((c) => c.nombre === nombreCategoria);
+    return categoria?.id || 1;
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup): void {
+    Object.values(formGroup.controls).forEach((control) => {
+      control.markAsTouched();
+    });
+  }
+
   navigateToMarketplace(): void {
     this.router.navigate(['/marketplace']);
-  }
-
-  // Calcular comisión (10% del precio)
-  calcularComision(): number {
-    const precio = this.productoForm.get('precio')?.value;
-    if (precio) {
-      return precio * this.porcentajeComision;
-    }
-    return 0;
-  }
-
-  // Precio total (precio - comisión)
-  calcularPrecioTotal(): number {
-    const precio = this.productoForm.get('precio')?.value;
-    if (precio) {
-      return parseFloat(precio) - this.calcularComision();
-    }
-    return 0;
-  }
-
-  // Método para formatear números
-  formatNumber(value: number): string {
-    return value.toFixed(2);
-  }
-
-  // Ejemplo de comisión para el modal
-  getEjemploComision(): { precio: number; comision: number; ganancia: number } {
-    return {
-      precio: 250,
-      comision: 250 * this.porcentajeComision,
-      ganancia: 250 - (250 * this.porcentajeComision)
-    };
   }
 }

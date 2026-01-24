@@ -1,40 +1,52 @@
 <div class="publicar-producto-container animate-fade-in">
   <div class="form-header">
     <h1 class="text-title">Publicar Producto en RaícesMX</h1>
-    <p class="text-caption">Comparte tus productos artesanales y tradicionales con nuestra comunidad</p>
+    <p class="text-caption">
+      Comparte tus productos artesanales y tradicionales con nuestra comunidad
+    </p>
   </div>
 
   <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="producto-form card-base">
-    
     <!-- Sección 1: Título e Imágenes -->
     <div class="form-section">
       <h2 class="text-subtitle">1. Información Básica</h2>
-      
+
       <div class="form-group">
         <label for="titulo" class="form-label">Título del producto *</label>
-        <input 
-          type="text" 
-          id="titulo" 
-          formControlName="titulo" 
+        <input
+          type="text"
+          id="titulo"
+          formControlName="titulo"
           class="input-base"
           placeholder="Ej: Jarro de barro negro de Oaxaca artesanal"
+        />
+        <div
+          *ngIf="productoForm.get('titulo')?.invalid && productoForm.get('titulo')?.touched"
+          class="error-message"
         >
-        <div *ngIf="productoForm.get('titulo')?.invalid && productoForm.get('titulo')?.touched" class="error-message">
-          <span *ngIf="productoForm.get('titulo')?.errors?.['required']">El título es requerido</span>
-          <span *ngIf="productoForm.get('titulo')?.errors?.['minlength']">Mínimo 10 caracteres</span>
-          <span *ngIf="productoForm.get('titulo')?.errors?.['maxlength']">Máximo 100 caracteres</span>
+          <span *ngIf="productoForm.get('titulo')?.errors?.['required']"
+            >El título es requerido</span
+          >
+          <span *ngIf="productoForm.get('titulo')?.errors?.['minlength']"
+            >Mínimo 10 caracteres</span
+          >
+          <span *ngIf="productoForm.get('titulo')?.errors?.['maxlength']"
+            >Máximo 100 caracteres</span
+          >
         </div>
       </div>
 
       <!-- Imágenes del Producto -->
       <div class="form-group">
         <div class="form-label">Imágenes del Producto *</div>
-        <p class="text-caption mb-3">Sube fotos de alta calidad. La primera imagen será la principal.</p>
-        
+        <p class="text-caption mb-3">
+          Sube fotos de alta calidad. La primera imagen será la principal.
+        </p>
+
         <div class="imagenes-section">
           <div class="imagenes-preview">
             <div *ngFor="let imagen of imagenesPrevisualizacion; let i = index" class="imagen-item">
-              <img [src]="imagen" alt="Previsualización" [class.principal]="i === 0">
+              <img [src]="imagen" alt="Previsualización" [class.principal]="i === 0" />
               <div class="imagen-overlay">
                 <span *ngIf="i === 0" class="badge-principal">Principal</span>
                 <button type="button" class="btn-eliminar" (click)="removeImage(i)">
@@ -42,15 +54,15 @@
                 </button>
               </div>
             </div>
-            
+
             <div *ngIf="imagenesPrevisualizacion.length < 5" class="upload-box">
-              <input 
-                type="file" 
-                id="imagenes" 
-                multiple 
-                accept="image/*" 
+              <input
+                type="file"
+                id="imagenes"
+                multiple
+                accept="image/*"
                 (change)="onFileSelected($event)"
-              >
+              />
               <label for="imagenes" class="upload-label">
                 <div class="upload-icon">
                   <i class="fas fa-cloud-upload-alt"></i>
@@ -61,7 +73,10 @@
             </div>
           </div>
         </div>
-        <div *ngIf="archivosImagenes.length === 0 && productoForm.get('titulo')?.touched" class="error-message">
+        <div
+          *ngIf="archivosImagenes.length === 0 && productoForm.get('titulo')?.touched"
+          class="error-message"
+        >
           Debes subir al menos una imagen
         </div>
       </div>
@@ -73,45 +88,85 @@
 
       <div class="form-group">
         <label for="descripcion" class="form-label">Descripción detallada *</label>
-        <textarea 
-          id="descripcion" 
-          formControlName="descripcion" 
+        <textarea
+          id="descripcion"
+          formControlName="descripcion"
           class="input-base"
           rows="6"
           placeholder="Describe tu producto detalladamente: materiales usados, técnicas artesanales, historia, medidas, cuidados, etc."
         ></textarea>
-        <div class="char-counter">{{ productoForm.get('descripcion')?.value?.length || 0 }}/2000</div>
-        <div *ngIf="productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched" class="error-message">
-          <span *ngIf="productoForm.get('descripcion')?.errors?.['required']">La descripción es requerida</span>
-          <span *ngIf="productoForm.get('descripcion')?.errors?.['minlength']">Mínimo 50 caracteres para una buena descripción</span>
+        <div class="char-counter">
+          {{ productoForm.get('descripcion')?.value?.length || 0 }}/2000
+        </div>
+        <div
+          *ngIf="
+            productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched
+          "
+          class="error-message"
+        >
+          <span *ngIf="productoForm.get('descripcion')?.errors?.['required']"
+            >La descripción es requerida</span
+          >
+          <span *ngIf="productoForm.get('descripcion')?.errors?.['minlength']"
+            >Mínimo 50 caracteres para una buena descripción</span
+          >
         </div>
       </div>
 
       <div class="form-row">
+        <!-- Categoría -->
         <div class="form-group">
           <label for="categoria" class="form-label">Categoría *</label>
           <select id="categoria" formControlName="categoria" class="input-base">
             <option value="" disabled selected>Selecciona una categoría</option>
             <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
           </select>
-          <div *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched" class="error-message">
+
+          <div
+            *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched"
+            class="error-message"
+          >
             Selecciona una categoría
           </div>
         </div>
 
+        <!-- Stock -->
         <div class="form-group">
-          <label for="stock" class="form-label">Cantidad disponible *</label>
-          <input 
-            type="number" 
-            id="stock" 
-            formControlName="stock" 
+          <label for="stock" class="form-label">Cantidad *</label>
+          <input
+            type="number"
+            id="stock"
+            formControlName="stock"
             class="input-base"
             min="1"
             max="999"
+          />
+
+          <div
+            *ngIf="productoForm.get('stock')?.invalid && productoForm.get('stock')?.touched"
+            class="error-message"
           >
-          <div *ngIf="productoForm.get('stock')?.invalid && productoForm.get('stock')?.touched" class="error-message">
-            <span *ngIf="productoForm.get('stock')?.errors?.['required']">La cantidad es requerida</span>
-            <span *ngIf="productoForm.get('stock')?.errors?.['min']">Mínimo 1 unidad</span>
+            Mínimo 1 unidad
+          </div>
+        </div>
+
+        <!-- Unidad -->
+        <div class="form-group">
+          <label for="unidad" class="form-label">Unidad *</label>
+          <select id="unidad" formControlName="unidad" class="input-base">
+            <option value="" disabled selected>Selecciona unidad</option>
+            <option value="pieza">Pieza</option>
+            <option value="kg">Kilogramo</option>
+            <option value="litro">Litro</option>
+            <option value="paquete">Paquete</option>
+            <option value="docena">Docena</option>
+          </select>
+
+          <div
+            *ngIf="productoForm.get('unidad')?.invalid && productoForm.get('unidad')?.touched"
+            class="error-message"
+          >
+            Selecciona una unidad
           </div>
         </div>
       </div>
@@ -120,7 +175,7 @@
     <!-- Sección 3: Precio con Modal de Comisión -->
     <div class="form-section">
       <h2 class="text-subtitle">3. Precio y Comisión</h2>
-      
+
       <div class="form-group">
         <div class="precio-header">
           <label for="precio" class="form-label">Precio (MXN) *</label>
@@ -130,18 +185,25 @@
         </div>
         <div class="input-with-icon">
           <span class="input-icon">$</span>
-          <input 
-            type="text" 
-            id="precio" 
-            formControlName="precio" 
+          <input
+            type="text"
+            id="precio"
+            formControlName="precio"
             class="input-base"
             (blur)="formatPrice($event)"
             placeholder="0.00"
-          >
+          />
         </div>
-        <div *ngIf="productoForm.get('precio')?.invalid && productoForm.get('precio')?.touched" class="error-message">
-          <span *ngIf="productoForm.get('precio')?.errors?.['required']">El precio es requerido</span>
-          <span *ngIf="productoForm.get('precio')?.errors?.['min']">El precio mínimo es $1 MXN</span>
+        <div
+          *ngIf="productoForm.get('precio')?.invalid && productoForm.get('precio')?.touched"
+          class="error-message"
+        >
+          <span *ngIf="productoForm.get('precio')?.errors?.['required']"
+            >El precio es requerido</span
+          >
+          <span *ngIf="productoForm.get('precio')?.errors?.['min']"
+            >El precio mínimo es $1 MXN</span
+          >
         </div>
       </div>
 
@@ -161,7 +223,7 @@
     <!-- Sección 4: Ubicación con Mapa Real -->
     <div class="form-section">
       <h2 class="text-subtitle">4. Ubicación</h2>
-      
+
       <div class="form-row">
         <div class="form-group">
           <label for="estado" class="form-label">Estado *</label>
@@ -169,83 +231,117 @@
             <option value="" disabled selected>Selecciona tu estado</option>
             <option *ngFor="let estado of estadosMexico" [value]="estado">{{ estado }}</option>
           </select>
-          <div *ngIf="productoForm.get('estado')?.invalid && productoForm.get('estado')?.touched" class="error-message">
+          <div
+            *ngIf="productoForm.get('estado')?.invalid && productoForm.get('estado')?.touched"
+            class="error-message"
+          >
             Selecciona tu estado
           </div>
         </div>
 
         <div class="form-group">
           <label for="ciudad" class="form-label">Ciudad/Municipio *</label>
-          <input 
-            type="text" 
-            id="ciudad" 
-            formControlName="ciudad" 
+          <input
+            type="text"
+            id="ciudad"
+            formControlName="ciudad"
             class="input-base"
             placeholder="Ej: Oaxaca de Juárez"
+          />
+          <div
+            *ngIf="productoForm.get('ciudad')?.invalid && productoForm.get('ciudad')?.touched"
+            class="error-message"
           >
-          <div *ngIf="productoForm.get('ciudad')?.invalid && productoForm.get('ciudad')?.touched" class="error-message">
             La ciudad es requerida
           </div>
         </div>
       </div>
 
       <div class="form-row">
+        <!-- ✅ DESPUÉS: Select con lista de colonias -->
         <div class="form-group">
           <label for="colonia" class="form-label">Colonia *</label>
-          <input 
-            type="text" 
-            id="colonia" 
-            formControlName="colonia" 
+
+          <!-- Si hay colonias disponibles, mostrar select -->
+          <select
+            *ngIf="coloniasDisponibles.length > 0"
+            id="colonia"
+            formControlName="colonia"
+            class="input-base"
+          >
+            <option value="" disabled>Selecciona una colonia</option>
+            <option *ngFor="let col of coloniasDisponibles" [value]="col">
+              {{ col }}
+            </option>
+          </select>
+
+          <!-- Si NO hay colonias, mostrar input manual -->
+          <input
+            *ngIf="coloniasDisponibles.length === 0"
+            type="text"
+            id="colonia"
+            formControlName="colonia"
             class="input-base"
             placeholder="Ej: Centro Histórico"
+          />
+
+          <!-- Mostrar contador de colonias disponibles -->
+          <small class="text-caption mt-1" *ngIf="coloniasDisponibles.length > 1">
+            <i class="fas fa-info-circle"></i>
+            {{ coloniasDisponibles.length }} colonias disponibles para este código postal
+          </small>
+
+          <div
+            *ngIf="productoForm.get('colonia')?.invalid && productoForm.get('colonia')?.touched"
+            class="error-message"
           >
-          <div *ngIf="productoForm.get('colonia')?.invalid && productoForm.get('colonia')?.touched" class="error-message">
             La colonia es requerida
           </div>
         </div>
 
         <div class="form-group">
           <label for="codigoPostal" class="form-label">Código Postal *</label>
-          <input 
-            type="text" 
-            id="codigoPostal" 
-            formControlName="codigoPostal" 
+          <input
+            type="text"
+            id="codigoPostal"
+            formControlName="codigoPostal"
             class="input-base"
             placeholder="5 dígitos"
             maxlength="5"
+          />
+          <div
+            *ngIf="
+              productoForm.get('codigoPostal')?.invalid && productoForm.get('codigoPostal')?.touched
+            "
+            class="error-message"
           >
-          <div *ngIf="productoForm.get('codigoPostal')?.invalid && productoForm.get('codigoPostal')?.touched" class="error-message">
-            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['required']">El código postal es requerido</span>
-            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['pattern']">Ingresa 5 dígitos válidos</span>
+            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['required']"
+              >El código postal es requerido</span
+            >
+            <span *ngIf="productoForm.get('codigoPostal')?.errors?.['pattern']"
+              >Ingresa 5 dígitos válidos</span
+            >
           </div>
         </div>
       </div>
+      <!-- Después del código postal (en el HTML) -->
 
       <!-- Mapa con API real (Geoapify Free Tier) -->
       <div class="form-group">
         <div class="form-label">Selecciona tu ubicación exacta en el mapa *</div>
-        
+
         <div class="mapa-container-real">
           <!-- Controles del mapa -->
           <div class="mapa-header">
             <div class="mapa-coordenadas">
               <i class="fas fa-map-marker-alt text-primary"></i>
               <span class="text-caption" *ngIf="ubicacionSeleccionada">
-                Lat: {{ ubicacionSeleccionada.lat | number:'1.6-6' }}, 
-                Lng: {{ ubicacionSeleccionada.lng | number:'1.6-6' }}
+                Lat: {{ ubicacionSeleccionada.lat | number: '1.6-6' }}, Lng:
+                {{ ubicacionSeleccionada.lng | number: '1.6-6' }}
               </span>
               <span class="text-caption" *ngIf="!ubicacionSeleccionada">
                 Haz clic en el mapa para seleccionar ubicación
               </span>
-            </div>
-            
-            <div class="mapa-botones">
-              <button type="button" class="btn-mapa-chico" (click)="usarUbicacionActual()" title="Usar mi ubicación actual">
-                <i class="fas fa-location-arrow"></i> Mi ubicación
-              </button>
-              <button type="button" class="btn-mapa-chico" (click)="centrarMapa()" title="Centrar mapa">
-                <i class="fas fa-crosshairs"></i> Centrar
-              </button>
             </div>
           </div>
 
@@ -253,29 +349,88 @@
           <div class="mapa-real" (click)="seleccionarUbicacionManual($event)" #mapaContainer>
             <!-- Imagen del mapa estático -->
             <div class="mapa-imagen-container">
-              <img [src]="getMapaUrl()" alt="Mapa de ubicación" class="mapa-imagen-real">
-              
+              <img [src]="getMapaUrl()" alt="Mapa de ubicación" class="mapa-imagen-real" />
+
               <!-- Marcador de ubicación -->
-              <div class="mapa-marcador-real" 
-                   *ngIf="mostrarMarcador"
-                   [style.top.px]="marcadorPosicion.y"
-                   [style.left.px]="marcadorPosicion.x">
+              <div
+                class="mapa-marcador-real"
+                *ngIf="mostrarMarcador"
+                [style.top.px]="marcadorPosicion.y"
+                [style.left.px]="marcadorPosicion.x"
+              >
                 <i class="fas fa-map-pin text-primary"></i>
                 <div class="marcador-punto-real"></div>
               </div>
-              
+
               <!-- Instrucciones overlay -->
               <div class="mapa-instrucciones-real">
                 <p><i class="fas fa-mouse-pointer"></i> Haz clic para marcar tu ubicación exacta</p>
               </div>
             </div>
           </div>
+          <!-- Dirección detallada -->
+          <div class="direccion-detallada mt-3">
+            <h3 class="text-subtitle">Dirección detallada</h3>
+
+            <div class="form-row">
+              <!-- Calle -->
+              <div class="form-group">
+                <label for="calle" class="form-label">Calle *</label>
+                <input
+                  type="text"
+                  id="calle"
+                  formControlName="calle"
+                  class="input-base"
+                  placeholder="Ej: Avenida Juárez"
+                />
+
+                <div
+                  *ngIf="productoForm.get('calle')?.invalid && productoForm.get('calle')?.touched"
+                  class="error-message"
+                >
+                  La calle es requerida
+                </div>
+              </div>
+
+              <!-- Número -->
+              <div class="form-group">
+                <label for="numero" class="form-label">Número *</label>
+                <input
+                  type="text"
+                  id="numero"
+                  formControlName="numero"
+                  class="input-base"
+                  placeholder="Ej: 123"
+                />
+
+                <div
+                  *ngIf="productoForm.get('numero')?.invalid && productoForm.get('numero')?.touched"
+                  class="error-message"
+                >
+                  El número es requerido
+                </div>
+              </div>
+            </div>
+
+            <!-- Referencia -->
+            <div class="form-group">
+              <label for="referencia" class="form-label">Referencia</label>
+              <input
+                type="text"
+                id="referencia"
+                formControlName="referencia"
+                class="input-base"
+                placeholder="Ej: Frente a la iglesia, casa azul"
+              />
+            </div>
+          </div>
 
           <!-- Instrucciones actualizadas -->
           <div class="instrucciones-mapa-actualizadas mt-2 p-3 bg-light rounded-md">
             <p class="text-caption mb-1">
-              <i class="fas fa-info-circle text-primary"></i> 
-              La ubicación exacta permite a los compradores calcular distancias y coordinar entregas personalizadas
+              <i class="fas fa-info-circle text-primary"></i>
+              La ubicación exacta permite a los compradores calcular distancias y coordinar entregas
+              personalizadas
             </p>
           </div>
 
@@ -292,70 +447,39 @@
           </div>
         </div>
       </div>
-
-      <!-- Información de contacto -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="contacto" class="form-label">Teléfono de contacto *</label>
-          <input 
-            type="tel" 
-            id="contacto" 
-            formControlName="contacto" 
-            class="input-base"
-            placeholder="10 dígitos"
-          >
-          <div *ngIf="productoForm.get('contacto')?.invalid && productoForm.get('contacto')?.touched" class="error-message">
-            <span *ngIf="productoForm.get('contacto')?.errors?.['required']">El teléfono es requerido</span>
-            <span *ngIf="productoForm.get('contacto')?.errors?.['pattern']">Ingresa 10 dígitos válidos</span>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="email" class="form-label">Correo electrónico *</label>
-          <input 
-            type="email" 
-            id="email" 
-            formControlName="email" 
-            class="input-base"
-            placeholder="ejemplo@email.com"
-          >
-          <div *ngIf="productoForm.get('email')?.invalid && productoForm.get('email')?.touched" class="error-message">
-            <span *ngIf="productoForm.get('email')?.errors?.['required']">El email es requerido</span>
-            <span *ngIf="productoForm.get('email')?.errors?.['email']">Ingresa un email válido</span>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Sección 5: Términos y Condiciones -->
     <div class="form-section terms-section">
       <h2 class="text-subtitle">5. Términos y Condiciones</h2>
-      
+
       <div class="form-group checkbox-group">
         <label class="checkbox-label">
-          <input type="checkbox" id="terminos" required>
+          <input type="checkbox" id="terminos" required />
           <span class="text-body">
-            Acepto los 
-            <a href="/terminos" target="_blank" class="text-primary">Términos y Condiciones</a> 
-            y la 
-            <a href="/privacidad" target="_blank" class="text-primary">Política de Privacidad</a> 
+            Acepto los
+            <a href="/terminos" target="_blank" class="text-primary">Términos y Condiciones</a>
+            y la
+            <a href="/privacidad" target="_blank" class="text-primary">Política de Privacidad</a>
             de RaícesMX *
           </span>
         </label>
       </div>
       <div class="form-group checkbox-group">
         <label class="checkbox-label">
-          <input type="checkbox" id="autenticidad" required>
+          <input type="checkbox" id="autenticidad" required />
           <span class="text-body">
-            Certifico que este producto es auténtico y hecho en México, siguiendo técnicas tradicionales *
+            Certifico que este producto es auténtico y hecho en México, siguiendo técnicas
+            tradicionales *
           </span>
         </label>
       </div>
       <div class="form-group checkbox-group">
         <label class="checkbox-label">
-          <input type="checkbox" id="responsabilidad" required>
+          <input type="checkbox" id="responsabilidad" required />
           <span class="text-body">
-            Me responsabilizo de la veracidad de la información proporcionada y de la calidad del producto *
+            Me responsabilizo de la veracidad de la información proporcionada y de la calidad del
+            producto *
           </span>
         </label>
       </div>
@@ -366,7 +490,11 @@
       <button type="button" class="btn-outline" (click)="navigateToMarketplace()">
         <i class="fas fa-times"></i> Cancelar
       </button>
-      <button type="submit" class="btn-primary" [disabled]="productoForm.invalid || archivosImagenes.length === 0 || !ubicacionSeleccionada">
+      <button
+        type="submit"
+        class="btn-primary"
+        [disabled]="productoForm.invalid || archivosImagenes.length === 0"
+      >
         <i class="fas fa-upload"></i> Publicar Producto
       </button>
     </div>
@@ -384,7 +512,7 @@
           <i class="fas fa-times"></i>
         </button>
       </div>
-      
+
       <div class="modal-body">
         <div class="comision-info">
           <div class="comision-icon">
@@ -393,10 +521,11 @@
           <div class="comision-text">
             <h4 class="comision-title">¡Recuerda que RaícesMX cobra comisión por cada venta!</h4>
             <p class="comision-description">
-              Para mantener nuestra plataforma y apoyar a los artesanos, cobramos una comisión del 
-              <span class="text-bold text-primary">{{ porcentajeComision * 100 }}%</span> sobre el precio de venta de cada producto.
+              Para mantener nuestra plataforma y apoyar a los artesanos, cobramos una comisión del
+              <span class="text-bold text-primary">{{ porcentajeComision * 100 }}%</span> sobre el
+              precio de venta de cada producto.
             </p>
-            
+
             <div class="ejemplo-comision">
               <h5 class="ejemplo-title">Ejemplo:</h5>
               <div class="ejemplo-item">
@@ -405,22 +534,29 @@
               </div>
               <div class="ejemplo-item">
                 <span>Comisión de RaícesMX ({{ porcentajeComision * 100 }}%):</span>
-                <span class="text-bold text-secondary">${{ formatNumber(getEjemploComision().comision) }} MXN</span>
+                <span class="text-bold text-secondary"
+                  >${{ formatNumber(getEjemploComision().comision) }} MXN</span
+                >
               </div>
               <div class="ejemplo-item total">
                 <span>Tu ganancia neta será:</span>
-                <span class="text-bold text-primary">${{ formatNumber(getEjemploComision().ganancia) }} MXN</span>
+                <span class="text-bold text-primary"
+                  >${{ formatNumber(getEjemploComision().ganancia) }} MXN</span
+                >
               </div>
             </div>
-            
+
             <div class="comision-consejo">
               <i class="fas fa-lightbulb text-warning"></i>
-              <p><strong>Consejo:</strong> Establece tus precios considerando esta comisión para asegurar una ganancia justa.</p>
+              <p>
+                <strong>Consejo:</strong> Establece tus precios considerando esta comisión para
+                asegurar una ganancia justa.
+              </p>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div class="modal-footer">
         <button type="button" class="btn-primary" (click)="cerrarModalComision()">
           <i class="fas fa-check"></i> Entendido

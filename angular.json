@@ -15,16 +15,14 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular/build:application",  
+          "builder": "@angular/build:application",
           "options": {
             "outputPath": {
               "base": "dist/raicesmx-angular"
             },
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -35,9 +33,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss", "node_modules/maplibre-gl/dist/maplibre-gl.css"],
             "stylePreprocessorOptions": {
               "includePaths": ["src/app/shared/styles"]
             },
@@ -78,7 +74,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular/build:dev-server",  
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "raicesmx-angular:build:production"
@@ -90,28 +86,18 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular/build:extract-i18n"  
+          "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular/build:karma",  
+          "builder": "@angular/build:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss", "node_modules/maplibre-gl/dist/maplibre-gl.css"],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/app/shared/styles"
-              ]
+              "includePaths": ["src/app/shared/styles"]
             }
           }
         }
