@@ -1,4 +1,4 @@
-// publicar-producto.component.ts
+// publicar-producto.component.ts - VERSIÓN FINAL LIMPIA
 import { Component, inject, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -25,18 +25,16 @@ export class PublicarProducto implements OnInit, AfterViewInit {
   mapa: maplibregl.Map | null = null;
   marcador: maplibregl.Marker | null = null;
 
-  // API Backend
+  // Configuración
   API_URL = 'http://localhost:3000';
-
-  // 🗺️ MapTiler API Key - REEMPLAZA CON LA TUYA
-  MAPTILER_API_KEY = environment.maptilerApiKey; // 👈 Pega tu API key aquí
+  MAPTILER_API_KEY = environment.maptilerApiKey;
 
   // Estados de carga
   cargandoCodigoPostal = false;
   coloniasDisponibles: string[] = [];
   categoriasDisponibles: any[] = [];
 
-  // Manejo de imágenes
+  // Imágenes
   imagenesPrevisualizacion: string[] = [];
   archivosImagenes: File[] = [];
 
@@ -83,7 +81,12 @@ export class PublicarProducto implements OnInit, AfterViewInit {
 
   // Modal de comisión
   mostrarModalComision = false;
-  porcentajeComision = 0.1; // 10%
+  porcentajeComision = 0.1;
+
+  // Validación de términos
+  terminosAceptados = false;
+  autenticidadAceptada = false;
+  responsabilidadAceptada = false;
 
   constructor() {
     this.productoForm = this.fb.group({
@@ -92,8 +95,8 @@ export class PublicarProducto implements OnInit, AfterViewInit {
         '',
         [Validators.required, Validators.minLength(50), Validators.maxLength(2000)],
       ],
-      categoryId: ['', Validators.required],
-      categoria: [''],
+      categoryId: [''],
+      categoria: ['', Validators.required],
       precio: ['', [Validators.required, Validators.min(1)]],
       stock: ['', [Validators.required, Validators.min(1)]],
       unidad: ['', Validators.required],
@@ -101,16 +104,14 @@ export class PublicarProducto implements OnInit, AfterViewInit {
       calle: ['', Validators.required],
       numeroExterior: ['', Validators.required],
       numeroInterior: [''],
-      numero: [''],
       colonia: ['', Validators.required],
       codigoPostal: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
-      municipio: [{ value: '', disabled: true }, Validators.required],
-      ciudad: [{ value: '', disabled: true }],
-      estado: [{ value: '', disabled: true }, Validators.required],
+      municipio: ['', Validators.required],
+      estado: ['', Validators.required],
       referencia: [''],
 
-      latitud: ['', Validators.required],
-      longitud: ['', Validators.required],
+      latitud: [''],
+      longitud: [''],
     });
 
     // Listener para código postal
@@ -118,15 +119,6 @@ export class PublicarProducto implements OnInit, AfterViewInit {
       if (cp && /^[0-9]{5}$/.test(cp)) {
         this.buscarCodigoPostal(cp);
       }
-    });
-
-    // Sincronizar campos duplicados
-    this.productoForm.get('numeroExterior')?.valueChanges.subscribe((val) => {
-      this.productoForm.get('numero')?.setValue(val, { emitEvent: false });
-    });
-
-    this.productoForm.get('municipio')?.valueChanges.subscribe((val) => {
-      this.productoForm.get('ciudad')?.setValue(val, { emitEvent: false });
     });
   }
 
@@ -139,6 +131,36 @@ export class PublicarProducto implements OnInit, AfterViewInit {
   }
 
   /**
+   * Getter para validar si se puede publicar
+   */
+  get puedePublicar(): boolean {
+    return (
+      this.productoForm.valid &&
+      this.archivosImagenes.length > 0 &&
+      (this.ubicacionSeleccionada !== null ||
+        (this.productoForm.get('latitud')?.value && this.productoForm.get('longitud')?.value)) &&
+      this.terminosAceptados &&
+      this.autenticidadAceptada &&
+      this.responsabilidadAceptada
+    );
+  }
+
+  /**
+   * Event handlers para checkboxes
+   */
+  onTerminosChange(event: Event): void {
+    this.terminosAceptados = (event.target as HTMLInputElement).checked;
+  }
+
+  onAutenticidadChange(event: Event): void {
+    this.autenticidadAceptada = (event.target as HTMLInputElement).checked;
+  }
+
+  onResponsabilidadChange(event: Event): void {
+    this.responsabilidadAceptada = (event.target as HTMLInputElement).checked;
+  }
+
+  /**
    * Cargar categorías desde el backend
    */
   async cargarCategorias(): Promise<void> {
@@ -148,10 +170,9 @@ export class PublicarProducto implements OnInit, AfterViewInit {
       if (response.success) {
         this.categoriasDisponibles = response.categories;
         this.categorias = response.categories.map((c: any) => c.nombre);
-        console.log('✅ Categorías cargadas:', this.categoriasDisponibles.length);
       }
     } catch (error) {
-      console.error('❌ Error cargando categorías:', error);
+      console.error('Error cargando categorías:', error);
       alert('Error al cargar las categorías');
     }
   }
@@ -162,24 +183,19 @@ export class PublicarProducto implements OnInit, AfterViewInit {
   inicializarMapa(): void {
     if (!this.mapaContainer) return;
 
-    // ✅ Usar MapTiler para ver nombres de calles
     this.mapa = new maplibregl.Map({
       container: this.mapaContainer.nativeElement,
       style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${this.MAPTILER_API_KEY}`,
-      center: [-102.5528, 23.6345], // Centro de México
+      center: [-102.5528, 23.6345],
       zoom: 5,
     });
 
-    // Controles de navegación
     this.mapa.addControl(new maplibregl.NavigationControl(), 'top-right');
 
-    // Evento de clic en el mapa
     this.mapa.on('click', (e) => {
       this.agregarMarcador(e.lngLat.lng, e.lngLat.lat);
       this.geocodificarInversa(e.lngLat.lat, e.lngLat.lng);
     });
-
-    console.log('🗺️ Mapa inicializado con MapTiler');
   }
 
   /**
@@ -188,38 +204,28 @@ export class PublicarProducto implements OnInit, AfterViewInit {
   agregarMarcador(lng: number, lat: number): void {
     if (!this.mapa) return;
 
-    // Eliminar marcador anterior
     if (this.marcador) {
       this.marcador.remove();
     }
 
-    // Crear nuevo marcador rojo
     this.marcador = new maplibregl.Marker({ color: '#e63946' })
       .setLngLat([lng, lat])
       .addTo(this.mapa);
 
-    // Actualizar coordenadas en formulario
     this.productoForm.patchValue({ latitud: lat, longitud: lng });
     this.ubicacionSeleccionada = { lat, lng };
     this.mostrarMarcador = true;
 
-    // Centrar mapa en el marcador
     this.mapa.flyTo({ center: [lng, lat], zoom: 14 });
-
-    console.log(`📍 Marcador colocado en: ${lat}, ${lng}`);
   }
 
   /**
-   * Buscar código postal (autocompleta formulario + mueve mapa)
+   * Buscar código postal y autocompletar datos
    */
   async buscarCodigoPostal(cp: string): Promise<void> {
-    // Limpiar y validar
     const cpLimpio = cp.replace(/\D/g, '').trim().substring(0, 5);
 
-    if (cpLimpio.length !== 5) {
-      console.warn('CP inválido:', cp);
-      return;
-    }
+    if (cpLimpio.length !== 5) return;
 
     this.cargandoCodigoPostal = true;
 
@@ -231,47 +237,31 @@ export class PublicarProducto implements OnInit, AfterViewInit {
       if (response.success) {
         const { estado, municipio, colonia, colonias, latitud, longitud } = response.data;
 
-        // Actualizar formulario
         this.productoForm.patchValue({
           estado,
           municipio,
-          ciudad: municipio,
           colonia,
           latitud,
           longitud,
         });
 
         this.coloniasDisponibles = colonias || [colonia];
-
-        // ✅ ESTABLECER UBICACIÓN (crítico para habilitar el botón)
         this.ubicacionSeleccionada = { lat: latitud, lng: longitud };
 
-        // 🗺️ Mover mapa y marcador a la ubicación
         if (this.mapa && latitud && longitud) {
           this.agregarMarcador(longitud, latitud);
         }
-
-        console.log('✅ CP encontrado:', response.data);
-        console.log('✅ Ubicación establecida:', this.ubicacionSeleccionada);
       }
     } catch (error: any) {
-      console.error('❌ Error:', error);
+      console.error('Error buscando CP:', error);
       alert('Código postal no encontrado');
-
-      this.productoForm.patchValue({
-        estado: '',
-        municipio: '',
-        ciudad: '',
-        colonia: '',
-      });
-      this.coloniasDisponibles = [];
     } finally {
       this.cargandoCodigoPostal = false;
     }
   }
 
   /**
-   * Geocodificación inversa (cuando haces clic en el mapa)
+   * Geocodificación inversa (clic en mapa)
    */
   async geocodificarInversa(lat: number, lng: number): Promise<void> {
     try {
@@ -283,11 +273,8 @@ export class PublicarProducto implements OnInit, AfterViewInit {
         this.productoForm.patchValue({
           estado: response.data.estado,
           municipio: response.data.municipio,
-          ciudad: response.data.municipio,
           colonia: response.data.colonia || '',
         });
-
-        console.log('📍 Dirección obtenida:', response.data);
       }
     } catch (error) {
       console.error('Error en geocodificación inversa:', error);
@@ -295,14 +282,14 @@ export class PublicarProducto implements OnInit, AfterViewInit {
   }
 
   /**
-   * Seleccionar ubicación manual (para compatibilidad con HTML viejo)
+   * Compatibilidad con HTML antiguo
    */
   seleccionarUbicacionManual(event: MouseEvent): void {
-    console.log('Usa el mapa interactivo con clic directo');
+    // Método legacy, ahora se usa el clic directo en el mapa
   }
 
   /**
-   * Obtener URL del mapa estático (para HTML viejo)
+   * Obtener URL del mapa estático
    */
   getMapaUrl(): string {
     if (this.ubicacionSeleccionada) {
@@ -396,46 +383,41 @@ export class PublicarProducto implements OnInit, AfterViewInit {
    * Enviar formulario al backend
    */
   async onSubmit(): Promise<void> {
-    if (this.productoForm.invalid || this.archivosImagenes.length === 0) {
-      alert('Por favor completa todos los campos y sube al menos una imagen');
+    if (!this.puedePublicar) {
+      alert('Por favor completa todos los campos obligatorios');
       this.markFormGroupTouched(this.productoForm);
-      return;
-    }
-
-    if (!this.ubicacionSeleccionada) {
-      alert('Por favor selecciona una ubicación en el mapa');
       return;
     }
 
     const formData = new FormData();
 
-    // Obtener valores (incluyendo disabled)
     const productoData = {
       titulo: this.productoForm.get('titulo')?.value,
       descripcion: this.productoForm.get('descripcion')?.value,
-      categoryId: this.productoForm.get('categoryId')?.value || this.obtenerCategoryId(),
+      categoryId: this.obtenerCategoryId(),
       precio: parseFloat(this.productoForm.get('precio')?.value),
       stock: parseInt(this.productoForm.get('stock')?.value),
       unidad: this.productoForm.get('unidad')?.value,
       calle: this.productoForm.get('calle')?.value,
-      numeroExterior:
-        this.productoForm.get('numeroExterior')?.value || this.productoForm.get('numero')?.value,
+      numeroExterior: this.productoForm.get('numeroExterior')?.value,
       numeroInterior: this.productoForm.get('numeroInterior')?.value || '',
       colonia: this.productoForm.get('colonia')?.value,
       codigoPostal: this.productoForm.get('codigoPostal')?.value,
       municipio: this.productoForm.get('municipio')?.value,
       estado: this.productoForm.get('estado')?.value,
       referencia: this.productoForm.get('referencia')?.value || '',
-      latitud: parseFloat(this.productoForm.get('latitud')?.value),
-      longitud: parseFloat(this.productoForm.get('longitud')?.value),
+      latitud: parseFloat(
+        this.productoForm.get('latitud')?.value || this.ubicacionSeleccionada?.lat,
+      ),
+      longitud: parseFloat(
+        this.productoForm.get('longitud')?.value || this.ubicacionSeleccionada?.lng,
+      ),
     };
 
-    // Agregar datos al FormData
     Object.keys(productoData).forEach((key) => {
       formData.append(key, (productoData as any)[key]);
     });
 
-    // Agregar imágenes
     this.archivosImagenes.forEach((file) => {
       formData.append('imagenes', file);
     });
@@ -448,7 +430,7 @@ export class PublicarProducto implements OnInit, AfterViewInit {
         this.router.navigate(['/marketplace']);
       }
     } catch (error: any) {
-      console.error('❌ Error:', error);
+      console.error('Error al publicar:', error);
       alert('Error al publicar: ' + (error.error?.message || error.message));
     }
   }
