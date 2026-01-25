@@ -40,7 +40,7 @@ export class Chatbot implements OnInit, AfterViewInit {
     '¿Qué productos artesanales tienen?',
     '¿Cómo puedo vender mis productos?',
     '¿Cuáles son los requisitos para registrarme?',
-    '¿Cómo contacto a un artesano?',
+    '¿Cómo contacto a un vendedor?',
     '¿Cuáles son las tarifas de la plataforma?',
     '¿Tienen cerámica de Talavera?',
   ];
