@@ -3,6 +3,11 @@
   <!-- Header -->
   <header class="chatbot-header">
     <div class="header-content">
+      <!-- Botón menú móvil -->
+      <button class="mobile-menu-btn" (click)="toggleSidebar()">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+
       <button class="back-button" routerLink="/marketplace">
         <span class="material-icons">arrow_back</span>
         <span>Volver al inicio</span>
@@ -18,11 +23,14 @@
     </div>
   </header>
 
+  <!-- Overlay para cerrar sidebar -->
+  <div class="sidebar-overlay" *ngIf="sidebarOpen" (click)="closeSidebar()"></div>
+
   <!-- Contenido principal -->
   <main class="chatbot-main">
     <div class="chatbot-container">
       <!-- Panel lateral izquierdo -->
-      <aside class="chatbot-sidebar">
+      <aside class="chatbot-sidebar" [class.open]="sidebarOpen">
         <div class="sidebar-header">
           <div class="sidebar-avatar">
             <span class="material-symbols-outlined">robot_2</span>
@@ -37,10 +45,11 @@
             Categorías de Ayuda
           </h3>
           <div class="help-categories">
-            <button 
-              *ngFor="let category of helpCategories" 
+            <button
+              *ngFor="let category of helpCategories"
               class="category-btn"
-              (click)="selectHelpCategory(category.title)">
+              (click)="selectHelpCategory(category.title)"
+            >
               <span class="material-symbols-outlined">{{ category.icon }}</span>
               <div class="category-info">
                 <span class="category-title">{{ category.title }}</span>
@@ -56,10 +65,11 @@
             Preguntas Frecuentes
           </h3>
           <div class="quick-questions-sidebar">
-            <button 
-              *ngFor="let question of quickQuestions" 
+            <button
+              *ngFor="let question of quickQuestions"
               class="quick-question-sidebar"
-              (click)="selectQuickQuestion(question)">
+              (click)="selectQuickQuestion(question)"
+            >
               {{ question }}
             </button>
           </div>
@@ -119,15 +129,25 @@
                 <span class="material-symbols-outlined icon-lg">waving_hand</span>
                 ¡Bienvenido al asistente de RaícesMX!
               </h3>
-              <p>Puedo ayudarte con información sobre productos artesanales, ventas, registro y más.</p>
+              <p>
+                Puedo ayudarte con información sobre productos artesanales, ventas, registro y más.
+              </p>
               <p>Selecciona una categoría o escribe tu pregunta directamente.</p>
             </div>
           </div>
 
           <!-- Historial de mensajes -->
           <div class="messages-history">
-            <div class="message-container" *ngFor="let message of messages">
-              <div class="message" [class.user]="message.sender === 'user'" [class.bot]="message.sender === 'bot'">
+            <!-- 👇 AGREGAR trackBy AQUÍ -->
+            <div
+              class="message-container"
+              *ngFor="let message of messages; trackBy: trackByMessageId"
+            >
+              <div
+                class="message"
+                [class.user]="message.sender === 'user'"
+                [class.bot]="message.sender === 'bot'"
+              >
                 <div class="message-avatar" *ngIf="message.sender === 'bot'">
                   <span class="material-symbols-outlined">smart_toy</span>
                 </div>
@@ -139,7 +159,9 @@
                         <span class="material-symbols-outlined icon-micro">schedule</span>
                         {{ formatTime(message.timestamp) }}
                       </span>
-                      <span class="message-sender">{{ message.sender === 'user' ? 'Tú' : 'RaícesBot' }}</span>
+                      <span class="message-sender">{{
+                        message.sender === 'user' ? 'Tú' : 'RaícesBot'
+                      }}</span>
                     </div>
                   </div>
                 </div>
@@ -168,10 +190,11 @@
                 ¿Te interesa saber también sobre...
               </p>
               <div class="suggested-buttons">
-                <button 
-                  *ngFor="let question of getSuggestedQuestions()" 
+                <button
+                  *ngFor="let question of getSuggestedQuestions()"
                   class="suggested-btn"
-                  (click)="selectQuickQuestion(question)">
+                  (click)="selectQuickQuestion(question)"
+                >
                   {{ question }}
                 </button>
               </div>
@@ -183,19 +206,21 @@
         <div class="chat-input-area">
           <div class="input-container">
             <div class="input-wrapper">
-              <textarea 
+              <textarea
                 [(ngModel)]="userMessage"
                 (keydown)="onKeyPress($event)"
                 placeholder="Escribe tu pregunta aquí... Presiona Enter para enviar."
                 class="chat-input"
                 rows="2"
-                #messageInput>
+                #messageInput
+              >
               </textarea>
-              <button 
-                class="send-button" 
-                (click)="sendMessage()" 
+              <button
+                class="send-button"
+                (click)="sendMessage()"
                 [disabled]="!userMessage.trim()"
-                [class.active]="userMessage.trim()">
+                [class.active]="userMessage.trim()"
+              >
                 <span class="material-symbols-outlined">send</span>
                 <span class="send-text">Enviar</span>
               </button>
