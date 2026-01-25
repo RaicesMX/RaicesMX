@@ -1,13 +1,22 @@
 // chatbot.component.ts
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ChatbotService } from '../service/chatbot.service';
 
 interface Message {
   text: string;
   sender: 'user' | 'bot';
   timestamp: Date;
+  id: number;
 }
 
 @Component({
@@ -15,222 +24,266 @@ interface Message {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './chatbot.html',
-  styleUrls: ['./chatbot.scss']
+  styleUrls: ['./chatbot.scss'],
 })
 export class Chatbot implements OnInit, AfterViewInit {
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   @ViewChild('messageInput') private messageInput!: ElementRef;
-  
+
+  sidebarOpen = false;
   userMessage = '';
   isTyping = false;
-  
-  messages: Message[] = [
-    {
-      text: '¡Hola! Soy el asistente virtual de RaícesMX. ¿En qué puedo ayudarte hoy?',
-      sender: 'bot',
-      timestamp: new Date()
-    },
-    {
-      text: 'Estoy aquí para ayudarte con información sobre productos artesanales, ventas, registro de vendedores y soporte general.',
-      sender: 'bot',
-      timestamp: new Date()
-    }
-  ];
-  
+  messages: Message[] = [];
+  private messageIdCounter = 0;
+
   quickQuestions = [
-    '¿Cómo puedo vender mis productos artesanales?',
+    '¿Qué productos artesanales tienen?',
+    '¿Cómo puedo vender mis productos?',
     '¿Cuáles son los requisitos para registrarme?',
     '¿Cómo contacto a un artesano?',
     '¿Cuáles son las tarifas de la plataforma?',
-    '¿Cómo puedo hacer un pedido?',
-    '¿Qué tipos de productos aceptan?'
+    '¿Tienen cerámica de Talavera?',
   ];
-  
+
   helpCategories = [
     { icon: 'shopping_cart', title: 'Compras', desc: 'Información sobre productos y pedidos' },
     { icon: 'storefront', title: 'Ventas', desc: 'Vender tus productos artesanales' },
     { icon: 'person_add', title: 'Registro', desc: 'Crear tu cuenta en RaícesMX' },
-    { icon: 'support_agent', title: 'Soporte', desc: 'Ayuda técnica y asistencia' }
+    { icon: 'support_agent', title: 'Soporte', desc: 'Ayuda técnica y asistencia' },
   ];
-  
-  botResponses: { [key: string]: string[] } = {
-    'ventas': [
-      'Para vender en RaícesMX, primero regístrate como vendedor en nuestra plataforma. Luego podrás subir fotos de tus productos artesanales, establecer precios y gestionar tus ventas.',
-      'Como vendedor en RaícesMX, disfrutas de una comisión competitiva del 10% por venta exitosa. Proporcionamos herramientas para gestionar inventario y seguimiento de pedidos.',
-      'Los productos artesanales mexicanos son nuestra especialidad: cerámica, textiles, joyería tradicional, madera tallada y más. Cada producto pasa por revisión de calidad.'
-    ],
-    'registro': [
-      'El registro en RaícesMX es completamente gratuito. Necesitas proporcionar información básica, comprobante de domicilio y datos fiscales para recibir pagos.',
-      'Como vendedor registrado, tendrás acceso a nuestro dashboard donde podrás gestionar productos, ver estadísticas de ventas y comunicarte con compradores.',
-      'El proceso de verificación toma de 1 a 2 días hábiles. Una vez aprobado, podrás comenzar a subir tus productos inmediatamente.'
-    ],
-    'compras': [
-      'Puedes explorar productos artesanales por categoría: cerámica, textiles, joyería, etc. Cada producto incluye descripción detallada y fotos del artesano.',
-      'Para hacer un pedido, selecciona el producto, elige cantidad y haz clic en "Comprar". Aceptamos múltiples métodos de pago seguro.',
-      'Los tiempos de envío varían según la ubicación del artesano. Normalmente es de 3 a 7 días hábiles dentro de México.'
-    ],
-    'productos': [
-      'RaícesMX se especializa en productos artesanales mexicanos auténticos: talavera, bordados, alebrijes, plata, cobre y más.',
-      'Cada producto en nuestra plataforma incluye certificado de autenticidad y la historia del artesano que lo creó.',
-      'Trabajamos directamente con comunidades artesanales para garantizar comercio justo y preservar técnicas tradicionales.'
-    ],
-    'soporte': [
-      'Nuestro equipo de soporte está disponible de lunes a sábado de 8:00 AM a 8:00 PM. Puedes contactarnos por WhatsApp: 55-1234-5678',
-      'Para consultas sobre pedidos, envía un correo a: pedidos@raicesmx.com. Para soporte técnico: soporte@raicesmx.com',
-      'Contamos con centro de ayuda en línea con tutoriales y guías paso a paso para compradores y vendedores.'
-    ],
-    'default': [
-      'Entiendo que quieres información sobre ese tema. Déjame proporcionarte los detalles más relevantes.',
-      'Esa es una excelente pregunta. Permíteme darte la información más actualizada que tenemos.',
-      'Gracias por tu consulta. Aquí tienes la información que necesitas sobre ese tema.'
-    ]
-  };
-  
-  ngOnInit() {
+
+  constructor(
+    private chatbotService: ChatbotService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  async ngOnInit() {
     document.title = 'Asistente Virtual - RaícesMX';
+    await this.loadWelcomeMessage();
   }
-  
+
   ngAfterViewInit() {
     this.scrollToBottom();
     setTimeout(() => {
-      if (this.messageInput) {
-        this.messageInput.nativeElement.focus();
-      }
+      this.messageInput?.nativeElement.focus();
     }, 500);
   }
-  
-  sendMessage() {
-    if (!this.userMessage.trim()) return;
-    
-    const userMsg: Message = {
-      text: this.userMessage,
-      sender: 'user',
-      timestamp: new Date()
-    };
-    this.messages.push(userMsg);
-    
-    const userInput = this.userMessage.toLowerCase();
-    this.userMessage = '';
-    
-    setTimeout(() => {
-      if (this.messageInput) {
-        this.messageInput.nativeElement.focus();
-      }
-    }, 100);
-    
-    this.isTyping = true;
-    this.scrollToBottom();
-    
-    setTimeout(() => {
-      this.getBotResponse(userInput);
-      this.isTyping = false;
-      this.scrollToBottom();
-    }, 800 + Math.random() * 800);
+
+  // ==========================================
+  // 🔹 Responsive Sidebar
+  // ==========================================
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
   }
-  
+
+  closeSidebar() {
+    this.sidebarOpen = false;
+  }
+
+  // ==========================================
+  // 🔹 Mensajes con Backend
+  // ==========================================
+
+  /**
+   * Carga el mensaje de bienvenida desde el backend
+   */
+  private loadWelcomeMessage() {
+    // NO mostrar indicador de escritura en el mensaje de bienvenida inicial
+    this.chatbotService.getGreeting().subscribe({
+      next: (response) => {
+        console.log('📨 Saludo recibido:', response.message);
+        this.addMessage(response.message, 'bot');
+      },
+      error: (error) => {
+        console.error('❌ Error al obtener saludo:', error);
+        this.addMessage(
+          '¡Hola! 👋 Soy el asistente virtual de RaícesMX. ¿En qué puedo ayudarte hoy? 🇲🇽',
+          'bot',
+        );
+      },
+    });
+  }
+
+  /**
+   * Envía un mensaje al chatbot
+   */
+  sendMessage() {
+    const trimmedMessage = this.userMessage.trim();
+    if (!trimmedMessage) return;
+
+    console.log('🚀 Enviando mensaje:', trimmedMessage);
+
+    this.closeSidebar();
+
+    // Agregar mensaje del usuario
+    this.addMessage(trimmedMessage, 'user');
+    console.log('✅ Mensaje del usuario agregado. Total:', this.messages.length);
+
+    const currentMessage = trimmedMessage;
+    this.userMessage = '';
+
+    // Focus en el input
+    setTimeout(() => {
+      this.messageInput?.nativeElement.focus();
+    }, 0);
+
+    // Mostrar indicador de escritura y forzar detección de cambios
+    this.isTyping = true;
+    this.cdr.detectChanges();
+
+    // Enviar al backend
+    this.chatbotService.sendMessage(currentMessage).subscribe({
+      next: (response) => {
+        console.log('📨 Respuesta del bot recibida:', response.message);
+        // Primero ocultar el indicador
+        this.isTyping = false;
+        this.cdr.detectChanges();
+        // Luego agregar el mensaje
+        this.addMessage(response.message, 'bot');
+        console.log('✅ Respuesta agregada. Total:', this.messages.length);
+      },
+      error: (error) => {
+        console.error('❌ Error al enviar mensaje:', error);
+        // Primero ocultar el indicador
+        this.isTyping = false;
+        this.cdr.detectChanges();
+        // Luego agregar el mensaje de error
+        this.addMessage(
+          'Lo siento, tuve un problema al procesar tu mensaje. Por favor, intenta de nuevo. 😊',
+          'bot',
+        );
+      },
+    });
+  }
+
+  /**
+   * Agrega un mensaje al array
+   */
+  private addMessage(text: string, sender: 'user' | 'bot') {
+    const newMessage: Message = {
+      text,
+      sender,
+      timestamp: new Date(),
+      id: this.messageIdCounter++,
+    };
+
+    // Crear nueva referencia del array para activar detección de cambios
+    this.messages = [...this.messages, newMessage];
+
+    console.log('📝 Mensaje agregado:', newMessage);
+    console.log('📋 Array actual:', this.messages);
+
+    // Scroll al final después de que Angular actualice la vista
+    setTimeout(() => {
+      this.scrollToBottom();
+      this.cdr.detectChanges();
+    }, 50);
+  }
+
+  /**
+   * Maneja el evento de teclado (Enter para enviar)
+   */
   onKeyPress(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       this.sendMessage();
     }
   }
-  
+
+  /**
+   * Selecciona una pregunta rápida
+   */
   selectQuickQuestion(question: string) {
     this.userMessage = question;
-    setTimeout(() => this.sendMessage(), 100);
+    this.sendMessage();
+    this.closeSidebar();
   }
-  
+
+  /**
+   * Selecciona una categoría de ayuda
+   */
   selectHelpCategory(category: string) {
-    const categoryMap: { [key: string]: string } = {
-      'Compras': 'compras',
-      'Ventas': 'ventas',
-      'Registro': 'registro',
-      'Soporte': 'soporte'
+    const categoryMessages: { [key: string]: string } = {
+      Compras: '¿Cómo puedo comprar productos artesanales?',
+      Ventas: '¿Cómo puedo vender mis productos artesanales?',
+      Registro: '¿Cómo me registro en la plataforma?',
+      Soporte: 'Necesito ayuda con soporte técnico',
     };
-    
-    const userMsg: Message = {
-      text: `Quiero información sobre: ${category}`,
-      sender: 'user',
-      timestamp: new Date()
-    };
-    this.messages.push(userMsg);
-    
-    this.isTyping = true;
-    this.scrollToBottom();
-    
-    setTimeout(() => {
-      this.getBotResponse(categoryMap[category]);
-      this.isTyping = false;
-      this.scrollToBottom();
-    }, 800);
+
+    this.userMessage = categoryMessages[category];
+    this.sendMessage();
+    this.closeSidebar();
   }
-  
-  private getBotResponse(userInput: string) {
-    let responseType = 'default';
-    
-    const patterns: { [key: string]: RegExp[] } = {
-      'ventas': [/vender/, /ventas/, /vendedor/, /producto.*mio/, /mi.*producto/],
-      'registro': [/registro/, /registrar/, /cuenta/, /perfil/, /ingresar/],
-      'compras': [/comprar/, /pedido/, /orden/, /pago/, /envío/, /entrega/],
-      'productos': [/producto/, /artesanal/, /cerámica/, /textil/, /joyería/, /artesanía/],
-      'soporte': [/soporte/, /ayuda/, /contacto/, /problema/, /error/, /queja/]
-    };
-    
-    for (const [category, regexes] of Object.entries(patterns)) {
-      if (regexes.some(regex => regex.test(userInput))) {
-        responseType = category;
-        break;
-      }
-    }
-    
-    const responses = this.botResponses[responseType];
-    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-    
-    const botMsg: Message = {
-      text: randomResponse,
-      sender: 'bot',
-      timestamp: new Date()
-    };
-    this.messages.push(botMsg);
+
+  /**
+   * Limpia el chat y reinicia
+   */
+  clearChat() {
+    this.messages = [];
+    this.messageIdCounter = 0;
+    this.isTyping = false;
+    this.cdr.detectChanges();
+    this.loadWelcomeMessage();
   }
-  
+
+  // ==========================================
+  // 🔹 Utilidades
+  // ==========================================
+
+  /**
+   * Hace scroll al final del chat
+   */
   private scrollToBottom() {
     try {
-      setTimeout(() => {
-        if (this.chatContainer) {
-          this.chatContainer.nativeElement.scrollTop = 
-            this.chatContainer.nativeElement.scrollHeight;
-        }
-      }, 100);
+      if (this.chatContainer) {
+        const container = this.chatContainer.nativeElement;
+        container.scrollTop = container.scrollHeight;
+      }
     } catch (err) {
-      console.error('Error scrolling to bottom:', err);
+      console.error('Error en scroll:', err);
     }
   }
-  
+
+  /**
+   * Formatea la hora del mensaje
+   */
   formatTime(date: Date): string {
-    return date.toLocaleTimeString('es-MX', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return new Date(date).toLocaleTimeString('es-MX', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   }
-  
-  clearChat() {
-    this.messages = [
-      {
-        text: '¡Hola! He reiniciado nuestra conversación. ¿En qué puedo ayudarte hoy?',
-        sender: 'bot',
-        timestamp: new Date()
-      }
-    ];
+
+  /**
+   * TrackBy para optimizar ngFor
+   */
+  trackByMessageId(index: number, message: Message): number {
+    return message.id;
   }
-  
+
+  /**
+   * Obtiene preguntas sugeridas según el contexto
+   */
   getSuggestedQuestions(): string[] {
     const lastMessage = this.messages[this.messages.length - 1];
     if (lastMessage?.sender === 'bot') {
-      if (lastMessage.text.includes('ventas') || lastMessage.text.includes('vender')) {
-        return ['¿Cuánto cuesta registrarme?', '¿Qué documentos necesito?', '¿Cómo subo mis productos?'];
+      const text = lastMessage.text.toLowerCase();
+
+      if (text.includes('productos') || text.includes('categoría')) {
+        return [
+          '¿Tienen cerámica de Talavera?',
+          '¿Venden joyería de plata?',
+          '¿Qué textiles tienen disponibles?',
+        ];
       }
-      if (lastMessage.text.includes('compras') || lastMessage.text.includes('compra')) {
+      if (text.includes('ventas') || text.includes('vender')) {
+        return [
+          '¿Cuánto cuesta registrarme?',
+          '¿Qué documentos necesito?',
+          '¿Cómo subo mis productos?',
+        ];
+      }
+      if (text.includes('compra') || text.includes('pedido')) {
         return ['¿Aceptan tarjetas?', '¿Hacen envíos internacionales?', '¿Hay garantía?'];
       }
     }
