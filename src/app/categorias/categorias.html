@@ -2,23 +2,22 @@
   <!-- HERO SECTION -->
   <section class="categorias-hero">
     <div class="mexican-pattern"></div>
-    
+
     <div class="hero-content-wrapper">
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title">
             <span class="hero-line-1">Tradiciones</span>
             <span class="hero-line-2">
-            <span class="text-mexicanas">Mexicanas</span>
-            <span class="text-categorias">Categorías</span>
-          </span>
-      </h1>
-    
-      <p class="hero-subtitle">
-        Explora nuestras categorías artesanales y conecta con tradiciones centenarias
-      </p>
-      
-          
+              <span class="text-mexicanas">Mexicanas</span>
+              <span class="text-categorias">Categorías</span>
+            </span>
+          </h1>
+
+          <p class="hero-subtitle">
+            Explora nuestras categorías y conecta con tradiciones centenarias
+          </p>
+
           <div class="hero-stats">
             <div class="hero-stat">
               <span class="stat-number">{{ categorias.length }}</span>
@@ -33,9 +32,9 @@
               <span class="stat-label">Productos</span>
             </div>
           </div>
-          
+
           <div class="hero-cta">
-            <button class="btn-explorar btn-glow-effect"(click)="scrollToCategorias()">
+            <button class="btn-explorar btn-glow-effect" (click)="scrollToCategorias()">
               <i class="material-icons btn-icon">search</i>
               <span class="btn-text">Explorar Categorías</span>
             </button>
@@ -43,7 +42,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="scroll-indicator" (click)="scrollToCategorias()">
       <div class="arrow"></div>
     </div>
@@ -53,7 +52,11 @@
   <section class="filtros-section">
     <div class="container">
       <div class="filtros-grid">
-        <div class="filtro-card" (click)="aplicarFiltroRapido('todos')" [class.active]="filtroRapido === 'todos'">
+        <div
+          class="filtro-card"
+          (click)="aplicarFiltroRapido('todos')"
+          [class.active]="filtroRapido === 'todos'"
+        >
           <div class="filtro-icon">
             <i class="material-icons">category</i>
           </div>
@@ -62,8 +65,12 @@
             <p>Todas las categorías</p>
           </div>
         </div>
-        
-        <div class="filtro-card" (click)="aplicarFiltroRapido('populares')" [class.active]="filtroRapido === 'populares'">
+
+        <div
+          class="filtro-card"
+          (click)="aplicarFiltroRapido('populares')"
+          [class.active]="filtroRapido === 'populares'"
+        >
           <div class="filtro-icon">
             <i class="material-icons icon-mexican-red">whatshot</i>
           </div>
@@ -72,8 +79,12 @@
             <p>Lo más buscado</p>
           </div>
         </div>
-        
-        <div class="filtro-card" (click)="aplicarFiltroRapido('nuevos')" [class.active]="filtroRapido === 'nuevos'">
+
+        <div
+          class="filtro-card"
+          (click)="aplicarFiltroRapido('nuevos')"
+          [class.active]="filtroRapido === 'nuevos'"
+        >
           <div class="filtro-icon">
             <i class="material-icons icon-mexican-green">fiber_new</i>
           </div>
@@ -82,7 +93,7 @@
             <p>Últimas categorías</p>
           </div>
         </div>
-        
+
         <div class="filtro-card dropdown-filtro">
           <div class="filtro-icon">
             <i class="material-icons icon-mexican-brown">location_on</i>
@@ -95,37 +106,50 @@
           </div>
         </div>
       </div>
-      
+
       <div class="filtros-footer">
         <div class="ordenamiento">
           <label>Ordenar por:</label>
-          <select [(ngModel)]="ordenSeleccionado" (change)="ordenarCategorias()" class="orden-select">
+          <select
+            [(ngModel)]="ordenSeleccionado"
+            (change)="ordenarCategorias()"
+            class="orden-select"
+          >
             <option value="nombre">Nombre A-Z</option>
             <option value="popularidad">Más populares</option>
             <option value="productos">Más productos</option>
             <option value="nuevos">Más recientes</option>
           </select>
         </div>
-        
-        <button class="btn-filtros-avanzados btn-glow-subtle" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+
+        <button
+          class="btn-filtros-avanzados btn-glow-subtle"
+          (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
+        >
           {{ mostrarFiltrosAvanzados ? 'Menos filtros' : 'Más filtros' }}
         </button>
-        
-        <button class="btn-limpiar btn-glow-effect btn-glow-subtle" (click)="limpiarFiltros()" *ngIf="filtroActivo">
+
+        <button
+          class="btn-limpiar btn-glow-effect btn-glow-subtle"
+          (click)="limpiarFiltros()"
+          *ngIf="filtroActivo"
+        >
           <i class="material-icons btn-icon">refresh</i>
           Limpiar filtros
         </button>
       </div>
-      
+
       <div class="filtros-avanzados" *ngIf="mostrarFiltrosAvanzados">
         <div class="filtro-avanzado">
           <label>⭐ Rating mínimo</label>
           <div class="rating-options">
-            <button *ngFor="let rating of [4, 3, 2, 1]"
-                    class="rating-btn"
-                    [class.active]="filtroRating === rating"
-                    (click)="filtroRating = filtroRating === rating ? 0 : rating; filtrarCategorias()">
-              {{ rating }}+ 
+            <button
+              *ngFor="let rating of [4, 3, 2, 1]"
+              class="rating-btn"
+              [class.active]="filtroRating === rating"
+              (click)="filtroRating = filtroRating === rating ? 0 : rating; filtrarCategorias()"
+            >
+              {{ rating }}+
               <i class="material-icons icon-mexican-gold">star</i>
             </button>
           </div>
@@ -146,22 +170,22 @@
           </span>
         </div>
       </div>
-      
+
       <div class="loading-state" *ngIf="cargando">
         <div class="spinner"></div>
         <p>Cargando categorías...</p>
       </div>
-      
+
       <div class="categorias-grid" *ngIf="!cargando">
         <div class="categoria-card" *ngFor="let categoria of categoriasFiltradas">
           <div class="categoria-imagen">
-            <img 
-              [src]="categoria.imagen" 
+            <img
+              [src]="categoria.imagen"
               [alt]="categoria.nombre"
               (error)="onImgError($event, categoria)"
               loading="lazy"
             />
-            
+
             <div class="categoria-badges">
               <span class="badge badge-region">{{ categoria.region }}</span>
               <span class="badge badge-popular" *ngIf="categoria.popular">
@@ -172,11 +196,11 @@
               </span>
             </div>
           </div>
-          
+
           <div class="categoria-content">
             <h3 class="categoria-nombre">{{ categoria.nombre }}</h3>
             <p class="categoria-descripcion">{{ categoria.descripcionCorta }}</p>
-            
+
             <div class="categoria-stats">
               <div class="stat">
                 <i class="material-icons icon-mexican-brown">inventory_2</i>
@@ -194,21 +218,24 @@
                 <span class="stat-label">Rating</span>
               </div>
             </div>
-            
+
             <div class="categoria-tags">
               <span *ngFor="let tag of categoria.tags" class="tag">
                 {{ tag }}
               </span>
             </div>
-            
-            <button class="btn-details btn-glow-effect btn-glow-subtle" (click)="verCategoria(categoria)">
+
+            <button
+              class="btn-details btn-glow-effect btn-glow-subtle"
+              (click)="verCategoria(categoria)"
+            >
               <span>Explorar Categoría</span>
               <i class="material-icons">arrow_forward</i>
             </button>
           </div>
         </div>
       </div>
-      
+
       <div class="no-resultados" *ngIf="!cargando && categoriasFiltradas.length === 0">
         <div class="no-resultados-icon">
           <i class="material-icons icon-lg">search_off</i>

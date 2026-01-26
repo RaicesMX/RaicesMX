@@ -92,7 +92,7 @@ export class AuthService {
       .subscribe({
         next: (response) => {
           if (response && response.user) {
-            console.log('✅ Sesión en background restaurada:', response.user.email);
+            console.log(' Sesión en background restaurada:', response.user.email);
             this.currentUser.set(response.user);
             this.isAuthenticated.set(true);
           }
@@ -109,7 +109,7 @@ export class AuthService {
       .pipe(
         tap((response) => {
           if (response.success && response.user) {
-            console.log('✅ Usuario registrado:', response.user);
+            console.log(' Usuario registrado:', response.user);
             this.currentUser.set(response.user);
             this.isAuthenticated.set(true);
           }
@@ -126,7 +126,7 @@ export class AuthService {
       .pipe(
         tap((response) => {
           if (response.success && response.user) {
-            console.log('✅ Login exitoso:', response.user);
+            console.log(' Login exitoso:', response.user);
             this.currentUser.set(response.user);
             this.isAuthenticated.set(true);
           }
@@ -166,7 +166,7 @@ export class AuthService {
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).pipe(
       tap(() => {
-        console.log('✅ Sesión cerrada');
+        console.log(' Sesión cerrada');
         this.currentUser.set(null);
         this.isAuthenticated.set(false);
         this.router.navigate(['/login']);
@@ -181,7 +181,7 @@ export class AuthService {
     return this.currentUser()?.isSeller ?? false;
   }
 
-  // ✨ NUEVOS MÉTODOS PARA SOLICITUDES DE VENDEDOR
+  //  NUEVOS MÉTODOS PARA SOLICITUDES DE VENDEDOR
 
   /**
    * Obtiene la solicitud de vendedor del usuario actual
