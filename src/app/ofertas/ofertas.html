@@ -2,7 +2,7 @@
   <!-- HERO SECTION -->
   <section class="ofertas-hero">
     <div class="mexican-pattern"></div>
-    
+
     <div class="hero-content-wrapper">
       <div class="hero-content">
         <div class="hero-text">
@@ -13,11 +13,9 @@
               <span class="text-ofertas">Ofertas</span>
             </span>
           </h1>
-          
-          <p class="hero-subtitle">
-            Aprovecha nuestras mejores ofertas en artesanías mexicanas. ¡Tiempo limitado!
-          </p>
-          
+
+          <p class="hero-subtitle">Aprovecha nuestras mejores ofertas. ¡Tiempo limitado!</p>
+
           <div class="hero-stats">
             <div class="hero-stat">
               <span class="stat-number">{{ obtenerTotalOfertas() }}</span>
@@ -28,11 +26,13 @@
               <span class="stat-label">Activas</span>
             </div>
             <div class="hero-stat">
-              <span class="stat-number">{{ calcularAhorroTotal() | currency:'MXN':'symbol' }}</span>
+              <span class="stat-number">{{
+                calcularAhorroTotal() | currency: 'MXN' : 'symbol'
+              }}</span>
               <span class="stat-label">Ahorro Total</span>
             </div>
           </div>
-          
+
           <div class="hero-cta">
             <button class="btn-explorar btn-glow-effect" (click)="scrollToOfertas()">
               <i class="material-icons btn-icon">local_offer</i>
@@ -43,7 +43,7 @@
         <!-- ELIMINADA LA SECCIÓN HERO-DECORATION CON EMOJIS -->
       </div>
     </div>
-    
+
     <div class="scroll-indicator" (click)="scrollToOfertas()">
       <div class="arrow"></div>
     </div>
@@ -54,9 +54,11 @@
     <div class="container">
       <div class="filtros-grid">
         <!-- Filtros rápidos -->
-        <div class="filtro-card" 
-            [class.active]="filtroRapido === 'todas'"
-            (click)="aplicarFiltroRapido('todas')">
+        <div
+          class="filtro-card"
+          [class.active]="filtroRapido === 'todas'"
+          (click)="aplicarFiltroRapido('todas')"
+        >
           <div class="filtro-icon">
             <i class="material-icons">all_inclusive</i>
           </div>
@@ -65,10 +67,12 @@
             <p>Todas las ofertas</p>
           </div>
         </div>
-        
-        <div class="filtro-card" 
-            [class.active]="filtroRapido === 'destacadas'"
-            (click)="aplicarFiltroRapido('destacadas')">
+
+        <div
+          class="filtro-card"
+          [class.active]="filtroRapido === 'destacadas'"
+          (click)="aplicarFiltroRapido('destacadas')"
+        >
           <div class="filtro-icon">
             <i class="material-icons">whatshot</i>
           </div>
@@ -77,10 +81,12 @@
             <p>Ofertas especiales</p>
           </div>
         </div>
-        
-        <div class="filtro-card"
-            [class.active]="filtroRapido === 'exclusivas'"
-            (click)="aplicarFiltroRapido('exclusivas')">
+
+        <div
+          class="filtro-card"
+          [class.active]="filtroRapido === 'exclusivas'"
+          (click)="aplicarFiltroRapido('exclusivas')"
+        >
           <div class="filtro-icon">
             <i class="material-icons">star</i>
           </div>
@@ -89,14 +95,18 @@
             <p>Solo en RaícesMX</p>
           </div>
         </div>
-        
+
         <!-- Dropdown de categorías -->
         <div class="filtro-card dropdown-filtro">
           <div class="filtro-icon">
             <i class="material-icons">category</i>
           </div>
           <div class="filtro-content">
-            <select [(ngModel)]="filtroCategoria" (change)="filtrarOfertas()" class="categoria-select">
+            <select
+              [(ngModel)]="filtroCategoria"
+              (change)="filtrarOfertas()"
+              class="categoria-select"
+            >
               <option value="">Todas las categorías</option>
               <option *ngFor="let categoria of categoriasUnicas" [value]="categoria">
                 {{ categoria }}
@@ -105,38 +115,52 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Controles adicionales -->
       <div class="filtros-footer">
         <div class="ordenamiento">
           <label for="ordenSelect">Ordenar por:</label>
-            <select id="ordenSelect" [(ngModel)]="ordenSeleccionado" (change)="ordenarOfertas()" class="orden-select">
+          <select
+            id="ordenSelect"
+            [(ngModel)]="ordenSeleccionado"
+            (change)="ordenarOfertas()"
+            class="orden-select"
+          >
             <option value="descuento">Mayor descuento</option>
             <option value="precio">Menor precio</option>
             <option value="popular">Más populares</option>
             <option value="nuevo">Más recientes</option>
           </select>
         </div>
-        
-        <button class="btn-filtros-avanzados btn-glow-subtle" (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados">
+
+        <button
+          class="btn-filtros-avanzados btn-glow-subtle"
+          (click)="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
+        >
           {{ mostrarFiltrosAvanzados ? 'Menos filtros' : 'Más filtros' }}
         </button>
-        
-        <button class="btn-limpiar btn-glow-effect btn-glow-subtle" (click)="limpiarFiltros()" *ngIf="filtroActivo">
+
+        <button
+          class="btn-limpiar btn-glow-effect btn-glow-subtle"
+          (click)="limpiarFiltros()"
+          *ngIf="filtroActivo"
+        >
           <i class="material-icons btn-icon">refresh</i>
           Limpiar filtros
         </button>
       </div>
-      
+
       <!-- Filtros avanzados -->
       <div class="filtros-avanzados" *ngIf="mostrarFiltrosAvanzados">
         <div class="filtro-avanzado">
           <span>Descuento mínimo</span>
           <div class="descuento-options">
-            <button *ngFor="let desc of ['10', '20', '30', '40', '50']"
-                    class="descuento-btn"
-                    [class.active]="filtroDescuento === desc"
-                    (click)="filtroDescuento = filtroDescuento === desc ? '' : desc; filtrarOfertas()">
+            <button
+              *ngFor="let desc of ['10', '20', '30', '40', '50']"
+              class="descuento-btn"
+              [class.active]="filtroDescuento === desc"
+              (click)="filtroDescuento = filtroDescuento === desc ? '' : desc; filtrarOfertas()"
+            >
               {{ desc }}%+
             </button>
           </div>
@@ -157,27 +181,26 @@
           </span>
         </div>
       </div>
-      
+
       <!-- Estado de carga -->
       <div class="loading-state" *ngIf="cargando">
         <div class="spinner"></div>
         <p>Cargando ofertas...</p>
       </div>
-      
+
       <!-- Grid de ofertas -->
       <div class="ofertas-grid" *ngIf="!cargando">
         <div class="oferta-card" *ngFor="let oferta of ofertasFiltradas">
-          
           <!-- Imagen con fallback -->
           <div class="oferta-imagen">
-            <img 
-              [src]="oferta.imagen" 
+            <img
+              [src]="oferta.imagen"
               [alt]="oferta.nombre"
               (error)="onImgError($event, oferta)"
               (load)="onImgLoad(oferta)"
               loading="lazy"
             />
-            
+
             <!-- Badges -->
             <div class="oferta-badges">
               <span class="badge badge-descuento">-{{ oferta.descuento }}%</span>
@@ -194,31 +217,35 @@
                 <i class="material-icons">schedule</i> Últimas {{ oferta.stock }}
               </span>
             </div>
-            
+
             <!-- Timer -->
             <div class="oferta-timer" *ngIf="oferta.tiempoRestante && oferta.stock > 0">
               <div class="timer-progress">
-                <div class="progress-bar" [style.width]="calcularProgresoTiempo(oferta) + '%'"></div>
+                <div
+                  class="progress-bar"
+                  [style.width]="calcularProgresoTiempo(oferta) + '%'"
+                ></div>
               </div>
               <div class="timer-text">
-                <i class="material-icons">schedule</i> {{ oferta.tiempoRestante.dias }}d {{ oferta.tiempoRestante.horas }}h
+                <i class="material-icons">schedule</i> {{ oferta.tiempoRestante.dias }}d
+                {{ oferta.tiempoRestante.horas }}h
               </div>
             </div>
           </div>
-          
+
           <!-- Contenido -->
           <div class="oferta-content">
             <h3 class="oferta-nombre">{{ oferta.nombre }}</h3>
-            
+
             <p class="oferta-descripcion">{{ oferta.descripcionCorta }}</p>
-            
+
             <!-- Artesano y región -->
             <div class="oferta-artesano">
               <i class="material-icons">palette</i>
               <span class="artesano-nombre">{{ oferta.artesano }}</span>
               <span class="artesano-region">· {{ oferta.region }}</span>
             </div>
-            
+
             <!-- Stats -->
             <div class="oferta-stats">
               <div class="stat">
@@ -237,46 +264,53 @@
                 <span class="stat-label">Vendidos</span>
               </div>
             </div>
-            
+
             <!-- Precios -->
             <div class="oferta-precios">
               <div class="precio-oferta">
-                {{ calcularPrecioOferta(oferta) | currency:'MXN':'symbol' }}
+                {{ calcularPrecioOferta(oferta) | currency: 'MXN' : 'symbol' }}
               </div>
               <div class="precio-original">
-                {{ oferta.precio | currency:'MXN':'symbol' }}
+                {{ oferta.precio | currency: 'MXN' : 'symbol' }}
               </div>
               <div class="ahorro">
-                <i class="material-icons">savings</i> Ahorras {{ calcularAhorro(oferta) | currency:'MXN':'symbol' }}
+                <i class="material-icons">savings</i> Ahorras
+                {{ calcularAhorro(oferta) | currency: 'MXN' : 'symbol' }}
               </div>
             </div>
-            
+
             <!-- Acciones -->
             <div class="oferta-actions">
-              <button class="btn-agregar-carrito btn-glow-effect" 
-                      (click)="agregarAlCarrito(oferta)"
-                      [disabled]="oferta.stock === 0">
+              <button
+                class="btn-agregar-carrito btn-glow-effect"
+                (click)="agregarAlCarrito(oferta)"
+                [disabled]="oferta.stock === 0"
+              >
                 <i class="material-icons">shopping_cart</i>
                 <span *ngIf="oferta.stock > 0">Agregar</span>
                 <span *ngIf="oferta.stock === 0">Agotado</span>
               </button>
-              
-              <button class="btn-comprar-ahora btn-glow-effect" 
-                      (click)="comprarAhora(oferta)"
-                      [disabled]="oferta.stock === 0">
+
+              <button
+                class="btn-comprar-ahora btn-glow-effect"
+                (click)="comprarAhora(oferta)"
+                [disabled]="oferta.stock === 0"
+              >
                 <i class="material-icons">shopping_bag</i>
                 <span *ngIf="oferta.stock > 0">Comprar</span>
                 <span *ngIf="oferta.stock === 0">No disponible</span>
               </button>
-              
+
               <button class="btn-favorito btn-glow-subtle" (click)="toggleFavorito(oferta)">
-                <i class="material-icons">{{ oferta.enFavoritos ? 'favorite' : 'favorite_border' }}</i>
+                <i class="material-icons">{{
+                  oferta.enFavoritos ? 'favorite' : 'favorite_border'
+                }}</i>
               </button>
             </div>
           </div>
         </div>
       </div>
-      
+
       <!-- Sin resultados -->
       <div class="no-resultados" *ngIf="!cargando && ofertasFiltradas.length === 0">
         <div class="no-resultados-icon">

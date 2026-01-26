@@ -138,7 +138,6 @@
 
           <!-- Historial de mensajes -->
           <div class="messages-history">
-            <!-- 👇 AGREGAR trackBy AQUÍ -->
             <div
               class="message-container"
               *ngFor="let message of messages; trackBy: trackByMessageId"
@@ -151,8 +150,10 @@
                 <div class="message-avatar" *ngIf="message.sender === 'bot'">
                   <span class="material-symbols-outlined">smart_toy</span>
                 </div>
+
                 <div class="message-content">
-                  <div class="message-bubble">
+                  <!-- ✅ MENSAJE NORMAL DE TEXTO -->
+                  <div class="message-bubble" *ngIf="!message.type || message.type === 'text'">
                     <p class="message-text">{{ message.text }}</p>
                     <div class="message-footer">
                       <span class="message-time">
@@ -162,6 +163,156 @@
                       <span class="message-sender">{{
                         message.sender === 'user' ? 'Tú' : 'RaícesBot'
                       }}</span>
+                    </div>
+                  </div>
+
+                  <!-- ✅ SOLICITUD DE MAPA -->
+                  <div class="message-bubble map-request" *ngIf="message.type === 'map_request'">
+                    <p class="message-text">{{ message.text }}</p>
+
+                    <div class="map-request-actions">
+                      <!-- Opción 1: Geolocalización automática -->
+                      <button
+                        class="btn-location primary"
+                        (click)="requestUserLocation()"
+                        [disabled]="isLoadingLocation"
+                      >
+                        <span class="material-symbols-outlined">my_location</span>
+                        <span *ngIf="!isLoadingLocation">Usar mi ubicación actual</span>
+                        <span *ngIf="isLoadingLocation">Obteniendo ubicación...</span>
+                      </button>
+
+                      <!-- Opción 2: Código postal manual -->
+                      <button
+                        class="btn-location secondary"
+                        (click)="toggleManualLocationInput()"
+                        *ngIf="!showManualLocationInput"
+                      >
+                        <span class="material-symbols-outlined">pin_drop</span>
+                        <span>Ingresar código postal</span>
+                      </button>
+
+                      <!-- Input de código postal -->
+                      <div class="postal-code-input" *ngIf="showManualLocationInput">
+                        <div class="input-group">
+                          <input
+                            type="text"
+                            [(ngModel)]="manualPostalCode"
+                            placeholder="Ej: 56700"
+                            maxlength="5"
+                            class="cp-input"
+                            (keydown.enter)="searchByPostalCode()"
+                            [disabled]="isLoadingPostalCode"
+                          />
+                          <button
+                            class="btn-search-cp"
+                            (click)="searchByPostalCode()"
+                            [disabled]="isLoadingPostalCode || manualPostalCode.length !== 5"
+                          >
+                            <span class="material-symbols-outlined" *ngIf="!isLoadingPostalCode"
+                              >search</span
+                            >
+                            <span class="loading-spinner" *ngIf="isLoadingPostalCode">
+                              <span class="spinner"></span>
+                            </span>
+                          </button>
+                        </div>
+
+                        <!-- Estado de carga -->
+                        <p class="loading-status" *ngIf="isLoadingPostalCode">
+                          <span class="material-symbols-outlined icon-xs rotating">autorenew</span>
+                          Obteniendo ubicación del código postal...
+                        </p>
+
+                        <button
+                          class="btn-cancel"
+                          (click)="toggleManualLocationInput()"
+                          [disabled]="isLoadingPostalCode"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+
+                      <p
+                        class="location-hint"
+                        *ngIf="!isLoadingLocation && !showManualLocationInput"
+                      >
+                        <span class="material-symbols-outlined icon-xs">info</span>
+                        💡 En laptops/PCs la ubicación automática puede ser imprecisa. Recomendamos
+                        usar código postal.
+                      </p>
+
+                      <p class="location-error" *ngIf="locationError">
+                        <span class="material-symbols-outlined icon-xs">error</span>
+                        {{ locationError }}
+                      </p>
+                    </div>
+
+                    <div class="message-footer">
+                      <span class="message-time">
+                        <span class="material-symbols-outlined icon-micro">schedule</span>
+                        {{ formatTime(message.timestamp) }}
+                      </span>
+                      <span class="message-sender">RaícesBot</span>
+                    </div>
+                  </div>
+
+                  <!-- ✅ MAPA CON PRODUCTOS -->
+                  <div
+                    class="message-bubble map-response"
+                    *ngIf="message.type === 'map_response' && message.data"
+                  >
+                    <p class="message-text">{{ message.text }}</p>
+
+                    <!-- Mapa interactivo -->
+                    <div class="map-container" id="map-{{ message.id }}">
+                      <div class="map-placeholder">
+                        <p>🗺️ Mapa interactivo cargando...</p>
+                        <p class="map-info">
+                          <strong>{{ message.data.products?.length || 0 }}</strong> productos en
+                          <strong>{{ message.data.radius || 5 }}km</strong>
+                        </p>
+                      </div>
+
+                      <!-- Lista de productos encontrados -->
+                      <div class="products-list">
+                        <div
+                          class="product-card"
+                          *ngFor="let product of message.data.products"
+                          [routerLink]="['/producto', product.id]"
+                        >
+                          <img
+                            [src]="product.images?.[0]?.imageUrl || '/assets/placeholder.webp'"
+                            [alt]="product.titulo"
+                            class="product-image"
+                          />
+                          <div class="product-info">
+                            <h4 class="product-title">{{ product.titulo }}</h4>
+                            <p class="product-price">${{ product.precio }} MXN</p>
+                            <p class="product-distance">
+                              <span class="material-symbols-outlined icon-micro">
+                                location_on
+                              </span>
+                              {{ product.distance }}km de distancia
+                            </p>
+                            <p class="product-location">
+                              {{ product.colonia }}, {{ product.municipio }}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p class="no-products" *ngIf="message.data.products?.length === 0">
+                          😔 No hay productos en este radio de búsqueda
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="message-footer">
+                      <span class="message-time">
+                        <span class="material-symbols-outlined icon-micro">schedule</span>
+                        {{ formatTime(message.timestamp) }}
+                      </span>
+                      <span class="message-sender">RaícesBot</span>
                     </div>
                   </div>
                 </div>
