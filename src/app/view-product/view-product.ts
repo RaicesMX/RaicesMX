@@ -1,18 +1,27 @@
-import { Component, HostListener, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+// view-product.component.ts - VERSIÓN FINAL CON ChangeDetectorRef
+import {
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  Inject,
+  PLATFORM_ID,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { ProductsService, Product } from '../service/products.service';
 
 @Component({
   selector: 'app-view-product',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './view-product.html',
-  styleUrl: './view-product.scss'
+  styleUrl: './view-product.scss',
 })
-export class ViewProductComponent implements OnDestroy {
-
+export class ViewProductComponent implements OnInit, OnDestroy {
   id!: number;
   cantidad: number = 1;
   calificacionUsuario: number = 0;
@@ -27,301 +36,158 @@ export class ViewProductComponent implements OnDestroy {
   imagenesCargadas: boolean = false;
   private isBrowser: boolean;
 
-  // Producto por defecto
-  producto: any = {
-    id: 1,
-    nombre: "Jarrón de Talavera Poblana",
-    precio: 850,
-    descripcion: "Hermoso jarrón artesanal de Talavera poblana, elaborado con técnicas tradicionales que datan del siglo XVI. Cada pieza es única y pintada a mano por maestros artesanos.",
-    rating: 4.8,
-    imagen: "assets/images/Jarrón_Talavera.jpg",
-    imagenes: [
-      "assets/images/Jarrón_Talavera.jpg",
-      "assets/images/Plato_Talavera.jpg",
-      "assets/images/Ceramica_Talavera.jpg",
-      "assets/images/Ceramica_Cubiertos.jpg"
-    ],
-    stock: 8,
-    caracteristicas: [
-      "Pintado completamente a mano",
-      "Material: Cerámica de alta calidad",
-      "Técnica: Talavera auténtica",
-      "Colores minerales naturales"
-    ],
-    envio: {
-      fecha: "Envío mañana",
-      costo: 79,
-      devolucion: "Gratis 30 días"
-    },
-    vendedor: {
-      nombre: "Artesanos de Puebla",
-      reputacion: "Excelente",
-      ventas: 1240
-    },
-    resenas: [
-      { usuario: "Ana G.", rating: 5, comentario: "La calidad es excepcional, superó mis expectativas." },
-      { usuario: "Carlos M.", rating: 4, comentario: "Muy bonito, llegó perfectamente empacado." }
-    ]
-  };
+  // Control de carga
+  cargando: boolean = true;
+  productoNoEncontrado: boolean = false;
 
-  productosRelacionados = [
-    { id: 2, nombre: "Blusa Bordada Tradicional", precio: 450, imagen: "assets/images/Blusa_Bordada.jpg" },
-    { id: 3, nombre: "Máscara Huichol Artesanal", precio: 620, imagen: "assets/images/Máscara_Huichol.jpg" },
-    { id: 4, nombre: "Alebrije Mexicano", precio: 720, imagen: "assets/images/Alebrigue_Artesanal.jpg" },
-    { id: 5, nombre: "Jaguar Cerámico", precio: 380, imagen: "assets/images/Jaguar_ceramico.jpg" },
-    { id: 6, nombre: "Prendas Textiles", precio: 290, imagen: "assets/images/Prendas_textiles.jpg" }
-  ];
+  // Producto de la API
+  producto: Product | null = null;
+
+  // Productos relacionados de la API
+  productosRelacionados: Product[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
+    private productsService: ProductsService,
+    private cdr: ChangeDetectorRef, // 👈 INYECTAR ChangeDetectorRef
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   ngOnInit() {
+    // Obtener ID del producto desde la URL
     this.id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('ID del producto:', this.id);
+    console.log('📦 Cargando producto con ID:', this.id);
 
-    this.cargarProductoPorId(this.id);
+    // Cargar producto desde la API
+    this.cargarProducto(this.id);
 
-    // Inicializar imagen principal
-    this.imagenPrincipal = this.producto.imagen;
-    this.indiceActual = 0;
-  }
-
-  // 🟦 Cargar producto por ID - CORREGIDO
-  cargarProductoPorId(id: number) {
-    // Base de datos simulada de productos con firma de índice
-    const productos: { [key: number]: any } = {
-      1: {
-        id: 1,
-        nombre: "Jarrón de Talavera Poblana",
-        precio: 850,
-        descripcion: "Hermoso jarrón artesanal de Talavera poblana, elaborado con técnicas tradicionales que datan del siglo XVI. Cada pieza es única y pintada a mano por maestros artesanos.",
-        rating: 4.8,
-        imagen: "assets/images/Jarrón_Talavera.jpg",
-        imagenes: [
-          "assets/images/Jarrón_Talavera.jpg",
-          "assets/images/Plato_Talavera.jpg",
-          "assets/images/Ceramica_Talavera.jpg",
-          "assets/images/Ceramica_Cubiertos.jpg"
-        ],
-        stock: 8,
-        caracteristicas: [
-          "Pintado completamente a mano",
-          "Material: Cerámica de alta calidad",
-          "Técnica: Talavera auténtica",
-          "Colores minerales naturales"
-        ],
-        envio: {
-          fecha: "Envío mañana",
-          costo: 79,
-          devolucion: "Gratis 30 días"
-        },
-        vendedor: {
-          nombre: "Artesanos de Puebla",
-          reputacion: "Excelente",
-          ventas: 1240
-        },
-        resenas: [
-          { usuario: "Ana G.", rating: 5, comentario: "La calidad es excepcional, superó mis expectativas." },
-          { usuario: "Carlos M.", rating: 4, comentario: "Muy bonito, llegó perfectamente empacado." }
-        ]
-      },
-      2: {
-        id: 2,
-        nombre: "Alebrije Artesanal",
-        precio: 450,
-        descripcion: "Colorido alebrije artesanal mexicano, tallado en madera y pintado a mano por artesanos oaxaqueños. Cada pieza es única y representa la rica tradición mexicana.",
-        rating: 4.7,
-        imagen: "assets/images/Alebrigue_Artesanal.jpg",
-        imagenes: [
-          "assets/images/Alebrigue_Artesanal.jpg"
-        ],
-        stock: 5,
-        caracteristicas: [
-          "Tallado completamente a mano",
-          "Material: Madera de copal",
-          "Pintura natural mineral",
-          "Protección con barniz natural"
-        ],
-        envio: {
-          fecha: "Envío en 3 días",
-          costo: 65,
-          devolucion: "Gratis 30 días"
-        },
-        vendedor: {
-          nombre: "Artesanos de Oaxaca",
-          reputacion: "Excelente",
-          ventas: 890
-        },
-        resenas: [
-          { usuario: "María L.", rating: 5, comentario: "Los colores son vibrantes y la calidad excelente." },
-          { usuario: "Roberto S.", rating: 4, comentario: "Muy bonito, perfecto para decoración." }
-        ]
-      },
-      3: {
-        id: 3,
-        nombre: "Blusa Bordada Tradicional",
-        precio: 380,
-        descripcion: "Hermosa blusa tradicional bordada a mano con hilos de seda. Inspirada en los trajes típicos de diferentes regiones de México. Confeccionada con algodón 100% natural.",
-        rating: 4.6,
-        imagen: "assets/images/Blusa_Bordada.jpg",
-        imagenes: [
-          "assets/images/Blusa_Bordada.jpg"
-        ],
-        stock: 12,
-        caracteristicas: [
-          "Bordado completamente a mano",
-          "Material: Algodón 100% natural",
-          "Hilos de seda natural",
-          "Tallas disponibles: S, M, L"
-        ],
-        envio: {
-          fecha: "Envío mañana",
-          costo: 45,
-          devolucion: "Gratis 30 días"
-        },
-        vendedor: {
-          nombre: "Tejedoras Mexicanas",
-          reputacion: "Excelente", 
-          ventas: 1560
-        },
-        resenas: [
-          { usuario: "Laura G.", rating: 5, comentario: "El bordado es impresionante, muy buena calidad." },
-          { usuario: "Sofia R.", rating: 4, comentario: "Muy cómoda y bonita, llega perfecta." }
-        ]
-      },
-      4: {
-        id: 4,
-        nombre: "Cerámica Talavera",
-        precio: 220,
-        descripcion: "Auténtica cerámica de Talavera con diseños tradicionales. Cada pieza es única y certificada como Talavera original. Perfecta para decorar tu hogar.",
-        rating: 4.5,
-        imagen: "assets/images/Ceramica_Talavera.jpg",
-        imagenes: [
-          "assets/images/Ceramica_Talavera.jpg"
-        ],
-        stock: 15,
-        caracteristicas: [
-          "Cerámica certificada Talavera",
-          "Pintura mineral natural",
-          "Cocción tradicional",
-          "Resistente al horno y microondas"
-        ],
-        envio: {
-          fecha: "Envío en 2 días",
-          costo: 55,
-          devolucion: "Gratis 30 días"
-        },
-        vendedor: {
-          nombre: "Alfareros de Puebla",
-          reputacion: "Excelente",
-          ventas: 2100
-        },
-        resenas: [
-          { usuario: "Carlos P.", rating: 5, comentario: "Auténtica Talavera, hermosa calidad." },
-          { usuario: "Ana M.", rating: 4, comentario: "Perfecta para mi cocina, muy resistente." }
-        ]
-      },
-      5: {
-        id: 5,
-        nombre: "Máscara Huichol Artesanal", 
-        precio: 620,
-        descripcion: "Máscara tradicional huichol elaborada con chaquira y semillas. Representa la rica cultura wixárika y sus tradiciones ancestrales. Cada cuenta es colocada manualmente.",
-        rating: 4.9,
-        imagen: "assets/images/Máscara_Huichol.jpg",
-        imagenes: [
-          "assets/images/Máscara_Huichol.jpg"
-        ],
-        stock: 3,
-        caracteristicas: [
-          "Chaquira colocada manualmente",
-          "Diseños tradicionales huicholes", 
-          "Marco de madera natural",
-          "Técnica ancestral"
-        ],
-        envio: {
-          fecha: "Envío en 4 días",
-          costo: 85,
-          devolucion: "Gratis 30 días"
-        },
-        vendedor: {
-          nombre: "Comunidad Wixárika",
-          reputacion: "Excelente",
-          ventas: 340
-        },
-        resenas: [
-          { usuario: "Miguel A.", rating: 5, comentario: "Obra de arte, el trabajo es impresionante." },
-          { usuario: "Elena C.", rating: 5, comentario: "Increíble detalle, vale cada peso." }
-        ]
-      },
-      6: {
-        id: 6,
-        nombre: "Plato Talavera Decorativo",
-        precio: 180,
-        descripcion: "Plato decorativo de Talavera con diseños azules tradicionales. Perfecto para servir o como pieza decorativa. Certificado como Talavera original.",
-        rating: 4.4,
-        imagen: "assets/images/Plato_Talavera.jpg", 
-        imagenes: [
-          "assets/images/Plato_Talavera.jpg"
-        ],
-        stock: 20,
-        caracteristicas: [
-          "Diámetro: 25 cm",
-          "Cerámica de alta calidad",
-          "Diseños azules tradicionales",
-          "Apto para alimentos"
-        ],
-        envio: {
-          fecha: "Envío mañana", 
-          costo: 50,
-          devolucion: "Gratis 30 días"
-        },
-        vendedor: {
-          nombre: "Ceramistas Mexicanos",
-          reputacion: "Excelente",
-          ventas: 1780
-        },
-        resenas: [
-          { usuario: "Patricia L.", rating: 4, comentario: "Muy bonito, perfecto tamaño." },
-          { usuario: "Javier M.", rating: 5, comentario: "Los colores son vibrantes, excelente calidad." }
-        ]
+    // Escuchar cambios en la ruta para recargar al navegar entre productos
+    this.route.params.subscribe((params) => {
+      const nuevoId = Number(params['id']);
+      if (nuevoId !== this.id) {
+        this.id = nuevoId;
+        this.cargarProducto(this.id);
+        window.scrollTo(0, 0); // Scroll al inicio
       }
-    };
-
-    // Cargar el producto según el ID, o mantener el default si no existe
-    const productoEncontrado = productos[id];
-    if (productoEncontrado) {
-      this.producto = productoEncontrado;
-      // Reiniciar imagen principal al cambiar de producto
-      this.imagenPrincipal = this.producto.imagen;
-      this.indiceActual = 0;
-    } else {
-      console.log('Producto no encontrado, usando producto default');
-    }
+    });
   }
 
+  // ==========================================
+  // 🔹 Cargar producto desde la API
+  // ==========================================
+  cargarProducto(id: number): void {
+    this.cargando = true;
+    this.productoNoEncontrado = false;
+    this.cdr.detectChanges(); // 👈 Forzar actualización
+
+    this.productsService.getProductById(id).subscribe({
+      next: (response) => {
+        console.log('✅ Producto recibido:', response);
+
+        this.producto = response.product;
+
+        // Inicializar galería
+        if (this.producto.images && this.producto.images.length > 0) {
+          this.imagenPrincipal = this.producto.images[0].imageUrl;
+          this.indiceActual = 0;
+        } else {
+          this.imagenPrincipal = 'assets/images/placeholder-artesania.jpg';
+        }
+
+        this.imagenesCargadas = true;
+
+        // ✅ SOLUCIÓN: setTimeout + detectChanges
+        setTimeout(() => {
+          this.cargando = false;
+          this.cdr.detectChanges();
+          console.log('🎉 Producto mostrado, cargando =', this.cargando);
+        }, 100);
+
+        // Cargar productos relacionados de la misma categoría
+        this.cargarProductosRelacionados(this.producto.category.id, this.producto.id);
+      },
+      error: (error) => {
+        console.error('❌ Error cargando producto:', error);
+
+        setTimeout(() => {
+          this.cargando = false;
+
+          if (error.status === 404) {
+            this.productoNoEncontrado = true;
+          } else {
+            alert('Error al cargar el producto. Por favor, intenta de nuevo.');
+            this.router.navigate(['/marketplace']);
+          }
+
+          this.cdr.detectChanges();
+        }, 100);
+      },
+    });
+  }
+
+  // ==========================================
+  // 🔹 Cargar productos relacionados
+  // ==========================================
+  cargarProductosRelacionados(categoryId: number, currentProductId: number): void {
+    this.productsService.getProductsByCategory(categoryId, 1).subscribe({
+      next: (response) => {
+        // Filtrar el producto actual y tomar solo 5
+        this.productosRelacionados = response.products
+          .filter((p) => p.id !== currentProductId)
+          .slice(0, 5);
+
+        console.log('✅ Productos relacionados:', this.productosRelacionados.length);
+        this.cdr.detectChanges(); // 👈 Forzar actualización
+      },
+      error: (error) => {
+        console.error('❌ Error cargando productos relacionados:', error);
+        this.productosRelacionados = [];
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  // ==========================================
+  // 🔹 Obtener imagen del producto
+  // ==========================================
+  getImagenProducto(producto: Product): string {
+    if (producto.images && producto.images.length > 0) {
+      return producto.images[0].imageUrl;
+    }
+    return 'assets/images/placeholder-artesania.jpg';
+  }
+
+  // ==========================================
   // === GALERÍA MEJORADA ===
+  // ==========================================
   cambiarImagenDirecta(indice: number) {
+    if (!this.producto || !this.producto.images) return;
+
     this.indiceActual = indice;
-    this.imagenPrincipal = this.producto.imagenes[indice];
+    this.imagenPrincipal = this.producto.images[indice].imageUrl;
   }
 
   anteriorImagen(event: Event) {
     event.stopPropagation();
-    const total = this.producto.imagenes.length;
+
+    if (!this.producto || !this.producto.images) return;
+
+    const total = this.producto.images.length;
     this.indiceActual = (this.indiceActual - 1 + total) % total;
-    this.imagenPrincipal = this.producto.imagenes[this.indiceActual];
+    this.imagenPrincipal = this.producto.images[this.indiceActual].imageUrl;
   }
 
   siguienteImagen(event: Event) {
     event.stopPropagation();
-    const total = this.producto.imagenes.length;
+
+    if (!this.producto || !this.producto.images) return;
+
+    const total = this.producto.images.length;
     this.indiceActual = (this.indiceActual + 1) % total;
-    this.imagenPrincipal = this.producto.imagenes[this.indiceActual];
+    this.imagenPrincipal = this.producto.images[this.indiceActual].imageUrl;
   }
 
   abrirZoom() {
@@ -339,40 +205,61 @@ export class ViewProductComponent implements OnDestroy {
     }
   }
 
+  // ==========================================
   // === OTROS MÉTODOS ===
+  // ==========================================
   calificar(rating: number) {
     this.calificacionUsuario = rating;
     console.log(`Calificación dada: ${rating} estrellas`);
+    // TODO: Enviar calificación al backend
   }
 
   compartir() {
+    if (!this.producto) return;
+
     if (navigator.share) {
-      navigator.share({
-        title: this.producto.nombre,
-        text: this.producto.descripcion,
-        url: window.location.href,
-      }).then(() => console.log('Compartido exitosamente'))
+      navigator
+        .share({
+          title: this.producto.titulo,
+          text: this.producto.descripcion,
+          url: window.location.href,
+        })
+        .then(() => console.log('Compartido exitosamente'))
         .catch((error) => console.log('Error al compartir', error));
     } else {
-      alert("Compartido en redes sociales (simulación)");
+      // Fallback: copiar URL al portapapeles
+      navigator.clipboard.writeText(window.location.href);
+      alert('Enlace copiado al portapapeles');
     }
   }
 
   aumentar() {
-    if (this.cantidad < this.producto.stock) this.cantidad++;
+    if (!this.producto) return;
+
+    if (this.cantidad < this.producto.stock) {
+      this.cantidad++;
+    }
   }
 
   disminuir() {
-    if (this.cantidad > 1) this.cantidad--;
+    if (this.cantidad > 1) {
+      this.cantidad--;
+    }
   }
 
   comprarAhora() {
-    alert(`Redirigiendo a checkout con ${this.cantidad} unidades de ${this.producto.nombre}`);
+    if (!this.producto) return;
+
+    alert(`Redirigiendo a checkout con ${this.cantidad} unidades de ${this.producto.titulo}`);
+    // TODO: Implementar checkout real
   }
 
   agregarAlCarrito() {
+    if (!this.producto) return;
+
     this.itemsCarrito += this.cantidad;
-    alert(`Agregado al carrito: ${this.cantidad} x ${this.producto.nombre}`);
+    alert(`✅ Agregado al carrito: ${this.cantidad} x ${this.producto.titulo}`);
+    // TODO: Implementar carrito real
   }
 
   verProducto(id: number) {
