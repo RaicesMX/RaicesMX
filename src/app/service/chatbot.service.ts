@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 //  Interfaz para respuestas del chatbot
 export interface ChatResponse {
@@ -15,7 +16,7 @@ export interface ChatResponse {
   providedIn: 'root',
 })
 export class ChatbotService {
-  private apiUrl = 'http://localhost:3000/chatbot';
+  private apiUrl = `${environment.apiUrl}/chatbot`;
 
   constructor(private http: HttpClient) {}
 
@@ -60,7 +61,7 @@ export class ChatbotService {
   /** Obtener coordenadas desde código postal
    */
   getCoordinatesFromPostalCode(cp: string): Observable<any> {
-    return this.http.get(`http://localhost:3000/geocoding/codigo-postal`, {
+    return this.http.get(`${environment.apiUrl}/geocoding/codigo-postal`, {
       params: { cp },
       withCredentials: true,
     });

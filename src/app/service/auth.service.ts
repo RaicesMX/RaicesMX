@@ -3,6 +3,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, of, map } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface User {
   id: number;
@@ -50,8 +51,9 @@ export interface SellerRequestResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/auth';
-  private sellerRequestsUrl = 'http://localhost:3000/seller-requests'; // ✨ NUEVO
+  private apiUrl = `${environment.apiUrl}/auth`;
+  private sellerRequestsUrl = `${environment.apiUrl}/seller-requests`;
+  // ✨ NUEVO
 
   /**
    * Estado reactivo del usuario actual

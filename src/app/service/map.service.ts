@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import * as maplibregl from 'maplibre-gl';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +26,7 @@ export class MapService {
 
     try {
       const response = await firstValueFrom(
-        this.http.get<any>('http://localhost:3000/geocoding/map-config'),
+        this.http.get<any>(`${environment.apiUrl}/geocoding/map-config`),
       );
 
       this.mapConfig = {

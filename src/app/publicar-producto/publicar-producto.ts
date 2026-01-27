@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import * as maplibregl from 'maplibre-gl';
-import { environment } from '../../enviroments/enviroment';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-publicar-producto',
@@ -26,7 +26,7 @@ export class PublicarProducto implements OnInit, AfterViewInit {
   marcador: maplibregl.Marker | null = null;
 
   // Configuración
-  API_URL = 'http://localhost:3000';
+  API_URL = environment.apiUrl;
   MAPTILER_API_KEY = environment.maptilerApiKey;
 
   // Estados de carga
