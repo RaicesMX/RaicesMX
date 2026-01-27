@@ -106,8 +106,8 @@
 
       <div class="filtros-footer">
         <div class="productos-count">
-          <span class="count-number">{{ productosFiltrados.length }}</span>
-          <span class="count-text">artesanías</span>
+          <span class="count-number">{{ totalProductos }}</span>
+          <span class="count-text">artesanías disponibles</span>
         </div>
 
         <button
@@ -127,46 +127,100 @@
     <div class="container">
       <h2 class="section-title">Nuestros Productos</h2>
 
+      <!-- LOADING STATE -->
       <div class="loading-state" *ngIf="cargando">
         <div class="spinner"></div>
         <p>Cargando productos...</p>
       </div>
 
-      <div class="productos-grid" *ngIf="!cargando">
+      <!-- GRID DE PRODUCTOS -->
+      <div class="productos-grid" *ngIf="!cargando && productosFiltrados.length > 0">
         <div class="producto-card" *ngFor="let producto of productosFiltrados">
+          <!-- IMAGEN DEL PRODUCTO -->
           <div class="product-image">
             <img
-              [src]="producto.imagen"
-              [alt]="producto.nombre"
+              [src]="getImagenProducto(producto)"
+              [alt]="producto.titulo"
               loading="lazy"
               (error)="onImgError($event)"
             />
 
-            <div class="product-badge" *ngIf="producto.nuevo || producto.oferta">
-              <span *ngIf="producto.nuevo"> <i class="material-icons">fiber_new</i> Nuevo </span>
-              <span *ngIf="producto.oferta">
-                <i class="material-icons">local_offer</i> Oferta
+            <!-- BADGES -->
+            <div
+              class="product-badge"
+              *ngIf="esProductoNuevo(producto) || esProductoPopular(producto)"
+            >
+              <span *ngIf="esProductoNuevo(producto)">
+                <i class="material-icons">fiber_new</i> Nuevo
               </span>
+              <span *ngIf="esProductoPopular(producto)">
+                <i class="material-icons">whatshot</i> Popular
+              </span>
+            </div>
+
+            <!-- ESTADO DEL PRODUCTO -->
+            <div class="product-location">
+              <i class="material-icons">location_on</i>
+              <span>{{ producto.estado }}</span>
             </div>
           </div>
 
+          <!-- INFO DEL PRODUCTO -->
           <div class="product-info">
             <div class="product-header">
-              <h3 class="product-name">{{ producto.nombre }}</h3>
-              <span class="product-category">{{ producto.categoria }}</span>
-            </div>
-
-            <div class="product-pricing">
-              <span class="current-price"> ${{ producto.precio | number: '1.0-0' }} MXN </span>
-              <span class="original-price" *ngIf="producto.precioOriginal">
-                ${{ producto.precioOriginal | number: '1.0-0' }}
+              <h3 class="product-name">{{ producto.titulo }}</h3>
+              <span class="product-category">
+                <i class="material-icons">{{ producto.category.icono }}</i>
+                {{ producto.category.nombre }}
               </span>
             </div>
 
+            <!-- DESCRIPCIÓN CORTA -->
+            <p class="product-description">
+              {{
+                producto.descripcion.length > 80
+                  ? (producto.descripcion | slice: 0 : 80) + '...'
+                  : producto.descripcion
+              }}
+            </p>
+
+            <!-- PRICING -->
+            <div class="product-pricing">
+              <span class="current-price"> ${{ producto.precio | number: '1.0-0' }} MXN </span>
+              <span class="product-unit">/ {{ producto.unidad }}</span>
+            </div>
+
+            <!-- STATS -->
+            <div class="product-stats">
+              <span class="stat-item">
+                <i class="material-icons">visibility</i>
+                {{ producto.vistas }} vistas
+              </span>
+              <span class="stat-item" *ngIf="producto.ventas > 0">
+                <i class="material-icons">shopping_bag</i>
+                {{ producto.ventas }} vendidos
+              </span>
+              <span class="stat-item" [class.low-stock]="producto.stock < 5">
+                <i class="material-icons">inventory_2</i>
+                {{ producto.stock }} disponibles
+              </span>
+            </div>
+
+            <!-- VENDEDOR -->
+            <div class="product-seller">
+              <i class="material-icons">store</i>
+              <span>{{ producto.seller.fullName }}</span>
+            </div>
+
+            <!-- ACTIONS -->
             <div class="product-actions">
-              <button class="btn-add-cart btn-glow-effect" (click)="agregarAlCarrito(producto)">
+              <button
+                class="btn-add-cart btn-glow-effect"
+                (click)="agregarAlCarrito(producto)"
+                [disabled]="producto.stock === 0"
+              >
                 <i class="material-icons btn-icon">shopping_cart</i>
-                Agregar
+                {{ producto.stock > 0 ? 'Agregar' : 'Sin stock' }}
               </button>
 
               <a
@@ -181,12 +235,65 @@
         </div>
       </div>
 
+      <!-- ✨ PAGINACIÓN -->
+      <div
+        class="pagination-container"
+        *ngIf="!cargando && productosFiltrados.length > 0 && totalPaginas > 1"
+      >
+        <div class="pagination">
+          <!-- Botón Anterior -->
+          <button
+            class="pagination-btn pagination-arrow"
+            (click)="paginaAnterior()"
+            [disabled]="paginaActual === 1"
+          >
+            <i class="material-icons">chevron_left</i>
+            Anterior
+          </button>
+
+          <!-- Números de Página -->
+          <div class="pagination-numbers">
+            <ng-container *ngFor="let pagina of paginasVisibles">
+              <button
+                *ngIf="pagina !== '...'"
+                class="pagination-btn pagination-number"
+                [class.active]="pagina === paginaActual"
+                (click)="irAPagina(+pagina)"
+              >
+                {{ pagina }}
+              </button>
+
+              <span *ngIf="pagina === '...'" class="pagination-dots">...</span>
+            </ng-container>
+          </div>
+
+          <!-- Botón Siguiente -->
+          <button
+            class="pagination-btn pagination-arrow"
+            (click)="paginaSiguiente()"
+            [disabled]="paginaActual === totalPaginas"
+          >
+            Siguiente
+            <i class="material-icons">chevron_right</i>
+          </button>
+        </div>
+
+        <!-- Info de Paginación -->
+        <div class="pagination-info">
+          Mostrando {{ (paginaActual - 1) * productosPorPagina + 1 }} -
+          {{ Math.min(paginaActual * productosPorPagina, totalProductos) }}
+          de {{ totalProductos }} productos
+        </div>
+      </div>
+
+      <!-- NO RESULTS -->
       <div class="no-results" *ngIf="!cargando && productosFiltrados.length === 0">
         <div class="no-results-icon">
           <i class="material-icons">sentiment_dissatisfied</i>
         </div>
 
-        <h3>No hay productos con ese filtro</h3>
+        <h3>No hay productos disponibles</h3>
+        <p>Intenta con otros filtros o vuelve más tarde</p>
 
         <button class="btn-limpiar btn-glow-effect btn-glow-subtle" (click)="limpiarFiltros()">
           <i class="material-icons btn-icon">refresh</i>
