@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../service/auth.service';
+import { environment } from '../../enviroments/enviroment';
 
 @Component({
   selector: 'app-vendedor-formulario',
@@ -46,7 +47,7 @@ export class VendedorFormulario implements OnInit {
    */
   checkExistingRequest() {
     this.http
-      .get<any>('http://localhost:3000/seller-requests/me', {
+      .get<any>(`${environment.apiUrl}/seller-requests/me`, {
         withCredentials: true,
       })
       .subscribe({
@@ -187,7 +188,7 @@ export class VendedorFormulario implements OnInit {
 
     // Enviar solicitud al backend
     this.http
-      .post<any>('http://localhost:3000/seller-requests', formData, {
+      .post<any>(`${environment.apiUrl}/seller-requests`, formData, {
         withCredentials: true,
       })
       .subscribe({

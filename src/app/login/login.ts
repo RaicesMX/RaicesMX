@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../service/auth.service';
+import { environment } from '../../enviroments/enviroment';
 
 /**
  * Componente de Login
@@ -239,6 +240,6 @@ export class LoginComponent implements OnInit {
    */
   loginWithGoogle() {
     // Redirige al endpoint de Google OAuth del backend
-    window.location.href = 'http://localhost:3000/auth/google';
+    window.location.href = `${environment.apiUrl}/auth/google`;
   }
 }

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../enviroments/enviroment';
 
 /**
  * Componente de Registro
@@ -151,7 +152,7 @@ export class RegisterComponent {
      */
     this.http
       .post(
-        'http://localhost:3000/auth/register',
+        `${environment.apiUrl}/auth/register`,
         {
           email: sanitizedEmail,
           fullName: fullName,
@@ -160,7 +161,7 @@ export class RegisterComponent {
         },
         {
           withCredentials: true, // ← MUY IMPORTANTE para cookies HTTP-Only
-        }
+        },
       )
       .subscribe({
         /**

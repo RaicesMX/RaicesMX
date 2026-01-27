@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-
+import { environment } from '../../enviroments/enviroment';
 @Component({
   selector: 'app-recuperar',
   standalone: true,
@@ -16,7 +16,7 @@ export class RecuperarComponent {
   private http = inject(HttpClient);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
-  private apiUrl = 'http://localhost:3000/auth/password-reset';
+  private apiUrl = `${environment.apiUrl}/auth/password-reset`;
 
   currentStep = 1;
   email = '';
