@@ -1,4 +1,4 @@
-// chatbot.component.ts
+// chatbot.component.ts - VERSIÓN CORREGIDA
 import {
   Component,
   OnInit,
@@ -6,14 +6,14 @@ import {
   ElementRef,
   AfterViewInit,
   ChangeDetectorRef,
-  OnDestroy, // ✅ NUEVO
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ChatbotService } from '../service/chatbot.service';
-import { MapService } from '../service/map.service'; // ✅ NUEVO
-import * as maplibregl from 'maplibre-gl'; // ✅ NUEVO
+import { MapService } from '../service/map.service';
+import * as maplibregl from 'maplibre-gl';
 
 interface Message {
   text: string;
@@ -36,7 +36,6 @@ interface Message {
   styleUrls: ['./chatbot.scss'],
 })
 export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
-  // ✅ AGREGAR OnDestroy
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   @ViewChild('messageInput') private messageInput!: ElementRef;
 
@@ -49,7 +48,7 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
   private messageIdCounter = 0;
   private maps: Map<number, maplibregl.Map> = new Map();
 
-  // ✅ NUEVO: Variables para ubicación manual
+  // Variables para ubicación manual
   showManualLocationInput = false;
   manualPostalCode = '';
   isLoadingPostalCode = false;
@@ -73,7 +72,7 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private chatbotService: ChatbotService,
     private cdr: ChangeDetectorRef,
-    private mapService: MapService, // ✅ NUEVO
+    private mapService: MapService,
   ) {}
 
   async ngOnInit() {
@@ -88,7 +87,6 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
     }, 500);
   }
 
-  // ✅ NUEVO: Limpiar mapas al destruir el componente
   ngOnDestroy() {
     this.maps.forEach((map) => map.remove());
     this.maps.clear();
@@ -178,8 +176,7 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
   // ==========================================
   private handleMapRequest(message: string) {
     this.addMessageWithType(message, 'bot', 'map_request');
-    this.showManualLocationInput = false; // Reset
-    // ❌ NO llamar requestUserLocation() aquí (el usuario debe hacer clic)
+    this.showManualLocationInput = false;
     console.log('🗺️ Esperando que el usuario elija método de ubicación');
   }
 
@@ -193,7 +190,7 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // ==========================================
-  // 🔹 Buscar por código postal
+  // 🔹 Buscar por código postal - CORREGIDO
   // ==========================================
   searchByPostalCode() {
     const cp = this.manualPostalCode.trim();
@@ -203,45 +200,65 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    console.log(`🔍 Iniciando búsqueda por CP: ${cp}`);
+
+    // ✅ ACTIVAR loading
     this.isLoadingPostalCode = true;
     this.locationError = '';
     this.cdr.detectChanges();
 
-    console.log(`🔍 Buscando coordenadas para CP: ${cp}...`);
-
     // Llamar al backend para obtener coordenadas del CP
     this.chatbotService.getCoordinatesFromPostalCode(cp).subscribe({
       next: (response) => {
-        console.log('📍 Coordenadas del CP:', response);
+        console.log('📍 Respuesta completa del backend:', response);
 
-        // ✅ Mantener loading activo hasta que termine la búsqueda
-        // this.isLoadingPostalCode = false; // ← NO apagar aquí
-        this.showManualLocationInput = false;
-        this.manualPostalCode = '';
+        // ✅ VERIFICAR que response.data existe
+        if (!response.data) {
+          console.error('❌ response.data es undefined:', response);
+          this.isLoadingPostalCode = false;
+          this.locationError = '❌ Respuesta inválida del servidor';
+          this.cdr.detectChanges();
+          return;
+        }
 
-        // ✅ CORRECCIÓN: Acceder a response.data
         const lat = response.data.latitud;
         const lng = response.data.longitud;
 
-        console.log(`✅ CP ${cp} → (${lat}, ${lng}) - Buscando productos...`);
+        console.log(`✅ CP ${cp} → (${lat}, ${lng})`);
 
-        // Agregar mensaje temporal
+        // ✅ Ocultar input y resetear
+        this.showManualLocationInput = false;
+        this.manualPostalCode = '';
+
+        // ✅ Agregar mensaje de ubicación encontrada
         this.addMessage(
           `📍 Ubicación encontrada: ${response.data.colonia}, ${response.data.municipio}. Buscando productos cercanos...`,
           'bot',
         );
 
-        // Buscar productos con las coordenadas obtenidas
-        this.fetchNearbyProducts(lat, lng);
-
-        // Apagar loading después de iniciar búsqueda
+        // ✅ DESACTIVAR loading del CP ANTES de buscar productos
         this.isLoadingPostalCode = false;
         this.cdr.detectChanges();
+
+        // ✅ Buscar productos con las coordenadas obtenidas
+        this.fetchNearbyProducts(lat, lng);
       },
       error: (error) => {
         console.error('❌ Error obteniendo coordenadas del CP:', error);
+        console.error('❌ Error completo:', JSON.stringify(error, null, 2));
+
+        // ✅ DESACTIVAR loading
         this.isLoadingPostalCode = false;
-        this.locationError = '❌ Código postal no encontrado. Intenta con otro.';
+
+        // ✅ Mostrar error específico
+        if (error.status === 404) {
+          this.locationError = '❌ Código postal no encontrado. Verifica que sea correcto.';
+        } else if (error.status === 0) {
+          this.locationError = '❌ No se pudo conectar con el servidor. Verifica tu conexión.';
+        } else {
+          this.locationError = `❌ Error: ${error.error?.message || 'Código postal no válido'}`;
+        }
+
         this.cdr.detectChanges();
       },
     });
@@ -334,10 +351,8 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
             radius,
           };
 
-          // ✅ GUARDAR el ID del mensaje ANTES de incrementar
           const messageId = this.messageIdCounter;
 
-          // Agregar mensaje con datos del mapa
           this.addMessageWithType(
             `🗺️ Encontré ${response.count} producto(s) artesanal(es) cerca de ti:`,
             'bot',
@@ -345,7 +360,6 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
             messageData,
           );
 
-          // ✅ NUEVO: Renderizar mapa después de agregar el mensaje
           this.renderMapAfterView(messageId, messageData);
         }
 
@@ -364,7 +378,7 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // ==========================================
-  // 🗺️ NUEVO: Renderizar mapa después de agregar mensaje
+  // 🗺️ Renderizar mapa después de agregar mensaje
   // ==========================================
   private renderMapAfterView(messageId: number, data: any): void {
     setTimeout(() => {
@@ -373,24 +387,17 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
 
       if (!container) {
         console.error(`❌ No se encontró el contenedor del mapa: #${containerId}`);
-        console.log(
-          '🔍 Contenedores disponibles:',
-          Array.from(document.querySelectorAll('[id^="map-"]')).map((el) => el.id),
-        );
         return;
       }
 
       console.log(`🗺️ Renderizando mapa en #${containerId}`);
-      console.log('📦 Datos del mapa:', data);
 
-      // Limpiar mapa anterior si existe
       if (this.maps.has(messageId)) {
         console.log(`🗑️ Eliminando mapa anterior #${messageId}`);
         this.maps.get(messageId)?.remove();
         this.maps.delete(messageId);
       }
 
-      // Crear nuevo mapa
       this.mapService
         .createMap(containerId, data.userLocation, data.products)
         .then((map) => {
@@ -404,7 +411,7 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
         .catch((error) => {
           console.error('❌ Error al crear el mapa:', error);
         });
-    }, 300); // Esperar a que Angular renderice el DOM
+    }, 300);
   }
 
   // ==========================================
@@ -420,7 +427,7 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
       text,
       sender,
       timestamp: new Date(),
-      id: this.messageIdCounter++, // Incrementa DESPUÉS de asignar
+      id: this.messageIdCounter++,
       type,
       data,
     };
@@ -447,7 +454,6 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
     this.messages = [...this.messages, newMessage];
 
     console.log('📝 Mensaje agregado:', newMessage);
-    console.log('📋 Array actual:', this.messages);
 
     setTimeout(() => {
       this.scrollToBottom();
@@ -482,7 +488,6 @@ export class Chatbot implements OnInit, AfterViewInit, OnDestroy {
   }
 
   clearChat() {
-    // Limpiar mapas antes de borrar mensajes
     this.maps.forEach((map) => map.remove());
     this.maps.clear();
 
