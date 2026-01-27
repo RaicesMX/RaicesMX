@@ -1,42 +1,57 @@
+<!-- src/app/carrito/carrito.html - VERSIÓN COMPLETA CON 4 PASOS -->
 <div class="carrito-container">
-  <!-- HERO SECTION COMPLETAMENTE NUEVO -->
+  <!-- ========== HERO SECTION CON PROGRESO ========== -->
   <section class="carrito-hero">
     <div class="hero-pattern"></div>
-    
+
+    <!-- Pasos del checkout -->
     <div class="hero-checkout-flow">
-      <!-- Pasos del proceso -->
       <div class="checkout-steps">
-        <div class="step active">
+        <!-- PASO 1: Carrito -->
+        <div
+          class="step"
+          [class.active]="pasoActual === 0"
+          [class.completed]="pasoActual > 0"
+          (click)="irAPaso(0)"
+        >
           <div class="step-number">1</div>
           <div class="step-content">
             <div class="step-icon">
-              <i class="material-icons">shopping_cart</i>
+              <i class="material-icons">{{ pasoActual > 0 ? 'check_circle' : 'shopping_cart' }}</i>
             </div>
             <span class="step-label">Carrito</span>
           </div>
         </div>
-        
-        <div class="step">
+
+        <!-- PASO 2: Datos -->
+        <div
+          class="step"
+          [class.active]="pasoActual === 1"
+          [class.completed]="pasoActual > 1"
+          (click)="irAPaso(1)"
+        >
           <div class="step-number">2</div>
           <div class="step-content">
             <div class="step-icon">
-              <i class="material-icons">person</i>
+              <i class="material-icons">{{ pasoActual > 1 ? 'check_circle' : 'person' }}</i>
             </div>
             <span class="step-label">Datos</span>
           </div>
         </div>
-        
-        <div class="step">
+
+        <!-- PASO 3: Pago -->
+        <div class="step" [class.active]="pasoActual === 2" [class.completed]="pasoActual > 2">
           <div class="step-number">3</div>
           <div class="step-content">
             <div class="step-icon">
-              <i class="material-icons">payment</i>
+              <i class="material-icons">{{ pasoActual > 2 ? 'check_circle' : 'payment' }}</i>
             </div>
             <span class="step-label">Pago</span>
           </div>
         </div>
-        
-        <div class="step">
+
+        <!-- PASO 4: Confirmación -->
+        <div class="step" [class.active]="pasoActual === 3">
           <div class="step-number">4</div>
           <div class="step-content">
             <div class="step-icon">
@@ -46,9 +61,9 @@
           </div>
         </div>
       </div>
-      
-      <!-- Información del carrito -->
-      <div class="checkout-summary">
+
+      <!-- Resumen rápido -->
+      <div class="checkout-summary" *ngIf="carrito && carrito.items.length > 0 && pasoActual < 3">
         <div class="summary-card">
           <div class="summary-header">
             <h1 class="summary-title">
@@ -56,82 +71,53 @@
               Resumen de tu compra
             </h1>
           </div>
-          
+
           <div class="summary-details">
             <div class="detail-item">
               <div class="detail-label">
                 <i class="material-icons">inventory_2</i>
-                Productos en carrito
+                Productos
               </div>
-              <div class="detail-value highlight">
-                {{ carrito.length }} artículos
-              </div>
+              <div class="detail-value highlight">{{ carrito.items.length }} artículos</div>
             </div>
-            
-            <div class="detail-item">
-              <div class="detail-label">
-                <i class="material-icons">tag</i>
-                Items totales
-              </div>
-              <div class="detail-value">
-                {{ obtenerTotalItems() }} unidades
-              </div>
-            </div>
-            
-            <div class="detail-item">
-              <div class="detail-label">
-                <i class="material-icons">local_shipping</i>
-                Envío estimado
-              </div>
-              <div class="detail-value free" *ngIf="calcularEnvio() === 0">
-                <i class="material-icons">celebration</i>
-                ¡Gratis!
-              </div>
-              <div class="detail-value" *ngIf="calcularEnvio() > 0">
-                {{ calcularEnvio() | currency:'MXN':'symbol' }}
-              </div>
-            </div>
-            
+
             <div class="detail-item total">
               <div class="detail-label">
                 <i class="material-icons">receipt</i>
-                Total a pagar
+                Total
               </div>
               <div class="detail-value total-amount">
-                {{ calcularTotal() | currency:'MXN':'symbol' }}
+                {{ calcularTotal() | currency: 'MXN' : 'symbol' }}
               </div>
             </div>
-          </div>
-          
-          <div class="summary-actions">
-            <button class="btn-quick-checkout btn-glow-effect" 
-                    (click)="procederPago()"
-                    [disabled]="carrito.length === 0">
-              <i class="material-icons">shopping_cart_checkout</i>
-              Pago Rápido
-            </button>
-            <button class="btn-continue btn-glow-subtle" routerLink="/marketplace">
-              <i class="material-icons">add</i>
-              Agregar Más
-            </button>
           </div>
         </div>
       </div>
     </div>
-    
-    <!-- Indicador de progreso -->
+
+    <!-- Barra de progreso -->
     <div class="progress-indicator">
       <div class="progress-bar">
-        <div class="progress-fill" [style.width]="'25%'"></div>
+        <div class="progress-fill" [style.width]="getPorcentajeProgreso() + '%'"></div>
       </div>
-      <div class="progress-text">Paso 1 de 4: Revisión del carrito</div>
+      <div class="progress-text">Paso {{ pasoActual + 1 }} de 4: {{ getTextoPasoActual() }}</div>
     </div>
   </section>
-  <!-- CONTENIDO PRINCIPAL -->
-  <div class="carrito-content" *ngIf="carrito.length > 0">
+
+  <!-- ========== LOADING ========== -->
+  <div class="loading-state" *ngIf="cargando">
+    <div class="loading-spinner"></div>
+    <p>Cargando carrito...</p>
+  </div>
+
+  <!-- ========== PASO 0: CARRITO ========== -->
+  <div
+    class="carrito-content"
+    *ngIf="!cargando && pasoActual === 0 && carrito && carrito.items.length > 0"
+  >
     <div class="container">
       <div class="carrito-layout">
-        <!-- COLUMNA IZQUIERDA: PRODUCTOS -->
+        <!-- PRODUCTOS -->
         <div class="productos-columna">
           <div class="section-header">
             <h2 class="section-title">Productos en tu carrito</h2>
@@ -140,170 +126,168 @@
               <span class="btn-text">Vaciar Carrito</span>
             </button>
           </div>
-          
+
           <div class="productos-list">
-            <div *ngFor="let item of carrito; let i = index" class="producto-card">
+            <div *ngFor="let item of carrito.items" class="producto-card">
               <!-- Imagen -->
               <div class="producto-imagen">
-                <img [src]="item.imagen" [alt]="item.nombre">
+                <img [src]="getProductImage(item)" [alt]="item.product.titulo" />
                 <div class="producto-badges">
-                  <span class="badge badge-categoria">{{ item.categoria }}</span>
+                  <span class="badge badge-categoria">{{ item.product.category.nombre }}</span>
                 </div>
               </div>
-              
+
               <!-- Información -->
               <div class="producto-info">
                 <div class="producto-header">
-                  <h3 class="producto-nombre">{{ item.nombre }}</h3>
-                  <button class="btn-eliminar btn-glow-subtle" (click)="eliminarProducto(i)">
+                  <h3 class="producto-nombre">{{ item.product.titulo }}</h3>
+                  <button class="btn-eliminar btn-glow-subtle" (click)="eliminarProducto(item)">
                     <i class="material-icons">close</i>
                   </button>
                 </div>
-                
-                <p class="producto-desc">{{ item.descripcion }}</p>
-                
+
+                <p class="producto-desc">
+                  {{
+                    item.product.descripcion.length > 100
+                      ? (item.product.descripcion | slice: 0 : 100) + '...'
+                      : item.product.descripcion
+                  }}
+                </p>
+
                 <div class="producto-artesano">
                   <i class="material-icons">palette</i>
-                  <span class="artesano-nombre">{{ item.artesano }}</span>
+                  <span class="artesano-nombre">{{ item.product.seller?.fullName }}</span>
                 </div>
-                
-                <!-- Precio unitario -->
+
                 <div class="producto-precio-unitario">
                   <span class="precio-label">Precio unitario:</span>
-                  <span class="precio-valor">{{ item.precio | currency:'MXN':'symbol' }}</span>
+                  <span class="precio-valor">{{
+                    item.precioUnitario | currency: 'MXN' : 'symbol'
+                  }}</span>
+                </div>
+
+                <div class="producto-stock" [class.low-stock]="item.product.stock < 5">
+                  <i class="material-icons">inventory_2</i>
+                  <span>{{ item.product.stock }} disponibles</span>
                 </div>
               </div>
-              
-              <!-- Controles de cantidad -->
+
+              <!-- Controles -->
               <div class="producto-cantidad">
                 <div class="cantidad-controls">
-                  <button class="btn-cantidad btn-glow-subtle" 
-                          (click)="disminuirCantidad(i)" 
-                          [disabled]="item.cantidad <= 1">
+                  <button
+                    class="btn-cantidad btn-glow-subtle"
+                    (click)="disminuirCantidad(item)"
+                    [disabled]="item.cantidad <= 1"
+                  >
                     <i class="material-icons">remove</i>
                   </button>
-                  
+
                   <div class="cantidad-display">
                     <span class="cantidad-numero">{{ item.cantidad }}</span>
                     <span class="cantidad-texto">unidades</span>
                   </div>
-                  
-                  <button class="btn-cantidad btn-glow-subtle" (click)="aumentarCantidad(i)">
+
+                  <button
+                    class="btn-cantidad btn-glow-subtle"
+                    (click)="aumentarCantidad(item)"
+                    [disabled]="item.cantidad >= item.product.stock"
+                  >
                     <i class="material-icons">add</i>
                   </button>
                 </div>
-                
-                <!-- Subtotal del producto -->
+
                 <div class="producto-subtotal">
                   <span class="subtotal-label">Subtotal:</span>
-                  <span class="subtotal-valor">{{ item.precio * item.cantidad | currency:'MXN':'symbol' }}</span>
+                  <span class="subtotal-valor">{{
+                    item.subtotal | currency: 'MXN' : 'symbol'
+                  }}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
-        <!-- COLUMNA DERECHA: RESUMEN -->
+
+        <!-- RESUMEN -->
         <div class="resumen-columna">
           <div class="resumen-card">
             <h3 class="resumen-title">Resumen del Pedido</h3>
-            
+
             <div class="resumen-detalles">
               <div class="detalle-linea">
                 <span class="detalle-label">Subtotal</span>
-                <span class="detalle-valor">{{ calcularSubtotal() | currency:'MXN':'symbol' }}</span>
+                <span class="detalle-valor">{{
+                  calcularSubtotal() | currency: 'MXN' : 'symbol'
+                }}</span>
               </div>
-              
+
               <div class="detalle-linea">
                 <span class="detalle-label">Envío</span>
                 <span class="detalle-valor envio-gratis" *ngIf="calcularEnvio() === 0">
                   <i class="material-icons">local_shipping</i> ¡Gratis!
                 </span>
                 <span class="detalle-valor" *ngIf="calcularEnvio() > 0">
-                  {{ calcularEnvio() | currency:'MXN':'symbol' }}
+                  {{ calcularEnvio() | currency: 'MXN' : 'symbol' }}
                 </span>
               </div>
-              
+
               <div class="detalle-linea descuento" *ngIf="calcularDescuento() > 0">
                 <span class="detalle-label">Descuento</span>
-                <span class="detalle-valor">-{{ calcularDescuento() | currency:'MXN':'symbol' }}</span>
+                <span class="detalle-valor"
+                  >-{{ calcularDescuento() | currency: 'MXN' : 'symbol' }}</span
+                >
               </div>
-              
+
               <div class="detalle-linea cupon" *ngIf="cuponAplicado">
                 <span class="detalle-label">Cupón aplicado</span>
-                <span class="detalle-valor cupon-texto">{{ codigoCupon }}</span>
+                <span class="detalle-valor cupon-texto">
+                  {{ carrito.codigoCupon }}
+                  <button class="btn-remover-cupon" (click)="removerCupon()">
+                    <i class="material-icons">close</i>
+                  </button>
+                </span>
               </div>
             </div>
-            
+
             <!-- Cupón -->
             <div class="cupon-section" *ngIf="!cuponAplicado">
               <div class="cupon-input">
-                <input type="text" 
-                       placeholder="Ingresa código de cupón" 
-                       [(ngModel)]="codigoCupon"
-                       class="form-input">
-                <button class="btn-cupon btn-glow-effect" (click)="aplicarCupon()">
+                <input
+                  type="text"
+                  placeholder="Código de cupón"
+                  [(ngModel)]="codigoCupon"
+                  class="form-input"
+                  [disabled]="aplicandoCupon"
+                />
+                <button
+                  class="btn-cupon btn-glow-effect"
+                  (click)="aplicarCupon()"
+                  [disabled]="aplicandoCupon || !codigoCupon"
+                >
                   <i class="material-icons">local_offer</i>
-                  Aplicar
+                  {{ aplicandoCupon ? 'Aplicando...' : 'Aplicar' }}
                 </button>
               </div>
             </div>
-            
+
             <!-- Total -->
             <div class="resumen-total">
               <div class="total-label">Total a pagar</div>
-              <div class="total-valor">{{ calcularTotal() | currency:'MXN':'symbol' }}</div>
+              <div class="total-valor">{{ calcularTotal() | currency: 'MXN' : 'symbol' }}</div>
               <div class="total-nota">IVA incluido</div>
             </div>
-            
+
             <!-- Acciones -->
             <div class="resumen-actions">
-              <button class="btn-comprar btn-glow-effect" (click)="procederPago()">
-                <i class="material-icons">shopping_cart_checkout</i>
-                <span class="btn-text">Proceder al Pago</span>
+              <button class="btn-comprar btn-glow-effect" (click)="siguientePaso()">
+                <i class="material-icons">arrow_forward</i>
+                <span class="btn-text">Continuar</span>
               </button>
-              
+
               <button class="btn-seguir btn-glow-subtle" routerLink="/marketplace">
                 <i class="material-icons">arrow_back</i>
                 <span class="btn-text">Seguir Comprando</span>
               </button>
-            </div>
-            
-            <!-- Métodos de pago -->
-            <div class="metodos-pago">
-              <h4 class="metodos-title">
-                <i class="material-icons">payment</i>
-                Métodos de pago aceptados
-              </h4>
-              <div class="pago-icons">
-                <div class="pago-icon">
-                  <i class="material-icons">credit_card</i>
-                  <span>Tarjetas</span>
-                </div>
-                <div class="pago-icon">
-                  <i class="material-icons">smartphone</i>
-                  <span>Móvil</span>
-                </div>
-                <div class="pago-icon">
-                  <i class="material-icons">account_balance</i>
-                  <span>Transferencia</span>
-                </div>
-                <div class="pago-icon">
-                  <i class="material-icons">payments</i>
-                  <span>Efectivo</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Información adicional -->
-          <div class="info-card">
-            <div class="info-icon">
-              <i class="material-icons">verified</i>
-            </div>
-            <div class="info-content">
-              <h4>Compra 100% Segura</h4>
-              <p>Tus datos están protegidos con encriptación SSL</p>
             </div>
           </div>
         </div>
@@ -311,8 +295,320 @@
     </div>
   </div>
 
-  <!-- CARRITO VACÍO -->
-  <div class="carrito-vacio" *ngIf="carrito.length === 0">
+  <!-- ========== PASO 1: DATOS DE ENVÍO ========== -->
+  <div class="datos-envio-content" *ngIf="!cargando && pasoActual === 1">
+    <div class="container">
+      <div class="datos-layout">
+        <div class="form-columna">
+          <h2 class="section-title">Información de Envío</h2>
+
+          <form class="envio-form">
+            <div class="form-group">
+              <label>
+                <i class="material-icons">person</i>
+                Nombre completo *
+              </label>
+              <input
+                type="text"
+                class="form-input"
+                [(ngModel)]="datosEnvio.nombre"
+                name="nombre"
+                placeholder="Juan Pérez García"
+                required
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>
+                  <i class="material-icons">email</i>
+                  Correo electrónico *
+                </label>
+                <input
+                  type="email"
+                  class="form-input"
+                  [(ngModel)]="datosEnvio.email"
+                  name="email"
+                  placeholder="correo@ejemplo.com"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>
+                  <i class="material-icons">phone</i>
+                  Teléfono *
+                </label>
+                <input
+                  type="tel"
+                  class="form-input"
+                  [(ngModel)]="datosEnvio.telefono"
+                  name="telefono"
+                  placeholder="5512345678"
+                  maxlength="10"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <i class="material-icons">home</i>
+                Dirección *
+              </label>
+              <input
+                type="text"
+                class="form-input"
+                [(ngModel)]="datosEnvio.direccion"
+                name="direccion"
+                placeholder="Calle, número, colonia"
+                required
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>
+                  <i class="material-icons">location_city</i>
+                  Ciudad *
+                </label>
+                <input
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="datosEnvio.ciudad"
+                  name="ciudad"
+                  placeholder="Ciudad de México"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>
+                  <i class="material-icons">map</i>
+                  Estado *
+                </label>
+                <input
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="datosEnvio.estado"
+                  name="estado"
+                  placeholder="CDMX"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>
+                  <i class="material-icons">markunread_mailbox</i>
+                  Código Postal *
+                </label>
+                <input
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="datosEnvio.codigoPostal"
+                  name="codigoPostal"
+                  placeholder="01000"
+                  maxlength="5"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>
+                  <i class="material-icons">flag</i>
+                  País
+                </label>
+                <input
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="datosEnvio.pais"
+                  name="pais"
+                  value="México"
+                  readonly
+                />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-volver btn-glow-subtle" (click)="pasoAnterior()">
+                <i class="material-icons">arrow_back</i>
+                Volver
+              </button>
+
+              <button type="button" class="btn-continuar btn-glow-effect" (click)="siguientePaso()">
+                <i class="material-icons">arrow_forward</i>
+                Continuar a Pago
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Resumen lateral -->
+        <div class="resumen-lateral">
+          <div class="resumen-card">
+            <h3 class="resumen-title">Resumen</h3>
+            <div class="resumen-detalles">
+              <div class="detalle-linea">
+                <span>Subtotal</span>
+                <span>{{ calcularSubtotal() | currency: 'MXN' : 'symbol' }}</span>
+              </div>
+              <div class="detalle-linea">
+                <span>Envío</span>
+                <span>{{ calcularEnvio() | currency: 'MXN' : 'symbol' }}</span>
+              </div>
+              <div class="resumen-total">
+                <div class="total-label">Total</div>
+                <div class="total-valor">{{ calcularTotal() | currency: 'MXN' : 'symbol' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PASO 2: PAGO CON PAYPAL ========== -->
+  <div class="pago-content" *ngIf="!cargando && pasoActual === 2">
+    <div class="container">
+      <div class="pago-layout">
+        <div class="pago-columna">
+          <h2 class="section-title">Método de Pago</h2>
+
+          <div class="paypal-section">
+            <div class="paypal-info">
+              <div class="paypal-logo">
+                <img
+                  src="https://www.paypalobjects.com/webstatic/mktg/logo/AM_mc_vs_dc_ae.jpg"
+                  alt="PayPal"
+                />
+              </div>
+              <p class="paypal-desc">
+                <i class="material-icons">security</i>
+                Paga de forma segura con PayPal. Acepta tarjetas de crédito, débito y saldo PayPal.
+              </p>
+            </div>
+
+            <!-- Contenedor del botón de PayPal -->
+            <div id="paypal-button-container" class="paypal-button-wrapper"></div>
+
+            <div class="pago-nota">
+              <i class="material-icons">info</i>
+              <span>Serás redirigido a PayPal para completar el pago de forma segura.</span>
+            </div>
+
+            <!-- Loading de procesamiento -->
+            <div class="procesando-overlay" *ngIf="procesandoPago">
+              <div class="procesando-content">
+                <div class="loading-spinner"></div>
+                <p>Procesando pago...</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pago-actions">
+            <button
+              class="btn-volver btn-glow-subtle"
+              (click)="pasoAnterior()"
+              [disabled]="procesandoPago"
+            >
+              <i class="material-icons">arrow_back</i>
+              Volver
+            </button>
+          </div>
+        </div>
+
+        <!-- Resumen lateral -->
+        <div class="resumen-lateral">
+          <div class="resumen-card">
+            <h3 class="resumen-title">Resumen Final</h3>
+
+            <div class="envio-info">
+              <h4><i class="material-icons">local_shipping</i> Envío a:</h4>
+              <p>{{ datosEnvio.nombre }}</p>
+              <p>{{ datosEnvio.direccion }}</p>
+              <p>{{ datosEnvio.ciudad }}, {{ datosEnvio.estado }} {{ datosEnvio.codigoPostal }}</p>
+            </div>
+
+            <div class="resumen-detalles">
+              <div class="detalle-linea">
+                <span>Subtotal</span>
+                <span>{{ calcularSubtotal() | currency: 'MXN' : 'symbol' }}</span>
+              </div>
+              <div class="detalle-linea">
+                <span>Envío</span>
+                <span>{{ calcularEnvio() | currency: 'MXN' : 'symbol' }}</span>
+              </div>
+              <div class="detalle-linea descuento" *ngIf="calcularDescuento() > 0">
+                <span>Descuento</span>
+                <span>-{{ calcularDescuento() | currency: 'MXN' : 'symbol' }}</span>
+              </div>
+              <div class="resumen-total">
+                <div class="total-label">Total a pagar</div>
+                <div class="total-valor">{{ calcularTotal() | currency: 'MXN' : 'symbol' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PASO 3: CONFIRMACIÓN ========== -->
+  <div class="confirmacion-content" *ngIf="!cargando && pasoActual === 3 && ordenConfirmada">
+    <div class="container">
+      <div class="confirmacion-success">
+        <div class="success-icon">
+          <i class="material-icons">check_circle</i>
+        </div>
+
+        <h1 class="success-title">¡Compra realizada con éxito!</h1>
+        <p class="success-desc">
+          Gracias por tu compra. Recibirás un correo de confirmación en breve.
+        </p>
+
+        <div class="orden-info">
+          <div class="info-card">
+            <h3>
+              <i class="material-icons">receipt</i>
+              Número de Orden
+            </h3>
+            <p class="orden-number">{{ ordenConfirmada.orderNumber }}</p>
+          </div>
+
+          <div class="info-card">
+            <h3>
+              <i class="material-icons">payments</i>
+              Total Pagado
+            </h3>
+            <p class="total-pagado">{{ ordenConfirmada.total | currency: 'MXN' : 'symbol' }}</p>
+          </div>
+        </div>
+
+        <div class="confirmacion-actions">
+          <button
+            class="btn-ver-orden btn-glow-effect"
+            [routerLink]="['/ordenes', ordenConfirmada.id]"
+          >
+            <i class="material-icons">visibility</i>
+            Ver Detalles de la Orden
+          </button>
+
+          <button class="btn-nueva-compra btn-glow-subtle" (click)="reiniciarCompra()">
+            <i class="material-icons">shopping_cart</i>
+            Hacer Nueva Compra
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CARRITO VACÍO ========== -->
+  <div
+    class="carrito-vacio"
+    *ngIf="!cargando && pasoActual === 0 && (!carrito || carrito.items.length === 0)"
+  >
     <div class="container">
       <div class="vacio-content">
         <div class="vacio-icon">
@@ -324,10 +620,6 @@
           <button class="btn-explorar btn-glow-effect" routerLink="/marketplace">
             <i class="material-icons">explore</i>
             <span class="btn-text">Explorar Productos</span>
-          </button>
-          <button class="btn-ofertas btn-glow-subtle" routerLink="/ofertas">
-            <i class="material-icons">local_offer</i>
-            <span class="btn-text">Ver Ofertas</span>
           </button>
         </div>
       </div>

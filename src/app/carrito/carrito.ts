@@ -1,239 +1,316 @@
-import { Component } from '@angular/core';
+// src/app/carrito/carrito.component.ts - VERSIÓN COMPLETA CON PAYPAL
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
+import { CartService, Cart, CartItem } from '../service/cart.service';
+import { OrdersService, CreateOrderDto } from '../service/orders.service';
+import { AuthService } from '../service/auth.service';
+import { Subject, takeUntil } from 'rxjs';
 
-// Interfaces
-interface ProductoCarrito {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  precio: number;
-  cantidad: number;
-  imagen: string;
-  categoria: string;
-  artesano: string;
-}
-
-interface DatosEnvio {
-  nombre: string;
-  email: string;
-  telefono: string;
-  direccion: string;
-  ciudad: string;
-  codigoPostal: string;
-  pais: string;
-}
-
-interface DatosPago {
-  metodo: string;
-  numeroTarjeta?: string;
-  nombreTitular?: string;
-  fechaExpiracion?: string;
-  cvv?: string;
-}
-
-interface OrdenConfirmada {
-  id: string;
-  fecha: string;
-  productos: ProductoCarrito[];
-  envio: DatosEnvio;
-  pago: DatosPago;
-  subtotal: number;
-  envioCosto: number;
-  descuento: number;
-  total: number;
-}
+// Declaración global de PayPal
+declare const paypal: any;
 
 @Component({
   selector: 'app-carrito',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './carrito.html',
-  styleUrls: ['./carrito.scss']
+  styleUrls: ['./carrito.scss'],
 })
-export class CarritoComponent {
-  // Datos de ejemplo para el carrito
-  carrito: ProductoCarrito[] = [
-    {
-      id: 1,
-      nombre: 'Alebrije de Oaxaca',
-      descripcion: 'Colorida figura artesanal tallada en madera',
-      precio: 450.00,
-      cantidad: 1,
-      imagen: 'assets/images/Alebrigue_Artesanal.jpg',
-      categoria: 'Arte Popular',
-      artesano: 'Taller Donají'
-    },
-    {
-      id: 2,
-      nombre: 'Textil Huichol',
-      descripcion: 'Manta tradicional con diseños ancestrales',
-      precio: 320.00,
-      cantidad: 2,
-      imagen: 'assets/images/Textiles Huichole.jpg',
-      categoria: 'Textiles',
-      artesano: 'Comunidad Wixárica'
-    },
-    {
-      id: 3,
-      nombre: 'Cerámica de Talavera',
-      descripcion: 'Jarrón artesanal con técnica tradicional',
-      precio: 280.00,
-      cantidad: 1,
-      imagen: 'assets/images/Ceramica_Talavera.jpg',
-      categoria: 'Cerámica',
-      artesano: 'Alfareros de Puebla'
-    }
-  ];
+export class CarritoComponent implements OnInit, OnDestroy {
+  private cartService = inject(CartService);
+  private ordersService = inject(OrdersService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+
+  private destroy$ = new Subject<void>();
+
+  // Datos del carrito
+  carrito: Cart | null = null;
+  cargando = true;
 
   // Estado del cupón
   codigoCupon: string = '';
-  cuponAplicado: boolean = false;
-  descuento: number = 0;
+  aplicandoCupon = false;
 
-  // Estados del proceso de pago
+  // Estados del proceso de pago (4 pasos)
   pasosCheckout = ['carrito', 'datos', 'pago', 'confirmacion'];
   pasoActual: number = 0;
-  
+
   // Datos del usuario
-  datosEnvio: DatosEnvio = {
+  datosEnvio = {
     nombre: '',
     email: '',
     telefono: '',
     direccion: '',
     ciudad: '',
+    estado: '',
     codigoPostal: '',
-    pais: 'México'
+    pais: 'México',
   };
-  
-  datosPago: DatosPago = {
-    metodo: 'tarjeta'
-  };
-  
-  // Orden generada
-  ordenConfirmada: OrdenConfirmada | null = null;
 
-  // Procesamiento de pago
-  procesandoPago: boolean = false;
+  // Orden creada y pago
+  ordenCreada: any = null;
+  paypalOrderId: string = '';
+  procesandoPago = false;
+  ordenConfirmada: any = null;
 
-  constructor() {
+  Math = Math;
+
+  ngOnInit(): void {
+    console.log('🛒 Carrito iniciado');
+
+    // Verificar autenticación
+    if (!this.authService.isAuthenticated()) {
+      console.warn('⚠️ Usuario no autenticado, redirigiendo a login');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.cargarCarrito();
     this.cargarDatosGuardados();
+
+    // Verificar si viene de PayPal
+    this.route.queryParams.subscribe((params) => {
+      if (params['token']) {
+        this.paypalOrderId = params['token'];
+        this.procesarRetornoPayPal();
+      }
+    });
   }
 
-  // 🟦 Obtener total de items en el carrito
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // ==================== CARGAR CARRITO ====================
+  cargarCarrito(): void {
+    this.cargando = true;
+
+    this.cartService
+      .getCart()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.carrito = response.cart;
+            console.log('✅ Carrito cargado:', this.carrito);
+
+            // ✅ Usar setTimeout para evitar ExpressionChangedAfterItHasBeenCheckedError
+            setTimeout(() => {
+              this.cargando = false;
+              this.cdr.detectChanges();
+            }, 0);
+          } else {
+            this.cargando = false;
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al cargar carrito:', error);
+          this.cargando = false;
+          this.mostrarNotificacion('Error al cargar el carrito');
+        },
+      });
+  }
+
+  // ==================== CÁLCULOS ====================
   obtenerTotalItems(): number {
-    return this.carrito.reduce((total, item) => total + item.cantidad, 0);
+    if (!this.carrito?.items) return 0;
+    return this.carrito.items.reduce((total, item) => total + item.cantidad, 0);
   }
 
-  // 🟦 Calcular subtotal
   calcularSubtotal(): number {
-    return this.carrito.reduce((total, item) => total + (item.precio * item.cantidad), 0);
+    return Number(this.carrito?.subtotal || 0);
   }
 
-  // 🟦 Calcular envío (gratis sobre $500)
   calcularEnvio(): number {
-    const subtotal = this.calcularSubtotal();
-    return subtotal >= 500 ? 0 : 80.00;
+    return Number(this.carrito?.envio || 0);
   }
 
-  // 🟦 Calcular descuento
   calcularDescuento(): number {
-    return this.descuento;
+    return Number(this.carrito?.descuento || 0);
   }
 
-  // 🟦 Calcular total
   calcularTotal(): number {
-    return this.calcularSubtotal() + this.calcularEnvio() - this.calcularDescuento();
+    return Number(this.carrito?.total || 0);
   }
 
-  // 🟦 Aumentar cantidad de producto
-  aumentarCantidad(index: number): void {
-    this.carrito[index].cantidad++;
-    this.guardarDatos();
+  get cuponAplicado(): boolean {
+    return !!this.carrito?.codigoCupon;
   }
 
-  // 🟦 Disminuir cantidad de producto
-  disminuirCantidad(index: number): void {
-    if (this.carrito[index].cantidad > 1) {
-      this.carrito[index].cantidad--;
-      this.guardarDatos();
+  // ==================== GESTIÓN DE ITEMS ====================
+  aumentarCantidad(item: CartItem): void {
+    const nuevaCantidad = item.cantidad + 1;
+
+    if (item.product.stock < nuevaCantidad) {
+      this.mostrarNotificacion(`Stock insuficiente. Solo hay ${item.product.stock} disponibles`);
+      return;
     }
+
+    this.cartService
+      .updateCartItem(item.id, nuevaCantidad)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.carrito = response.cart;
+            this.cdr.detectChanges();
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error:', error);
+          this.mostrarNotificacion(error.error?.message || 'Error al actualizar cantidad');
+        },
+      });
   }
 
-  // 🟦 Eliminar producto del carrito
-  eliminarProducto(index: number): void {
-    if (confirm(`¿Estás seguro de eliminar "${this.carrito[index].nombre}" del carrito?`)) {
-      this.carrito.splice(index, 1);
-      this.guardarDatos();
+  disminuirCantidad(item: CartItem): void {
+    if (item.cantidad <= 1) {
+      this.mostrarNotificacion('La cantidad mínima es 1');
+      return;
     }
+
+    const nuevaCantidad = item.cantidad - 1;
+
+    this.cartService
+      .updateCartItem(item.id, nuevaCantidad)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.carrito = response.cart;
+            this.cdr.detectChanges();
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error:', error);
+          this.mostrarNotificacion(error.error?.message || 'Error al actualizar cantidad');
+        },
+      });
   }
 
-  // 🟦 Vaciar todo el carrito
+  eliminarProducto(item: CartItem): void {
+    if (!confirm(`¿Estás seguro de eliminar "${item.product.titulo}" del carrito?`)) {
+      return;
+    }
+
+    this.cartService
+      .removeCartItem(item.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.carrito = response.cart;
+            this.cdr.detectChanges();
+            this.mostrarNotificacion('Producto eliminado del carrito');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error:', error);
+          this.mostrarNotificacion(error.error?.message || 'Error al eliminar producto');
+        },
+      });
+  }
+
   vaciarCarrito(): void {
-    if (confirm('¿Estás seguro de vaciar todo el carrito?')) {
-      this.carrito = [];
-      this.cuponAplicado = false;
-      this.descuento = 0;
-      this.guardarDatos();
+    if (!confirm('¿Estás seguro de vaciar todo el carrito?')) {
+      return;
     }
+
+    this.cartService
+      .clearCart()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.carrito = null;
+            this.cdr.detectChanges();
+            this.mostrarNotificacion('Carrito vaciado correctamente');
+            this.cargarCarrito();
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error:', error);
+          this.mostrarNotificacion(error.error?.message || 'Error al vaciar carrito');
+        },
+      });
   }
 
-  // 🟦 Aplicar cupón de descuento
+  // ==================== CUPONES ====================
   aplicarCupon(): void {
-    if (this.codigoCupon.trim() === '') {
-      alert('Por favor ingresa un código de cupón');
+    if (!this.codigoCupon.trim()) {
+      this.mostrarNotificacion('Por favor ingresa un código de cupón');
       return;
     }
 
-    // Simulación de validación de cupón
-    const cuponesValidos = ['RAICES10', 'ARTESANIA15', 'MEXICO20'];
-    
-    if (cuponesValidos.includes(this.codigoCupon.toUpperCase())) {
-      const porcentajeDescuento = this.codigoCupon.toUpperCase() === 'RAICES10' ? 0.10 :
-        this.codigoCupon.toUpperCase() === 'ARTESANIA15' ? 0.15 : 0.20;
-      
-      this.descuento = this.calcularSubtotal() * porcentajeDescuento;
-      this.cuponAplicado = true;
-      alert(`¡Cupón aplicado! Descuento de ${porcentajeDescuento * 100}% aplicado.`);
-    } else {
-      alert('Cupón no válido. Intenta con: RAICES10, ARTESANIA15 o MEXICO20');
-      this.cuponAplicado = false;
-      this.descuento = 0;
-    }
-    
-    this.guardarDatos();
+    this.aplicandoCupon = true;
+
+    this.cartService
+      .applyCoupon(this.codigoCupon)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.carrito = response.cart;
+            this.cdr.detectChanges();
+            this.mostrarNotificacion(`¡Cupón aplicado! ${response.message}`);
+          }
+          this.aplicandoCupon = false;
+        },
+        error: (error) => {
+          console.error('❌ Error:', error);
+          this.mostrarNotificacion(error.error?.message || 'Cupón no válido');
+          this.aplicandoCupon = false;
+        },
+      });
   }
 
-  // ========== MÉTODOS DEL CHECKOUT ==========
-
-  // 🟦 Proceder al pago (inicia el proceso)
-  procederPago(): void {
-    if (this.carrito.length === 0) {
-      alert('Tu carrito está vacío');
-      return;
-    }
-
-    this.siguientePaso(); // Ir al paso de datos
+  removerCupon(): void {
+    this.cartService
+      .removeCoupon()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.carrito = response.cart;
+            this.codigoCupon = '';
+            this.cdr.detectChanges();
+            this.mostrarNotificacion('Cupón removido');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error:', error);
+          this.mostrarNotificacion(error.error?.message || 'Error al remover cupón');
+        },
+      });
   }
 
-  // 🟦 Navegar entre pasos
+  // ==================== UTILIDADES ====================
+  getProductImage(item: CartItem): string {
+    return this.cartService.getProductImage(item);
+  }
+
+  // ==================== NAVEGACIÓN PASOS ====================
   siguientePaso(): void {
     if (this.pasoActual < this.pasosCheckout.length - 1) {
-      // Validar paso actual antes de avanzar
+      // Validar datos de envío en paso 1
       if (this.pasoActual === 1 && !this.validarDatosEnvio()) {
-        alert('Por favor, completa todos los campos de envío');
         return;
       }
-      
-      if (this.pasoActual === 2 && !this.validarDatosPago()) {
-        alert('Por favor, completa todos los campos de pago');
-        return;
-      }
-      
+
       this.pasoActual++;
       this.scrollToTop();
       this.guardarDatos();
+
+      // Si llegamos al paso de pago (paso 2), renderizar PayPal
+      if (this.pasoActual === 2) {
+        setTimeout(() => this.renderizarBotonPayPal(), 500);
+      }
     }
   }
 
@@ -241,16 +318,14 @@ export class CarritoComponent {
     if (this.pasoActual > 0) {
       this.pasoActual--;
       this.scrollToTop();
-      this.guardarDatos();
     }
   }
 
   irAPaso(paso: number): void {
-    // Solo permitir regresar a pasos anteriores
+    // Solo permitir ir a pasos completados o al paso actual
     if (paso >= 0 && paso <= this.pasoActual && paso < this.pasosCheckout.length) {
       this.pasoActual = paso;
       this.scrollToTop();
-      this.guardarDatos();
     }
   }
 
@@ -258,244 +333,266 @@ export class CarritoComponent {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // 🟦 Validar datos de envío
+  // ==================== VALIDACIONES ====================
   validarDatosEnvio(): boolean {
     const datos = this.datosEnvio;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const telefonoRegex = /^\d{10}$/;
-    
+
     if (!datos.nombre || datos.nombre.trim().length < 3) {
-      alert('Por favor ingresa un nombre válido (mínimo 3 caracteres)');
+      this.mostrarNotificacion('Nombre inválido (mínimo 3 caracteres)');
       return false;
     }
-    
+
     if (!emailRegex.test(datos.email)) {
-      alert('Por favor ingresa un correo electrónico válido');
+      this.mostrarNotificacion('Correo electrónico inválido');
       return false;
     }
-    
+
     if (!telefonoRegex.test(datos.telefono.replace(/\D/g, ''))) {
-      alert('Por favor ingresa un número de teléfono válido (10 dígitos)');
+      this.mostrarNotificacion('Teléfono inválido (10 dígitos)');
       return false;
     }
-    
+
     if (!datos.direccion || datos.direccion.trim().length < 5) {
-      alert('Por favor ingresa una dirección válida');
+      this.mostrarNotificacion('Dirección inválida');
       return false;
     }
-    
+
     if (!datos.ciudad || datos.ciudad.trim().length < 2) {
-      alert('Por favor ingresa una ciudad válida');
+      this.mostrarNotificacion('Ciudad inválida');
       return false;
     }
-    
-    if (!datos.codigoPostal || !/^\d{5}$/.test(datos.codigoPostal)) {
-      alert('Por favor ingresa un código postal válido (5 dígitos)');
+
+    if (!datos.estado || datos.estado.trim().length < 2) {
+      this.mostrarNotificacion('Estado inválido');
       return false;
     }
-    
+
+    if (!/^\d{5}$/.test(datos.codigoPostal)) {
+      this.mostrarNotificacion('Código postal inválido (5 dígitos)');
+      return false;
+    }
+
     return true;
   }
 
-  // 🟦 Validar datos de pago
-  validarDatosPago(): boolean {
-    if (this.datosPago.metodo === 'tarjeta') {
-      // Validar número de tarjeta (simplificado)
-      const numeroTarjeta = this.datosPago.numeroTarjeta?.replace(/\s/g, '');
-      if (!numeroTarjeta || numeroTarjeta.length < 16 || !/^\d+$/.test(numeroTarjeta)) {
-        alert('Por favor ingresa un número de tarjeta válido (16 dígitos)');
-        return false;
-      }
-      
-      if (!this.datosPago.nombreTitular || this.datosPago.nombreTitular.trim().length < 3) {
-        alert('Por favor ingresa el nombre del titular de la tarjeta');
-        return false;
-      }
-      
-      // Validar fecha MM/AA
-      const fechaRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
-      if (!this.datosPago.fechaExpiracion || !fechaRegex.test(this.datosPago.fechaExpiracion)) {
-        alert('Por favor ingresa una fecha de expiración válida (MM/AA)');
-        return false;
-      }
-      
-      // Validar CVV
-      if (!this.datosPago.cvv || !/^\d{3,4}$/.test(this.datosPago.cvv)) {
-        alert('Por favor ingresa un CVV válido (3 o 4 dígitos)');
-        return false;
-      }
-    }
-    
-    return true;
-  }
-
-  // 🟦 Procesar pago simulado
-  procesarPago(): void {
-    if (!this.validarDatosPago()) {
+  // ==================== PROCESAR PAGO ====================
+  procederPago(): void {
+    if (!this.carrito || this.carrito.items.length === 0) {
+      this.mostrarNotificacion('Tu carrito está vacío');
       return;
     }
-    
+
+    this.siguientePaso();
+  }
+
+  /**
+   * Crear orden en backend y obtener ID de PayPal
+   */
+  private crearOrden(): void {
+    if (!this.validarDatosEnvio()) {
+      return;
+    }
+
     this.procesandoPago = true;
-    
-    // Simular procesamiento de pago (2 segundos)
-    setTimeout(() => {
-      // Generar orden confirmada
-      this.ordenConfirmada = {
-        id: 'ORD-' + Date.now().toString().slice(-8),
-        fecha: new Date().toLocaleDateString('es-MX', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        productos: [...this.carrito],
-        envio: { ...this.datosEnvio },
-        pago: { ...this.datosPago },
-        subtotal: this.calcularSubtotal(),
-        envioCosto: this.calcularEnvio(),
-        descuento: this.calcularDescuento(),
-        total: this.calcularTotal()
-      };
-      
-      // Limpiar carrito y datos temporales
-      this.carrito = [];
-      this.cuponAplicado = false;
-      this.descuento = 0;
-      this.codigoCupon = '';
-      
-      // Limpiar localStorage
-      localStorage.removeItem('carritoCompras');
-      localStorage.removeItem('checkoutProgreso');
-      
-      // Ir a confirmación
-      this.pasoActual = 3;
-      this.procesandoPago = false;
-      
-      // Mostrar mensaje de éxito
-      console.log('Compra procesada exitosamente:', this.ordenConfirmada);
-    }, 2000);
+
+    const createOrderDto: CreateOrderDto = {
+      shippingDetails: this.datosEnvio,
+      codigoCupon: this.carrito?.codigoCupon ?? undefined,
+    };
+
+    this.ordersService
+      .createOrder(createOrderDto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.ordenCreada = response.order;
+            this.paypalOrderId = response.paypal.orderId;
+
+            console.log('✅ Orden creada:', this.ordenCreada);
+            console.log('🔑 PayPal Order ID:', this.paypalOrderId);
+
+            // Redirigir a PayPal
+            window.location.href = response.paypal.approveUrl;
+          }
+          this.procesandoPago = false;
+        },
+        error: (error) => {
+          console.error('❌ Error al crear orden:', error);
+          this.mostrarNotificacion(error.error?.message || 'Error al procesar la orden');
+          this.procesandoPago = false;
+        },
+      });
   }
 
-  // 🟦 Descargar factura simulada
-  descargarFactura(): void {
-    if (!this.ordenConfirmada) return;
-    
-    const factura = `
-      ============================================
-                    FACTURA SIMULADA
-                    Tienda Artesanal
-      ============================================
-      
-      NÚMERO DE ORDEN: ${this.ordenConfirmada.id}
-      FECHA: ${this.ordenConfirmada.fecha}
-      
-      ============================================
-                        PRODUCTOS
-      ============================================
-      ${this.ordenConfirmada.productos.map((p, i) => 
-        `${i+1}. ${p.nombre}
-           Cantidad: ${p.cantidad} x ${p.precio.toFixed(2)} MXN
-           Subtotal: ${(p.precio * p.cantidad).toFixed(2)} MXN
-           Categoría: ${p.categoria}
-           Artesano: ${p.artesano}
-           `
-      ).join('\n')}
-      
-      ============================================
-                         TOTALES
-      ============================================
-      Subtotal: ${this.ordenConfirmada.subtotal.toFixed(2)} MXN
-      Envío: ${this.ordenConfirmada.envioCosto.toFixed(2)} MXN
-      Descuento: -${this.ordenConfirmada.descuento.toFixed(2)} MXN
-      --------------------------------------------
-      TOTAL: ${this.ordenConfirmada.total.toFixed(2)} MXN
-      
-      ============================================
-                    DATOS DE ENVÍO
-      ============================================
-      Nombre: ${this.ordenConfirmada.envio.nombre}
-      Email: ${this.ordenConfirmada.envio.email}
-      Teléfono: ${this.ordenConfirmada.envio.telefono}
-      Dirección: ${this.ordenConfirmada.envio.direccion}
-      Ciudad: ${this.ordenConfirmada.envio.ciudad}
-      Código Postal: ${this.ordenConfirmada.envio.codigoPostal}
-      País: ${this.ordenConfirmada.envio.pais}
-      
-      ============================================
-                    MÉTODO DE PAGO
-      ============================================
-      Método: ${this.ordenConfirmada.pago.metodo}
-      ${this.ordenConfirmada.pago.metodo === 'tarjeta' ? 
-        `Tarjeta terminada en: ****${this.ordenConfirmada.pago.numeroTarjeta?.slice(-4)}` : 
-        ''}
-      
-      ============================================
-                ¡GRACIAS POR TU COMPRA!
-      ============================================
-      
-      Este es un comprobante simulado para fines de demostración.
-    `;
-    
-    const blob = new Blob([factura], { type: 'text/plain;charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `factura-${this.ordenConfirmada.id}.txt`;
-    link.click();
-    window.URL.revokeObjectURL(url);
-    
-    alert('Factura descargada exitosamente');
+  /**
+   * Renderizar botón de PayPal
+   */
+  private renderizarBotonPayPal(): void {
+    const container = document.getElementById('paypal-button-container');
+    if (!container) {
+      console.error('❌ Contenedor de PayPal no encontrado');
+      return;
+    }
+
+    // Limpiar contenedor
+    container.innerHTML = '';
+
+    if (typeof paypal === 'undefined') {
+      console.error('❌ SDK de PayPal no cargado');
+      this.mostrarNotificacion('Error al cargar PayPal. Recarga la página.');
+      return;
+    }
+
+    paypal
+      .Buttons({
+        style: {
+          layout: 'vertical',
+          color: 'gold',
+          shape: 'rect',
+          label: 'paypal',
+          height: 50,
+        },
+
+        // Crear orden
+        createOrder: () => {
+          if (!this.validarDatosEnvio()) {
+            return Promise.reject('Datos de envío inválidos');
+          }
+
+          this.procesandoPago = true;
+
+          const createOrderDto: CreateOrderDto = {
+            shippingDetails: this.datosEnvio,
+            codigoCupon: this.carrito?.codigoCupon ?? undefined,
+          };
+
+          return this.ordersService
+            .createOrder(createOrderDto)
+            .toPromise()
+            .then((response) => {
+              if (response && response.success) {
+                this.ordenCreada = response.order;
+                console.log('✅ Orden creada:', this.ordenCreada);
+                this.procesandoPago = false;
+                return response.paypal.orderId;
+              }
+              throw new Error('Error al crear orden');
+            })
+            .catch((error) => {
+              console.error('❌ Error:', error);
+              this.mostrarNotificacion(error.error?.message || 'Error al crear orden');
+              this.procesandoPago = false;
+              throw error;
+            });
+        },
+
+        // Aprobar pago
+        onApprove: (data: any) => {
+          console.log('✅ Pago aprobado:', data);
+          this.procesandoPago = true;
+
+          return this.ordersService
+            .capturePayment(data.orderID)
+            .toPromise()
+            .then((response) => {
+              if (response && response.success) {
+                console.log('✅ Pago capturado:', response);
+                this.ordenConfirmada = response.order;
+                this.pasoActual = 3; // Ir a confirmación
+                this.procesandoPago = false;
+                this.cdr.detectChanges();
+                this.mostrarNotificacion('¡Pago procesado exitosamente!');
+                localStorage.removeItem('checkoutProgreso');
+              }
+            })
+            .catch((error) => {
+              console.error('❌ Error al capturar pago:', error);
+              this.mostrarNotificacion('Error al procesar el pago');
+              this.procesandoPago = false;
+            });
+        },
+
+        // Cancelar pago
+        onCancel: () => {
+          console.log('⚠️ Pago cancelado por el usuario');
+          this.mostrarNotificacion('Pago cancelado');
+          this.procesandoPago = false;
+        },
+
+        // Error en pago
+        onError: (err: any) => {
+          console.error('❌ Error en PayPal:', err);
+          this.mostrarNotificacion('Error al procesar el pago con PayPal');
+          this.procesandoPago = false;
+        },
+      })
+      .render('#paypal-button-container');
+
+    console.log('✅ Botón de PayPal renderizado');
   }
 
-  // 🟦 Guardar datos en localStorage
+  /**
+   * Procesar retorno de PayPal (cuando usuario aprueba)
+   */
+  private procesarRetornoPayPal(): void {
+    console.log('🔄 Procesando retorno de PayPal:', this.paypalOrderId);
+    this.procesandoPago = true;
+
+    this.ordersService
+      .capturePayment(this.paypalOrderId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.ordenConfirmada = response.order;
+            this.pasoActual = 3;
+            this.procesandoPago = false;
+            this.cdr.detectChanges();
+            this.mostrarNotificacion('¡Pago procesado exitosamente!');
+            localStorage.removeItem('checkoutProgreso');
+
+            // Limpiar URL
+            this.router.navigate([], {
+              queryParams: {},
+              replaceUrl: true,
+            });
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error:', error);
+          this.mostrarNotificacion('Error al procesar el pago');
+          this.procesandoPago = false;
+          this.pasoActual = 2;
+        },
+      });
+  }
+
+  // ==================== GUARDAR/CARGAR DATOS ====================
   private guardarDatos(): void {
-    // Guardar carrito
-    localStorage.setItem('carritoCompras', JSON.stringify(this.carrito));
-    
-    // Guardar progreso del checkout
     const progreso = {
       pasoActual: this.pasoActual,
       datosEnvio: this.datosEnvio,
-      datosPago: this.datosPago,
-      cuponAplicado: this.cuponAplicado,
-      codigoCupon: this.codigoCupon,
-      descuento: this.descuento
     };
     localStorage.setItem('checkoutProgreso', JSON.stringify(progreso));
   }
 
-  // 🟦 Cargar datos guardados
   private cargarDatosGuardados(): void {
-    // Cargar carrito
-    const carritoGuardado = localStorage.getItem('carritoCompras');
-    if (carritoGuardado) {
-      try {
-        this.carrito = JSON.parse(carritoGuardado);
-      } catch (e) {
-        console.error('Error al cargar carrito:', e);
-      }
-    }
-    
-    // Cargar progreso del checkout
     const progresoGuardado = localStorage.getItem('checkoutProgreso');
     if (progresoGuardado) {
       try {
         const progreso = JSON.parse(progresoGuardado);
         this.pasoActual = progreso.pasoActual || 0;
         this.datosEnvio = progreso.datosEnvio || this.datosEnvio;
-        this.datosPago = progreso.datosPago || this.datosPago;
-        this.cuponAplicado = progreso.cuponAplicado || false;
-        this.codigoCupon = progreso.codigoCupon || '';
-        this.descuento = progreso.descuento || 0;
       } catch (e) {
         console.error('Error al cargar progreso:', e);
       }
     }
   }
 
-  // 🟦 Reiniciar compra
+  // ==================== UTILIDADES UI ====================
   reiniciarCompra(): void {
     if (confirm('¿Deseas comenzar una nueva compra?')) {
       this.pasoActual = 0;
@@ -505,50 +602,56 @@ export class CarritoComponent {
         telefono: '',
         direccion: '',
         ciudad: '',
+        estado: '',
         codigoPostal: '',
-        pais: 'México'
+        pais: 'México',
       };
-      this.datosPago = { metodo: 'tarjeta' };
       this.ordenConfirmada = null;
+      this.ordenCreada = null;
       localStorage.removeItem('checkoutProgreso');
+      this.router.navigate(['/marketplace']);
     }
   }
 
-  // 🟦 Formatear número de tarjeta para mostrar
-  formatearNumeroTarjeta(): string {
-    if (!this.datosPago.numeroTarjeta) return '';
-    const numero = this.datosPago.numeroTarjeta.replace(/\s/g, '');
-    if (numero.length <= 4) return numero;
-    return '**** **** **** ' + numero.slice(-4);
-  }
-
-  // 🟦 Verificar si se puede avanzar al siguiente paso
-  puedeAvanzar(): boolean {
-    switch (this.pasoActual) {
-      case 0: // Carrito
-        return this.carrito.length > 0;
-      case 1: // Datos
-        return this.validarDatosEnvio();
-      case 2: // Pago
-        return this.validarDatosPago();
-      default:
-        return false;
-    }
-  }
-
-  // 🟦 Obtener texto del paso actual
   getTextoPasoActual(): string {
     const textos = [
       'Revisión del carrito',
       'Datos de envío',
       'Método de pago',
-      'Confirmación de compra'
+      'Confirmación de compra',
     ];
     return textos[this.pasoActual] || '';
   }
 
-  // 🟦 Obtener porcentaje de progreso
   getPorcentajeProgreso(): number {
     return ((this.pasoActual + 1) / this.pasosCheckout.length) * 100;
+  }
+
+  mostrarNotificacion(mensaje: string): void {
+    const notification = document.createElement('div');
+    notification.textContent = mensaje;
+
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #9D2235;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      z-index: 10000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      animation: slideIn 0.3s ease;
+      max-width: 300px;
+      font-weight: 500;
+      font-family: 'Montserrat', sans-serif;
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
   }
 }

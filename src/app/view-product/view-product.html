@@ -1,84 +1,130 @@
 <div class="product-container">
-    <div class="product-main">
+  <!-- ✨ LOADING STATE -->
+  <div class="loading-container" *ngIf="cargando">
+    <div class="spinner"></div>
+    <p>Cargando producto...</p>
+  </div>
+
+  <!-- ❌ PRODUCTO NO ENCONTRADO -->
+  <div class="not-found-container" *ngIf="productoNoEncontrado && !cargando">
+    <div class="not-found-icon">
+      <i class="material-icons">sentiment_dissatisfied</i>
+    </div>
+    <h2>Producto no encontrado</h2>
+    <p>Lo sentimos, el producto que buscas no existe o ya no está disponible.</p>
+    <button class="btn-back" routerLink="/marketplace">
+      <i class="material-icons">arrow_back</i>
+      Volver al marketplace
+    </button>
+  </div>
+
+  <!-- ✅ CONTENIDO DEL PRODUCTO -->
+  <div class="product-main" *ngIf="producto && !cargando">
     <!-- GALERÍA -->
-        <div class="product-gallery">
-            <div class="main-img-container" [class.zoomed]="imagenZoomed" (click)="!imagenZoomed && abrirZoom()">
-                <img 
-                    [src]="imagenPrincipal" 
-                    class="main-img" 
-                    alt="Imagen principal del producto"
-                    (load)="onImageLoad()"
-                />
-            <!-- Indicador de zoom solo fuera del modo zoom -->
-                <div class="zoom-indicator" *ngIf="!imagenZoomed && producto.imagenes.length > 1">
-                    <i class="material-icons icon-md">search</i>
-                    Click para zoom
-                </div>
-            <!-- FLECHAS SIEMPRE VISIBLES (si hay más de 1 foto) -->
-            <button 
-                class="nav-arrow prev" 
-                (click)="anteriorImagen($event)"
-                *ngIf="producto.imagenes.length > 1"
-            >
-                <i class="material-icons">chevron_left</i>
-            </button>
-            <button 
-                class="nav-arrow next" 
-                (click)="siguienteImagen($event)"
-                *ngIf="producto.imagenes.length > 1"
-            >
-                <i class="material-icons">chevron_right</i>
-            </button>
-            <!-- Controles de cierre solo en zoom -->
+    <div class="product-gallery">
+      <div
+        class="main-img-container"
+        [class.zoomed]="imagenZoomed"
+        (click)="!imagenZoomed && abrirZoom()"
+      >
+        <img
+          [src]="imagenPrincipal"
+          class="main-img"
+          alt="Imagen principal del producto"
+          (load)="onImageLoad()"
+        />
+
+        <!-- Indicador de zoom solo fuera del modo zoom -->
+        <div class="zoom-indicator" *ngIf="!imagenZoomed && producto.images.length > 1">
+          <i class="material-icons icon-md">search</i>
+          Click para zoom
+        </div>
+
+        <!-- FLECHAS SIEMPRE VISIBLES (si hay más de 1 foto) -->
+        <button
+          class="nav-arrow prev"
+          (click)="anteriorImagen($event)"
+          *ngIf="producto.images.length > 1"
+        >
+          <i class="material-icons">chevron_left</i>
+        </button>
+        <button
+          class="nav-arrow next"
+          (click)="siguienteImagen($event)"
+          *ngIf="producto.images.length > 1"
+        >
+          <i class="material-icons">chevron_right</i>
+        </button>
+
+        <!-- Controles de cierre solo en zoom -->
         <div class="zoom-controls" *ngIf="imagenZoomed">
-            <button class="zoom-btn" (click)="cerrarZoom($event)">
+          <button class="zoom-btn" (click)="cerrarZoom($event)">
             <i class="material-icons">close</i>
             Cerrar
-            </button>
+          </button>
         </div>
-    </div>
+      </div>
 
-  <!-- Miniaturas (solo si hay más de 1 imagen) -->
-  <div class="thumbs" *ngIf="producto.imagenes.length > 1">
-    <img 
-      *ngFor="let img of producto.imagenes; let i = index" 
-      [src]="img" 
-      class="thumb" 
-      [class.active]="i === indiceActual"
-      (click)="cambiarImagenDirecta(i)"
-      alt="Miniatura {{ i + 1 }}"
-    />
-  </div>
-</div>
+      <!-- Miniaturas (solo si hay más de 1 imagen) -->
+      <div class="thumbs" *ngIf="producto.images.length > 1">
+        <img
+          *ngFor="let img of producto.images; let i = index"
+          [src]="img.imageUrl"
+          class="thumb"
+          [class.active]="i === indiceActual"
+          (click)="cambiarImagenDirecta(i)"
+          alt="Miniatura {{ i + 1 }}"
+        />
+      </div>
+    </div>
 
     <!-- INFORMACIÓN -->
     <div class="product-info">
-      <h1 class="product-name">{{ producto.nombre }}</h1>
+      <h1 class="product-name">{{ producto.titulo }}</h1>
 
       <!-- Calificación -->
       <div class="product-rating">
         <div class="stars-container">
-          <span 
-            *ngFor="let star of [1,2,3,4,5]; let i = index" 
+          <span
+            *ngFor="let star of [1, 2, 3, 4, 5]; let i = index"
             class="star"
             [class.active]="i < (hoverCalificacion || calificacionUsuario)"
             (click)="calificar(i + 1)"
             (mouseover)="hoverCalificacion = i + 1"
-            (mouseleave)="hoverCalificacion = 0">
+            (mouseleave)="hoverCalificacion = 0"
+          >
             <i class="material-icons icon-md">star</i>
           </span>
         </div>
-        <span class="rating-count">({{ producto.resenas?.length || 124 }} reseñas)</span>
+        <span class="rating-count">({{ producto.vistas || 0 }} vistas)</span>
         <span *ngIf="calificacionUsuario > 0" class="user-rating">
           Tu calificación: {{ calificacionUsuario }}
           <i class="material-icons icon-mexican-gold">star</i>
         </span>
       </div>
 
-      <p class="product-price">${{ producto.precio | number:'1.0-0' }} MXN</p>
+      <!-- Precio -->
+      <p class="product-price">
+        ${{ producto.precio | number: '1.0-0' }} MXN / {{ producto.unidad }}
+      </p>
 
+      <!-- Descripción -->
       <p class="product-description">{{ producto.descripcion }}</p>
 
+      <!-- Categoría -->
+      <div class="product-category">
+        <i class="material-icons">{{ producto.category.icono }}</i>
+        <span>{{ producto.category.nombre }}</span>
+      </div>
+
+      <!-- Ubicación -->
+      <div class="product-location-box">
+        <h3><i class="material-icons icon-mexican-brown">location_on</i> Ubicación</h3>
+        <p>{{ producto.colonia }}, {{ producto.municipio }}</p>
+        <p>{{ producto.estado }}, México - CP {{ producto.codigoPostal }}</p>
+      </div>
+
+      <!-- Stock -->
       <div class="product-stock" [class.low-stock]="producto.stock < 10">
         Stock disponible: <strong>{{ producto.stock }}</strong>
         <span *ngIf="producto.stock < 10" class="stock-warning">
@@ -94,11 +140,11 @@
           <button class="qty-btn" (click)="disminuir()" [disabled]="cantidad <= 1">
             <i class="material-icons">remove</i>
           </button>
-          <input 
-            type="number" 
-            min="1" 
-            [max]="producto.stock" 
-            [(ngModel)]="cantidad" 
+          <input
+            type="number"
+            min="1"
+            [max]="producto.stock"
+            [(ngModel)]="cantidad"
             class="qty-input"
           />
           <button class="qty-btn" (click)="aumentar()" [disabled]="cantidad >= producto.stock">
@@ -109,58 +155,77 @@
 
       <!-- Acciones principales -->
       <div class="actions">
-        <button class="btn-buy btn-glow-effect" (click)="comprarAhora()">
-            <i class="material-icons icon-mexican-gold">shopping_bag</i>
-            Comprar ahora
+        <button
+          class="btn-buy btn-glow-effect"
+          (click)="comprarAhora()"
+          [disabled]="producto.stock === 0"
+        >
+          <i class="material-icons icon-mexican-gold">shopping_bag</i>
+          Comprar ahora
         </button>
 
-        <button class="btn-add btn-glow-effect" (click)="agregarAlCarrito()">
-            <i class="material-icons">add_shopping_cart</i>
-            Agregar al carrito
+        <button
+          class="btn-add btn-glow-effect"
+          (click)="agregarAlCarrito()"
+          [disabled]="producto.stock === 0"
+        >
+          <i class="material-icons">add_shopping_cart</i>
+          Agregar al carrito
         </button>
 
         <button class="btn-share btn-glow-effect btn-glow-subtle" (click)="compartir()">
-            <i class="material-icons">share</i>
-            Compartir
+          <i class="material-icons">share</i>
+          Compartir
         </button>
-    </div>
+      </div>
 
-    <!-- Envío -->
-    <div class="shipping-box">
+      <!-- Envío -->
+      <div class="shipping-box">
         <h3><i class="material-icons icon-mexican-green">local_shipping</i> Envío</h3>
         <p><i class="material-icons">package</i> Llegada estimada: <strong>2 - 5 días</strong></p>
-        <p><i class="material-icons icon-mexican-brown">directions_car</i> Costo estimado: <strong>$79 MXN</strong></p>
+        <p>
+          <i class="material-icons icon-mexican-brown">directions_car</i> Costo estimado:
+          <strong>$79 MXN</strong>
+        </p>
         <p><i class="material-icons">autorenew</i> Devoluciones: <strong>30 días</strong></p>
-    </div>
+      </div>
 
       <!-- Vendedor -->
       <div class="seller-box">
         <h3><i class="material-icons icon-mexican-brown">store</i> Vendedor</h3>
-        <p><strong>Artesanos de México</strong></p>
-        <p class="seller-desc">Productos 100% hechos a mano por artesanos.</p>
-        <div class="seller-rating">
-          <i class="material-icons icon-mexican-gold">star</i>
-          <i class="material-icons icon-mexican-gold">star</i>
-          <i class="material-icons icon-mexican-gold">star</i>
-          <i class="material-icons icon-mexican-gold">star</i>
-          <i class="material-icons icon-mexican-gold">star</i>
-          (4.8/5.0)
+        <p>
+          <strong>{{ producto.seller.fullName }}</strong>
+        </p>
+        <p class="seller-desc">{{ producto.seller.email }}</p>
+        <div class="seller-stats">
+          <span class="stat-badge">
+            <i class="material-icons">visibility</i>
+            {{ producto.vistas || 0 }} vistas
+          </span>
+          <span class="stat-badge" *ngIf="producto.ventas > 0">
+            <i class="material-icons">shopping_bag</i>
+            {{ producto.ventas }} vendidos
+          </span>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Productos relacionados -->
-  <div class="related-section">
+  <div class="related-section" *ngIf="productosRelacionados.length > 0 && !cargando">
     <h2>Productos relacionados</h2>
     <div class="related-grid">
       <div class="related-card" *ngFor="let prod of productosRelacionados">
-        <img [src]="prod.imagen" [alt]="prod.nombre" />
-        <h4>{{ prod.nombre }}</h4>
-        <p>${{ prod.precio | number:'1.0-0' }} MXN</p>
+        <img
+          [src]="getImagenProducto(prod)"
+          [alt]="prod.titulo"
+          (error)="$any($event.target).src = 'assets/images/placeholder-artesania.jpg'"
+        />
+        <h4>{{ prod.titulo }}</h4>
+        <p>${{ prod.precio | number: '1.0-0' }} MXN</p>
         <button class="btn-details btn-glow-effect btn-glow-subtle" (click)="verProducto(prod.id)">
-            <i class="material-icons">visibility</i>
-            Ver producto
+          <i class="material-icons">visibility</i>
+          Ver producto
         </button>
       </div>
     </div>

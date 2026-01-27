@@ -11,11 +11,11 @@
   background: linear-gradient(145deg, #ffffff 0%, #f8f6f4 100%);
   border-bottom: 3px solid rgba(212, 175, 55, 0.2);
   box-shadow: 0 4px 20px rgba(122, 26, 44, 0.08);
-  
+
   .hero-pattern {
     position: absolute;
     inset: 0;
-    background: 
+    background:
       repeating-linear-gradient(
         45deg,
         transparent,
@@ -23,18 +23,10 @@
         rgba(212, 175, 55, 0.02) 10px,
         rgba(212, 175, 55, 0.02) 20px
       ),
-      radial-gradient(
-        circle at 20% 80%,
-        rgba(122, 26, 44, 0.03) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        circle at 80% 20%,
-        rgba(212, 175, 55, 0.03) 0%,
-        transparent 50%
-      );
+      radial-gradient(circle at 20% 80%, rgba(122, 26, 44, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
   }
-  
+
   .hero-checkout-flow {
     position: relative;
     z-index: 2;
@@ -49,16 +41,16 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   margin-bottom: 2.5rem;
-  
+
   @include mixins.respond-to(md) {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.8rem;
   }
-  
+
   @include mixins.respond-to(xs) {
     grid-template-columns: 1fr;
   }
-  
+
   .step {
     position: relative;
     display: flex;
@@ -69,7 +61,7 @@
     border: 2px solid rgba(139, 69, 19, 0.1);
     border-radius: 16px;
     transition: all vars.$transition-normal;
-    
+
     &:not(:last-child)::after {
       content: '';
       position: absolute;
@@ -79,12 +71,12 @@
       width: 1.5rem;
       height: 2px;
       background: rgba(139, 69, 19, 0.15);
-      
+
       @include mixins.respond-to(md) {
         display: none;
       }
     }
-    
+
     /* PASO INACTIVO - FONDO BLANCO, COLORES CAFÉ */
     .step-number {
       width: 40px;
@@ -100,12 +92,12 @@
       flex-shrink: 0;
       transition: all vars.$transition-normal;
     }
-    
+
     .step-content {
       display: flex;
       align-items: center;
       gap: 0.8rem;
-      
+
       .step-icon {
         width: 46px;
         height: 46px;
@@ -114,77 +106,77 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        
+
         .material-icons {
           color: #8b4513;
           font-size: 1.5rem;
         }
       }
-      
+
       .step-label {
         color: #8b4513;
         font-weight: typo.$font-weight-semibold;
         font-size: 0.95rem;
         white-space: nowrap;
-        
+
         @include mixins.respond-to(xs) {
           font-size: 0.9rem;
         }
       }
     }
-    
+
     /* HOVER EN PASOS INACTIVOS */
     &:hover:not(.active) {
       border-color: rgba(212, 175, 55, 0.3);
       transform: translateY(-2px);
       box-shadow: 0 4px 16px rgba(212, 175, 55, 0.1);
-      
+
       .step-number {
         background: rgba(212, 175, 55, 0.2);
-        color: #7A1A2C;
+        color: #7a1a2c;
       }
-      
+
       .step-icon {
         background: rgba(212, 175, 55, 0.1);
-        
+
         .material-icons {
-          color: #D4AF37;
+          color: #d4af37;
         }
       }
     }
-    
+
     /* PASO ACTIVO - FONDO DORADO CLARO, COLORES VINO */
     &.active {
       background: rgba(212, 175, 55, 0.1);
-      border: 2px solid #D4AF37;
+      border: 2px solid #d4af37;
       box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
-      
+
       .step-number {
-        background: #7A1A2C;
+        background: #7a1a2c;
         color: colors.$color-white;
         font-weight: typo.$font-weight-extrabold;
         box-shadow: 0 4px 8px rgba(122, 26, 44, 0.3);
       }
-      
+
       .step-icon {
         background: colors.$color-white;
-        border: 1px solid #D4AF37;
+        border: 1px solid #d4af37;
         box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
-        
+
         .material-icons {
-          color: #7A1A2C;
+          color: #7a1a2c;
           font-size: 1.6rem;
         }
       }
-      
+
       .step-label {
-        color: #7A1A2C;
+        color: #7a1a2c;
         font-weight: typo.$font-weight-bold;
         font-size: 1rem;
       }
-      
+
       &:not(:last-child)::after {
-        background: #D4AF37;
+        background: #d4af37;
       }
     }
   }
@@ -193,18 +185,18 @@
 /* ===== RESUMEN DEL CHECKOUT ===== */
 .checkout-summary {
   margin-bottom: 2rem;
-  
+
   .summary-card {
     background: linear-gradient(145deg, #ffffff, #faf7f3);
     border-radius: 20px;
     padding: 2.5rem;
     border: 2px solid rgba(212, 175, 55, 0.15);
-    box-shadow: 
+    box-shadow:
       0 8px 30px rgba(122, 26, 44, 0.12),
       inset 0 1px 0 rgba(255, 255, 255, 0.8);
     position: relative;
     overflow: hidden;
-    
+
     &::before {
       content: '';
       position: absolute;
@@ -212,10 +204,10 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, #7A1A2C, #D4AF37);
+      background: linear-gradient(90deg, #7a1a2c, #d4af37);
       border-radius: 20px 20px 0 0;
     }
-    
+
     &::after {
       content: '🛍️';
       position: absolute;
@@ -226,36 +218,36 @@
       z-index: 1;
     }
   }
-  
+
   .summary-header {
     margin-bottom: 2rem;
-    
+
     .summary-title {
       display: flex;
       align-items: center;
       gap: 1rem;
-      color: #7A1A2C;
+      color: #7a1a2c;
       font-size: 1.8rem;
       font-weight: typo.$font-weight-extrabold;
       margin: 0;
-      
+
       .material-icons {
-        color: #D4AF37;
+        color: #d4af37;
         font-size: 2.2rem;
       }
     }
   }
-  
+
   .summary-details {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     margin-bottom: 2.5rem;
-    
+
     @include mixins.respond-to(sm) {
       grid-template-columns: 1fr;
     }
-    
+
     .detail-item {
       padding: 1.2rem;
       background: rgba(255, 255, 255, 0.6);
@@ -265,25 +257,25 @@
       justify-content: space-between;
       align-items: center;
       transition: all vars.$transition-normal;
-      
+
       &:hover {
         background: rgba(255, 255, 255, 0.9);
         border-color: rgba(212, 175, 55, 0.3);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
       }
-      
+
       &.total {
         grid-column: 1 / -1;
         background: linear-gradient(135deg, rgba(122, 26, 44, 0.05), rgba(212, 175, 55, 0.05));
         border: 2px solid rgba(212, 175, 55, 0.2);
         padding: 1.5rem;
-        
+
         .detail-label .material-icons {
-          color: #D4AF37;
+          color: #d4af37;
         }
       }
-      
+
       .detail-label {
         display: flex;
         align-items: center;
@@ -291,57 +283,57 @@
         color: rgba(26, 26, 26, 0.8);
         font-weight: typo.$font-weight-semibold;
         font-size: 0.95rem;
-        
+
         .material-icons {
           color: #8b4513;
           font-size: 1.2rem;
         }
       }
-      
+
       .detail-value {
         font-weight: typo.$font-weight-bold;
-        color: #7A1A2C;
+        color: #7a1a2c;
         font-size: 1.1rem;
-        
+
         &.highlight {
-          color: #D4AF37;
+          color: #d4af37;
           font-size: 1.2rem;
         }
-        
+
         &.free {
           color: #4caf50;
           display: flex;
           align-items: center;
           gap: 0.5rem;
           font-weight: typo.$font-weight-extrabold;
-          
+
           .material-icons {
             color: #4caf50;
             font-size: 1.1rem;
           }
         }
       }
-      
+
       .total-amount {
         font-size: 2rem;
         font-weight: typo.$font-weight-extrabold;
-        color: #7A1A2C;
-        background: linear-gradient(135deg, #7A1A2C, #D4AF37);
+        color: #7a1a2c;
+        background: linear-gradient(135deg, #7a1a2c, #d4af37);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
     }
   }
-  
+
   .summary-actions {
     display: flex;
     gap: 1rem;
-    
+
     @include mixins.respond-to(xs) {
       flex-direction: column;
     }
-    
+
     .btn-quick-checkout {
       @include mixins.btn-primary;
       flex: 2;
@@ -352,24 +344,24 @@
       justify-content: center;
       gap: 0.8rem;
       border-radius: 14px;
-      
+
       &:hover:not(:disabled) {
         transform: translateY(-3px);
-        box-shadow: 
+        box-shadow:
           0 10px 30px rgba(212, 175, 55, 0.6),
           0 0 20px rgba(212, 175, 55, 0.3);
       }
-      
+
       &:disabled {
         opacity: 0.6;
         cursor: not-allowed;
       }
-      
+
       .material-icons {
         font-size: 1.4rem;
       }
     }
-    
+
     .btn-continue {
       @include mixins.btn-outline;
       flex: 1;
@@ -380,14 +372,14 @@
       gap: 0.8rem;
       border-radius: 14px;
       border-color: rgba(122, 26, 44, 0.3);
-      color: #7A1A2C;
-      
+      color: #7a1a2c;
+
       &:hover {
         background: rgba(122, 26, 44, 0.05);
-        border-color: #7A1A2C;
+        border-color: #7a1a2c;
         transform: translateY(-2px);
       }
-      
+
       .material-icons {
         font-size: 1.3rem;
       }
@@ -399,21 +391,21 @@
 .progress-indicator {
   max-width: 800px;
   margin: 2rem auto 0;
-  
+
   .progress-bar {
     height: 6px;
     background: rgba(139, 69, 19, 0.1);
     border-radius: 3px;
     overflow: hidden;
     margin-bottom: 0.8rem;
-    
+
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #7A1A2C, #D4AF37);
+      background: linear-gradient(90deg, #7a1a2c, #d4af37);
       border-radius: 3px;
       transition: width 0.6s ease;
       position: relative;
-      
+
       &::after {
         content: '';
         position: absolute;
@@ -421,23 +413,18 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 255, 255, 0.4),
-          transparent
-        );
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
         animation: shimmer 2s infinite;
       }
     }
   }
-  
+
   .progress-text {
     text-align: center;
     color: rgba(26, 26, 26, 0.7);
     font-size: 0.9rem;
     font-weight: typo.$font-weight-medium;
-    
+
     @include mixins.respond-to(xs) {
       font-size: 0.85rem;
     }
@@ -445,14 +432,18 @@
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* ===== CONTENIDO PRINCIPAL (se mantiene igual, solo cambia el padding) ===== */
 .carrito-content {
   padding: 2rem 1rem 4rem; // Reducido el padding superior
-  
+
   .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -463,7 +454,7 @@
 .carrito-content {
   padding: 4rem 1rem;
   background: colors.$color-white;
-  
+
   .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -475,7 +466,7 @@
   grid-template-columns: 1fr 400px;
   gap: vars.$spacing-xl;
   align-items: start;
-  
+
   @include mixins.respond-to(md) {
     grid-template-columns: 1fr;
   }
@@ -488,14 +479,14 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-    
+
     .section-title {
       font-size: typo.$font-size-2xl;
-      color: #7A1A2C;
+      color: #7a1a2c;
       font-weight: typo.$font-weight-extrabold;
       margin: 0;
     }
-    
+
     .btn-vaciar {
       @include mixins.btn-outline;
       background: rgba(244, 67, 54, 0.1);
@@ -505,12 +496,12 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.7rem 1.5rem;
-      
+
       &:hover {
         background: rgba(244, 67, 54, 0.2);
         border-color: #f44336;
       }
-      
+
       .material-icons {
         font-size: 1.2rem;
       }
@@ -534,13 +525,13 @@
   gap: 1.5rem;
   align-items: start;
   transition: all vars.$transition-normal;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: vars.$shadow-lg;
     border-color: rgba(212, 175, 55, 0.3);
   }
-  
+
   @include mixins.respond-to(sm) {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -553,23 +544,23 @@
   border-radius: 12px;
   overflow: hidden;
   position: relative;
-  
+
   @include mixins.respond-to(sm) {
     width: 100%;
     height: 200px;
   }
-  
+
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  
+
   .producto-badges {
     position: absolute;
     top: 0.5rem;
     left: 0.5rem;
-    
+
     .badge-categoria {
       padding: 0.3rem 0.8rem;
       background: rgba(122, 26, 44, 0.9);
@@ -589,16 +580,16 @@
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 0.8rem;
-    
+
     .producto-nombre {
       font-size: 1.3rem;
       font-weight: typo.$font-weight-bold;
-      color: #7A1A2C;
+      color: #7a1a2c;
       margin: 0;
       line-height: 1.3;
       flex: 1;
     }
-    
+
     .btn-eliminar {
       background: transparent;
       border: none;
@@ -607,19 +598,19 @@
       padding: 0.5rem;
       border-radius: 50%;
       transition: all vars.$transition-normal;
-      
+
       &:hover {
         background: rgba(244, 67, 54, 0.1);
         color: #f44336;
         transform: scale(1.1);
       }
-      
+
       .material-icons {
         font-size: 1.2rem;
       }
     }
   }
-  
+
   .producto-desc {
     color: rgba(26, 26, 26, 0.6);
     margin: 0 0 1rem 0;
@@ -630,7 +621,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
+
   .producto-artesano {
     display: flex;
     align-items: center;
@@ -638,31 +629,31 @@
     margin-bottom: 1rem;
     font-size: 0.9rem;
     color: rgba(26, 26, 26, 0.6);
-    
+
     .material-icons {
       color: #8b4513;
       font-size: 1rem;
     }
-    
+
     .artesano-nombre {
       font-weight: typo.$font-weight-semibold;
     }
   }
-  
+
   .producto-precio-unitario {
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
-    
+
     .precio-label {
       font-size: 0.9rem;
       color: rgba(26, 26, 26, 0.6);
     }
-    
+
     .precio-valor {
       font-size: 1.2rem;
       font-weight: typo.$font-weight-bold;
-      color: #D4AF37;
+      color: #d4af37;
     }
   }
 }
@@ -673,12 +664,12 @@
   align-items: flex-end;
   gap: 1.5rem;
   min-width: 180px;
-  
+
   @include mixins.respond-to(sm) {
     align-items: stretch;
     min-width: auto;
   }
-  
+
   .cantidad-controls {
     display: flex;
     align-items: center;
@@ -687,7 +678,7 @@
     border-radius: 12px;
     padding: 0.5rem;
     border: 1px solid rgba(212, 175, 55, 0.1);
-    
+
     .btn-cantidad {
       background: colors.$color-white;
       border: 1px solid rgba(139, 69, 19, 0.2);
@@ -699,43 +690,43 @@
       justify-content: center;
       cursor: pointer;
       transition: all vars.$transition-normal;
-      
+
       &:hover:not(:disabled) {
-        background: #7A1A2C;
-        border-color: #7A1A2C;
-        
+        background: #7a1a2c;
+        border-color: #7a1a2c;
+
         .material-icons {
           color: colors.$color-white;
         }
       }
-      
+
       &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-        
+
         .material-icons {
           color: rgba(26, 26, 26, 0.3);
         }
       }
-      
+
       .material-icons {
         color: #8b4513;
         font-size: 1.2rem;
       }
     }
-    
+
     .cantidad-display {
       display: flex;
       flex-direction: column;
       align-items: center;
-      
+
       .cantidad-numero {
         font-size: 1.5rem;
         font-weight: typo.$font-weight-extrabold;
-        color: #7A1A2C;
+        color: #7a1a2c;
         line-height: 1;
       }
-      
+
       .cantidad-texto {
         font-size: 0.7rem;
         color: rgba(26, 26, 26, 0.6);
@@ -744,26 +735,26 @@
       }
     }
   }
-  
+
   .producto-subtotal {
     text-align: right;
-    
+
     @include mixins.respond-to(sm) {
       text-align: center;
     }
-    
+
     .subtotal-label {
       display: block;
       font-size: 0.9rem;
       color: rgba(26, 26, 26, 0.6);
       margin-bottom: 0.3rem;
     }
-    
+
     .subtotal-valor {
       display: block;
       font-size: 1.6rem;
       font-weight: typo.$font-weight-extrabold;
-      color: #7A1A2C;
+      color: #7a1a2c;
     }
   }
 }
@@ -775,7 +766,7 @@
   gap: 1.5rem;
   position: sticky;
   top: 100px;
-  
+
   @include mixins.respond-to(md) {
     position: static;
   }
@@ -786,10 +777,10 @@
   border-radius: 16px;
   border: 1px solid rgba(139, 69, 19, 0.1);
   padding: 2rem;
-  
+
   .resumen-title {
     font-size: 1.5rem;
-    color: #7A1A2C;
+    color: #7a1a2c;
     font-weight: typo.$font-weight-extrabold;
     margin: 0 0 1.5rem 0;
     text-align: center;
@@ -798,50 +789,50 @@
 
 .resumen-detalles {
   margin-bottom: 2rem;
-  
+
   .detalle-linea {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.8rem 0;
     border-bottom: 1px solid rgba(139, 69, 19, 0.1);
-    
+
     &:last-child {
       border-bottom: none;
     }
-    
+
     .detalle-label {
       color: rgba(26, 26, 26, 0.8);
       font-weight: typo.$font-weight-semibold;
     }
-    
+
     .detalle-valor {
-      color: #7A1A2C;
+      color: #7a1a2c;
       font-weight: typo.$font-weight-bold;
       font-size: 1.1rem;
-      
+
       &.envio-gratis {
         color: #4caf50;
         display: flex;
         align-items: center;
         gap: 0.3rem;
-        
+
         .material-icons {
           font-size: 1rem;
         }
       }
     }
-    
+
     &.descuento {
       .detalle-label {
         color: #4caf50;
       }
-      
+
       .detalle-valor {
         color: #4caf50;
       }
     }
-    
+
     &.cupon {
       .cupon-texto {
         background: rgba(212, 175, 55, 0.1);
@@ -859,11 +850,11 @@
   margin-bottom: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(139, 69, 19, 0.1);
-  
+
   .cupon-input {
     display: flex;
     gap: 0.5rem;
-    
+
     .form-input {
       flex: 1;
       padding: 0.8rem 1rem;
@@ -872,18 +863,18 @@
       font-size: 0.95rem;
       color: colors.$color-gray-800;
       transition: all vars.$transition-normal;
-      
+
       &:focus {
         outline: none;
-        border-color: #7A1A2C;
+        border-color: #7a1a2c;
         box-shadow: 0 0 0 3px rgba(122, 26, 44, 0.1);
       }
-      
+
       &::placeholder {
         color: rgba(26, 26, 26, 0.5);
       }
     }
-    
+
     .btn-cupon {
       @include mixins.btn-secondary;
       padding: 0.8rem 1.5rem;
@@ -891,7 +882,7 @@
       align-items: center;
       gap: 0.5rem;
       white-space: nowrap;
-      
+
       .material-icons {
         font-size: 1.1rem;
       }
@@ -906,7 +897,7 @@
   text-align: center;
   margin-bottom: 2rem;
   border: 1px solid rgba(212, 175, 55, 0.2);
-  
+
   .total-label {
     font-size: 1rem;
     color: rgba(26, 26, 26, 0.7);
@@ -914,15 +905,15 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-  
+
   .total-valor {
     font-size: 2.5rem;
     font-weight: typo.$font-weight-extrabold;
-    color: #7A1A2C;
+    color: #7a1a2c;
     line-height: 1;
     margin-bottom: 0.5rem;
   }
-  
+
   .total-nota {
     font-size: 0.8rem;
     color: rgba(26, 26, 26, 0.6);
@@ -934,7 +925,7 @@
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 2rem;
-  
+
   .btn-comprar {
     @include mixins.btn-primary;
     padding: 1rem 2rem;
@@ -943,31 +934,31 @@
     align-items: center;
     justify-content: center;
     gap: 0.8rem;
-    
+
     &:hover {
       transform: translateY(-3px);
       box-shadow: 0 10px 30px rgba(212, 175, 55, 0.6);
     }
-    
+
     .material-icons {
       font-size: 1.3rem;
     }
   }
-  
+
   .btn-seguir {
     @include mixins.btn-outline;
-    color: #7A1A2C;
-    border-color: #7A1A2C;
+    color: #7a1a2c;
+    border-color: #7a1a2c;
     padding: 0.9rem 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.8rem;
-    
+
     &:hover {
       background: rgba(122, 26, 44, 0.05);
     }
-    
+
     .material-icons {
       font-size: 1.2rem;
     }
@@ -977,7 +968,7 @@
 .metodos-pago {
   padding-top: 1.5rem;
   border-top: 1px solid rgba(139, 69, 19, 0.1);
-  
+
   .metodos-title {
     font-size: 1rem;
     color: rgba(26, 26, 26, 0.8);
@@ -985,18 +976,18 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    
+
     .material-icons {
       color: #8b4513;
       font-size: 1.2rem;
     }
   }
-  
+
   .pago-icons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.8rem;
-    
+
     .pago-icon {
       display: flex;
       align-items: center;
@@ -1006,18 +997,18 @@
       border-radius: 8px;
       border: 1px solid rgba(139, 69, 19, 0.1);
       transition: all vars.$transition-normal;
-      
+
       &:hover {
         background: rgba(212, 175, 55, 0.05);
         border-color: rgba(212, 175, 55, 0.3);
         transform: translateY(-2px);
       }
-      
+
       .material-icons {
         color: #8b4513;
         font-size: 1.3rem;
       }
-      
+
       span {
         font-size: 0.85rem;
         color: rgba(26, 26, 26, 0.8);
@@ -1036,22 +1027,22 @@
   align-items: center;
   gap: 1rem;
   background: linear-gradient(135deg, rgba(122, 26, 44, 0.03), rgba(212, 175, 55, 0.03));
-  
+
   .info-icon {
     .material-icons {
       font-size: 2.5rem;
       color: #8b4513;
     }
   }
-  
+
   .info-content {
     h4 {
       font-size: 1.1rem;
-      color: #7A1A2C;
+      color: #7a1a2c;
       margin: 0 0 0.3rem 0;
       font-weight: typo.$font-weight-bold;
     }
-    
+
     p {
       color: rgba(26, 26, 26, 0.6);
       font-size: 0.9rem;
@@ -1064,78 +1055,78 @@
 .carrito-vacio {
   padding: 4rem 1rem;
   background: colors.$color-white;
-  
+
   .container {
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+
   .vacio-content {
     text-align: center;
     padding: 4rem 2rem;
     background: linear-gradient(135deg, rgba(122, 26, 44, 0.03), rgba(212, 175, 55, 0.03));
     border-radius: 16px;
     border: 1px solid rgba(139, 69, 19, 0.1);
-    
+
     .vacio-icon {
       margin-bottom: 1.5rem;
-      
+
       .material-icons {
         font-size: 4rem;
         color: #8b4513;
         opacity: 0.7;
       }
     }
-    
+
     .vacio-title {
-      color: #7A1A2C;
+      color: #7a1a2c;
       margin-bottom: 0.5rem;
       font-size: 1.8rem;
     }
-    
+
     .vacio-desc {
       color: rgba(26, 26, 26, 0.6);
       margin-bottom: 1.5rem;
       font-size: 1.1rem;
     }
   }
-  
+
   .vacio-actions {
     display: flex;
     gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
-    
+
     @include mixins.respond-to(xs) {
       flex-direction: column;
       align-items: center;
     }
-    
+
     .btn-explorar {
       @include mixins.btn-primary;
       display: flex;
       align-items: center;
       gap: 0.5rem;
       padding: 0.8rem 2rem;
-      
+
       .material-icons {
         font-size: 1.2rem;
       }
     }
-    
+
     .btn-ofertas {
       @include mixins.btn-outline;
-      color: #7A1A2C;
-      border-color: #7A1A2C;
+      color: #7a1a2c;
+      border-color: #7a1a2c;
       display: flex;
       align-items: center;
       gap: 0.5rem;
       padding: 0.8rem 2rem;
-      
+
       &:hover {
         background: rgba(122, 26, 44, 0.1);
       }
-      
+
       .material-icons {
         font-size: 1.2rem;
       }
@@ -1148,29 +1139,29 @@
   .carrito-hero {
     padding: 3rem 1rem 1.5rem;
     min-height: 35vh;
-    
+
     .hero-content {
       gap: 1.5rem;
     }
-    
+
     .hero-title {
       font-size: 2rem;
     }
-    
+
     .hero-stats {
       gap: 1.5rem;
     }
   }
-  
+
   .carrito-content {
     padding: 2rem 1rem;
   }
-  
+
   .carrito-layout {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .productos-columna .section-header {
     flex-direction: column;
     align-items: stretch;
@@ -1181,27 +1172,27 @@
 @include mixins.respond-to(sm) {
   .hero-title {
     font-size: 1.8rem;
-    
+
     .hero-line-2 {
       flex-direction: column;
       gap: 0.5rem;
     }
   }
-  
+
   .hero-stats {
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    
+
     .hero-stat .stat-number {
       font-size: 1.8rem;
     }
   }
-  
+
   .producto-card {
     padding: 1rem;
   }
-  
+
   .resumen-card {
     padding: 1.5rem;
   }
@@ -1211,7 +1202,7 @@
   .vacio-actions {
     flex-direction: column;
   }
-  
+
   .resumen-actions .btn-comprar,
   .resumen-actions .btn-seguir {
     width: 100%;
@@ -1220,7 +1211,11 @@
 
 /* ===== ANIMACIONES ===== */
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0) translateX(-50%);
   }
   40% {
@@ -1245,5 +1240,550 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+// src/app/carrito/carrito.scss - ESTILOS ADICIONALES PARA PASOS 1-3
+
+// ==================== PASO 1: DATOS DE ENVÍO ====================
+.datos-envio-content {
+  padding: 3rem 0;
+  min-height: 60vh;
+}
+
+.datos-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-columna {
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: #9d2235;
+    }
+  }
+}
+
+.envio-form {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+
+    i {
+      font-size: 1.2rem;
+      color: #9d2235;
+    }
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #9d2235;
+      box-shadow: 0 0 0 3px rgba(157, 34, 53, 0.1);
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+
+    &[readonly] {
+      background: #f5f5f5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  @media (max-width: 568px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f0f0f0;
+
+  button {
+    flex: 1;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    i {
+      font-size: 1.2rem;
+    }
+  }
+
+  .btn-volver {
+    background: #f0f0f0;
+    color: #2d3436;
+
+    &:hover {
+      background: #e0e0e0;
+      transform: translateY(-2px);
+    }
+  }
+
+  .btn-continuar {
+    background: linear-gradient(135deg, #9d2235 0%, #c41e3a 100%);
+    color: white;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(157, 34, 53, 0.3);
+    }
+  }
+}
+
+// ==================== PASO 2: PAGO PAYPAL ====================
+.pago-content {
+  padding: 3rem 0;
+  min-height: 60vh;
+}
+
+.pago-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pago-columna {
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 2rem;
+  }
+}
+
+.paypal-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.paypal-info {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  .paypal-logo {
+    margin-bottom: 1rem;
+
+    img {
+      height: 50px;
+      object-fit: contain;
+    }
+  }
+
+  .paypal-desc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #636e72;
+    font-size: 0.95rem;
+    line-height: 1.6;
+
+    i {
+      color: #00a86b;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.paypal-button-wrapper {
+  margin: 2rem 0;
+  min-height: 150px;
+}
+
+.pago-nota {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #636e72;
+  font-size: 0.9rem;
+  margin-top: 1.5rem;
+
+  i {
+    color: #9d2235;
+    font-size: 1.2rem;
+  }
+}
+
+.procesando-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.procesando-content {
+  text-align: center;
+
+  .loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f0f0f0;
+    border-top-color: #9d2235;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3436;
+  }
+}
+
+.pago-actions {
+  margin-top: 2rem;
+
+  .btn-volver {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    background: #f0f0f0;
+    color: #2d3436;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover:not(:disabled) {
+      background: #e0e0e0;
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ==================== PASO 3: CONFIRMACIÓN ====================
+.confirmacion-content {
+  padding: 4rem 0;
+  min-height: 60vh;
+}
+
+.confirmacion-success {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.success-icon {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 2rem;
+  background: linear-gradient(135deg, #00b894 0%, #00a86b 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 40px rgba(0, 184, 148, 0.3);
+  animation: scaleIn 0.5s ease;
+
+  i {
+    font-size: 4rem;
+    color: white;
+  }
+}
+
+.success-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #2d3436;
+  margin-bottom: 1rem;
+}
+
+.success-desc {
+  font-size: 1.1rem;
+  color: #636e72;
+  margin-bottom: 3rem;
+}
+
+.orden-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+
+  @media (max-width: 568px) {
+    grid-template-columns: 1fr;
+  }
+
+  .info-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    h3 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: #636e72;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      i {
+        color: #9d2235;
+      }
+    }
+
+    .orden-number,
+    .total-pagado {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #9d2235;
+    }
+  }
+}
+
+.confirmacion-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 500px;
+  margin: 0 auto;
+
+  button {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    i {
+      font-size: 1.2rem;
+    }
+  }
+
+  .btn-ver-orden {
+    background: linear-gradient(135deg, #9d2235 0%, #c41e3a 100%);
+    color: white;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(157, 34, 53, 0.3);
+    }
+  }
+
+  .btn-nueva-compra {
+    background: #f0f0f0;
+    color: #2d3436;
+
+    &:hover {
+      background: #e0e0e0;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// ==================== RESUMEN LATERAL ====================
+.resumen-lateral {
+  .resumen-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 100px;
+  }
+
+  .resumen-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+  }
+
+  .envio-info {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f0f0f0;
+
+    h4 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2d3436;
+      margin-bottom: 0.75rem;
+
+      i {
+        color: #9d2235;
+      }
+    }
+
+    p {
+      color: #636e72;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0.25rem 0;
+    }
+  }
+
+  .resumen-detalles {
+    .detalle-linea {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+      color: #636e72;
+
+      &.descuento {
+        color: #00b894;
+        font-weight: 600;
+      }
+    }
+
+    .resumen-total {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #f0f0f0;
+
+      .total-label {
+        font-size: 0.9rem;
+        color: #636e72;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .total-valor {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #9d2235;
+      }
+    }
+  }
+}
+
+// ==================== ANIMACIONES ====================
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ==================== PASOS MEJORADOS ====================
+.step {
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &.completed {
+    .step-icon i {
+      color: #00b894 !important;
+    }
+
+    .step-number {
+      background: #00b894;
+      color: white;
+    }
+  }
+
+  &:hover:not(.active) {
+    transform: translateY(-2px);
   }
 }

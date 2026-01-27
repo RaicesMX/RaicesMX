@@ -1,9 +1,10 @@
-// src/app/marketplace/marketplace.component.ts
+// src/app/marketplace/marketplace.component.ts - ACTUALIZADO
 import { Component, OnInit, ViewChild, ElementRef, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../service/auth.service';
 import { ProductsService, Product, ProductsResponse } from '../service/products.service';
+import { CartService } from '../service/cart.service';
 
 @Component({
   selector: 'app-marketplace',
@@ -17,6 +18,7 @@ export class MarketplaceComponent implements OnInit {
 
   private authService = inject(AuthService);
   private productsService = inject(ProductsService);
+  private cartService = inject(CartService);
   private cdr = inject(ChangeDetectorRef);
 
   // Productos
@@ -34,7 +36,7 @@ export class MarketplaceComponent implements OnInit {
   filtroActivo = '';
   mostrarCTAVendedor = true;
   usuarioAutenticado = false;
-  cartItems = 3;
+  cartItems = 0; // Cambiado a 0 inicialmente
   Math = Math;
 
   // Filtros
@@ -51,6 +53,25 @@ export class MarketplaceComponent implements OnInit {
     console.log('🚀 Marketplace iniciado');
     this.cargarProductos();
     this.verificarEstadoVendedor();
+    this.cargarContadorCarrito(); // ← NUEVO
+  }
+
+  // ==================== NUEVO: Cargar contador del carrito ====================
+  cargarContadorCarrito(): void {
+    if (this.authService.isAuthenticated()) {
+      this.cartService.cartItemsCountObservable.subscribe({
+        next: (count) => {
+          this.cartItems = count;
+          console.log('🛒 Items en carrito:', count);
+        },
+        error: (error) => {
+          console.error('❌ Error al cargar contador:', error);
+        },
+      });
+
+      // Cargar el contador inicial
+      this.cartService.getCartItemsCount().subscribe();
+    }
   }
 
   cargarProductos(): void {
@@ -76,7 +97,6 @@ export class MarketplaceComponent implements OnInit {
       next: (response: ProductsResponse) => {
         console.log('✅ Respuesta recibida:', response);
 
-        // Asignar productos
         this.productos = response.products || [];
         this.productosFiltrados = response.products || [];
         this.totalProductos = response.total || 0;
@@ -84,28 +104,21 @@ export class MarketplaceComponent implements OnInit {
 
         console.log(`✅ ${this.productosFiltrados.length} productos cargados`);
 
-        // 🎨 DELAY DE 2 SEGUNDOS para mostrar el spinner
         setTimeout(() => {
           this.cargando = false;
           this.cdr.detectChanges();
           console.log('🎉 Productos mostrados después de 2 segundos');
-        }, 2000); // ← 2000ms = 2 segundos
+        }, 2000);
       },
       error: (error) => {
         console.error('❌ ERROR:', error);
-
-        // En caso de error, mostrar inmediatamente (sin delay)
         this.cargando = false;
         this.productos = [];
         this.productosFiltrados = [];
         this.totalProductos = 0;
         this.totalPaginas = 0;
         this.cdr.detectChanges();
-
         this.mostrarNotificacion('Error al cargar productos');
-      },
-      complete: () => {
-        console.log('🏁 Observable completado');
       },
     });
   }
@@ -260,9 +273,33 @@ export class MarketplaceComponent implements OnInit {
     }
   }
 
+  // ==================== ACTUALIZADO: Agregar al carrito con backend ====================
   agregarAlCarrito(producto: Product): void {
-    this.cartItems++;
-    this.mostrarNotificacion(`"${producto.titulo}" agregado al carrito`);
+    if (!this.authService.isAuthenticated()) {
+      this.mostrarNotificacion('Debes iniciar sesión para agregar productos al carrito');
+      return;
+    }
+
+    if (producto.stock === 0) {
+      this.mostrarNotificacion('Producto sin stock disponible');
+      return;
+    }
+
+    console.log('🛒 Agregando al carrito:', producto.titulo);
+
+    this.cartService.addToCart(producto.id, 1).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.mostrarNotificacion(`"${producto.titulo}" agregado al carrito`);
+          console.log('✅ Producto agregado:', response);
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al agregar al carrito:', error);
+        const mensaje = error.error?.message || 'Error al agregar el producto al carrito';
+        this.mostrarNotificacion(mensaje);
+      },
+    });
   }
 
   onImgError(event: Event): void {
