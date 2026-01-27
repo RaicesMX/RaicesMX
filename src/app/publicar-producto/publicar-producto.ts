@@ -26,7 +26,7 @@ export class PublicarProducto implements OnInit, AfterViewInit {
   marcador: maplibregl.Marker | null = null;
 
   // Configuración
-  API_URL = 'http://localhost:3000';
+  API_URL = environment.apiUrl;
   MAPTILER_API_KEY = environment.maptilerApiKey;
 
   // Estados de carga
