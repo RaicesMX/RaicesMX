@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../service/auth.service';
-import { environment } from '../../enviroments/enviroment';
+import { environment } from '../../environments/environment';
 
 /**
  * Componente de Login
