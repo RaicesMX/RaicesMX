@@ -813,3 +813,283 @@
     color: #d4af37; // Oro mexicano
   }
 }
+
+/* ========================================
+   SPINNER MEJORADO CON TEMATICA MEXICANA
+   Agregar al final de marketplace.scss
+   ======================================== */
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  min-height: 400px;
+
+  .spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 2rem;
+
+    /* Spinner principal con colores mexicanos */
+    &::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 4px solid transparent;
+      border-top-color: #9d2235; /* Rojo mexicano */
+      border-radius: 50%;
+      animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+
+    /* Segundo círculo con dorado */
+    &::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      top: 10px;
+      left: 10px;
+      border: 4px solid transparent;
+      border-top-color: #c99e10; /* Dorado mexicano */
+      border-radius: 50%;
+      animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
+    }
+  }
+
+  /* Icono de artesanía en el centro */
+  .spinner-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  /* Texto de carga */
+  p {
+    color: #666;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    animation: fadeInOut 2s ease-in-out infinite;
+  }
+
+  /* Puntos animados */
+  .loading-dots {
+    display: inline-block;
+    margin-left: 0.5rem;
+
+    span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #9d2235;
+      border-radius: 50%;
+      margin: 0 3px;
+      animation: bounce 1.4s infinite ease-in-out;
+
+      &:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+
+      &:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+    }
+  }
+
+  /* Mensaje descriptivo */
+  .loading-message {
+    margin-top: 1rem;
+    color: #999;
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+}
+
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes fadeInOut {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .loading-state {
+    padding: 3rem 1rem;
+    min-height: 300px;
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+
+      &::after {
+        width: 45px;
+        height: 45px;
+        top: 7.5px;
+        left: 7.5px;
+      }
+    }
+
+    .spinner-icon {
+      font-size: 1.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+}
+
+/* ========================================
+   SPINNER SIMPLE - RAÍCESMX
+   Agregar al final de marketplace.scss
+   ======================================== */
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  min-height: 400px;
+
+  /* Spinner circular simple */
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #0e0e0e;
+    border-top: 4px solid #9d2235;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Texto de carga */
+  p {
+    color: #000000;
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  /* Puntos animados */
+  .loading-dots {
+    display: inline-block;
+
+    span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #9d2235;
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: bounce 1.4s infinite ease-in-out both;
+
+      &:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+
+      &:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+    }
+  }
+
+  /* Mensaje opcional */
+  .loading-message {
+    display: block;
+    margin-top: 1rem;
+    color: #0a0a0a;
+    font-size: 0.875rem;
+  }
+}
+
+/* Animación de rotación */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animación de puntos */
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .loading-state {
+    padding: 3rem 1.5rem;
+    min-height: 300px;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}

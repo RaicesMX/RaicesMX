@@ -1,50 +1,9 @@
 // src/app/marketplace/marketplace.component.ts
-import { Component, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../service/auth.service';
-import { ProductsService } from '../service/products.service'; // 👈 IMPORTAR
-
-// ✨ NUEVA INTERFAZ basada en tu backend
-interface ProductoAPI {
-  id: number;
-  titulo: string;
-  descripcion: string;
-  precio: number;
-  stock: number;
-  unidad: string;
-  estado: string;
-  municipio: string;
-  vistas: number;
-  ventas: number;
-  createdAt: string;
-  images: Array<{
-    id: number;
-    imageUrl: string; // 👈 Cambio de "url" a "imageUrl"
-    publicId: string;
-    orden: number;
-  }>;
-  category: {
-    id: number;
-    nombre: string;
-    icono: string;
-  };
-  seller: {
-    id: number;
-    fullName: string;
-    email: string;
-  };
-}
-
-// Interfaz para la respuesta paginada del backend
-interface ProductosResponse {
-  success: boolean;
-  count: number;
-  total: number;
-  page: number;
-  limit: number;
-  products: ProductoAPI[];
-}
+import { ProductsService, Product, ProductsResponse } from '../service/products.service';
 
 @Component({
   selector: 'app-marketplace',
@@ -55,29 +14,30 @@ interface ProductosResponse {
 })
 export class MarketplaceComponent implements OnInit {
   @ViewChild('productosSection') productosSection!: ElementRef;
-  Math = Math; // ✅ Permite usar Math en el template
 
   private authService = inject(AuthService);
-  private productsService = inject(ProductsService); // 👈 INYECTAR SERVICIO
+  private productsService = inject(ProductsService);
+  private cdr = inject(ChangeDetectorRef);
 
-  // ========== PRODUCTOS DE LA API ==========
-  productos: ProductoAPI[] = [];
-  productosFiltrados: ProductoAPI[] = [];
+  // Productos
+  productos: Product[] = [];
+  productosFiltrados: Product[] = [];
 
-  // ========== PAGINACIÓN ==========
+  // Paginación
   paginaActual = 1;
-  productosPorPagina = 12; // Coincide con el default del backend
+  productosPorPagina = 12;
   totalProductos = 0;
   totalPaginas = 0;
 
-  // ========== ESTADOS ==========
+  // Estados
   cargando = true;
   filtroActivo = '';
   mostrarCTAVendedor = true;
   usuarioAutenticado = false;
   cartItems = 3;
+  Math = Math;
 
-  // ========== FILTROS AVANZADOS ==========
+  // Filtros
   filtrosActivos = {
     categoryId: undefined as number | undefined,
     estado: undefined as string | undefined,
@@ -87,145 +47,132 @@ export class MarketplaceComponent implements OnInit {
     ordenar: 'recientes' as 'recientes' | 'precio_asc' | 'precio_desc' | 'mas_vendidos',
   };
 
-  // ========== LIFECYCLE HOOKS ==========
   ngOnInit(): void {
+    console.log('🚀 Marketplace iniciado');
     this.cargarProductos();
     this.verificarEstadoVendedor();
   }
 
-  // ========== CARGAR PRODUCTOS DESDE API ==========
-  /**
-   * Carga productos desde el backend con paginación
-   */
   cargarProductos(): void {
+    console.log('📦 Iniciando carga de productos...');
     this.cargando = true;
+    this.cdr.detectChanges();
 
-    // Construir parámetros de consulta
     const params: any = {
       page: this.paginaActual,
       limit: this.productosPorPagina,
       ordenar: this.filtrosActivos.ordenar,
     };
 
-    // Agregar filtros opcionales solo si tienen valor
-    if (this.filtrosActivos.categoryId) {
-      params.categoryId = this.filtrosActivos.categoryId;
-    }
-    if (this.filtrosActivos.estado) {
-      params.estado = this.filtrosActivos.estado;
-    }
-    if (this.filtrosActivos.minPrecio) {
-      params.minPrecio = this.filtrosActivos.minPrecio;
-    }
-    if (this.filtrosActivos.maxPrecio) {
-      params.maxPrecio = this.filtrosActivos.maxPrecio;
-    }
-    if (this.filtrosActivos.search) {
-      params.search = this.filtrosActivos.search;
-    }
+    if (this.filtrosActivos.categoryId) params.categoryId = this.filtrosActivos.categoryId;
+    if (this.filtrosActivos.estado) params.estado = this.filtrosActivos.estado;
+    if (this.filtrosActivos.minPrecio) params.minPrecio = this.filtrosActivos.minPrecio;
+    if (this.filtrosActivos.maxPrecio) params.maxPrecio = this.filtrosActivos.maxPrecio;
+    if (this.filtrosActivos.search) params.search = this.filtrosActivos.search;
+
+    console.log('🔍 Parámetros:', params);
 
     this.productsService.getProducts(params).subscribe({
-      next: (response: ProductosResponse) => {
-        this.productos = response.products;
-        this.productosFiltrados = response.products;
-        this.totalProductos = response.total;
-        this.totalPaginas = Math.ceil(response.total / this.productosPorPagina);
-        this.cargando = false;
+      next: (response: ProductsResponse) => {
+        console.log('✅ Respuesta recibida:', response);
 
-        console.log(
-          `✅ ${response.count} productos cargados (Página ${response.page}/${this.totalPaginas})`,
-        );
+        // Asignar productos
+        this.productos = response.products || [];
+        this.productosFiltrados = response.products || [];
+        this.totalProductos = response.total || 0;
+        this.totalPaginas = Math.ceil((response.total || 0) / this.productosPorPagina);
+
+        console.log(`✅ ${this.productosFiltrados.length} productos cargados`);
+
+        // 🎨 DELAY DE 2 SEGUNDOS para mostrar el spinner
+        setTimeout(() => {
+          this.cargando = false;
+          this.cdr.detectChanges();
+          console.log('🎉 Productos mostrados después de 2 segundos');
+        }, 2000); // ← 2000ms = 2 segundos
       },
       error: (error) => {
-        console.error('❌ Error al cargar productos:', error);
+        console.error('❌ ERROR:', error);
+
+        // En caso de error, mostrar inmediatamente (sin delay)
         this.cargando = false;
-        this.mostrarNotificacion('Error al cargar productos. Intenta de nuevo.');
+        this.productos = [];
+        this.productosFiltrados = [];
+        this.totalProductos = 0;
+        this.totalPaginas = 0;
+        this.cdr.detectChanges();
+
+        this.mostrarNotificacion('Error al cargar productos');
+      },
+      complete: () => {
+        console.log('🏁 Observable completado');
       },
     });
   }
 
-  // ========== PAGINACIÓN ==========
-  /**
-   * Cambia a una página específica
-   */
   irAPagina(pagina: number): void {
     if (pagina < 1 || pagina > this.totalPaginas) return;
 
+    console.log(`📄 Navegando a página ${pagina}`);
     this.paginaActual = pagina;
     this.cargarProductos();
     this.scrollToProductos();
   }
 
-  /**
-   * Página anterior
-   */
   paginaAnterior(): void {
     if (this.paginaActual > 1) {
       this.irAPagina(this.paginaActual - 1);
     }
   }
 
-  /**
-   * Página siguiente
-   */
   paginaSiguiente(): void {
     if (this.paginaActual < this.totalPaginas) {
       this.irAPagina(this.paginaActual + 1);
     }
   }
 
-  /**
-   * Genera array de números de página para mostrar
-   * Ejemplo: [1, 2, 3, '...', 10] o [1, '...', 5, 6, 7, '...', 10]
-   */
   get paginasVisibles(): (number | string)[] {
     const paginas: (number | string)[] = [];
-    const maxVisible = 5; // Máximo de botones de página visibles
+    const maxVisible = 5;
 
     if (this.totalPaginas <= maxVisible + 2) {
-      // Si hay pocas páginas, mostrar todas
       for (let i = 1; i <= this.totalPaginas; i++) {
         paginas.push(i);
       }
     } else {
-      // Siempre mostrar la primera página
       paginas.push(1);
 
-      // Calcular rango alrededor de la página actual
       let inicio = Math.max(2, this.paginaActual - 1);
       let fin = Math.min(this.totalPaginas - 1, this.paginaActual + 1);
 
-      // Agregar '...' si es necesario
       if (inicio > 2) {
         paginas.push('...');
       }
 
-      // Agregar páginas centrales
       for (let i = inicio; i <= fin; i++) {
         paginas.push(i);
       }
 
-      // Agregar '...' si es necesario
       if (fin < this.totalPaginas - 1) {
         paginas.push('...');
       }
 
-      // Siempre mostrar la última página
       paginas.push(this.totalPaginas);
     }
 
     return paginas;
   }
 
-  // ========== FILTROS RÁPIDOS ==========
   filtrarDestacados(): void {
+    console.log('🔥 Filtro: Destacados');
     this.filtroActivo = 'destacados';
     this.filtrosActivos.ordenar = 'mas_vendidos';
-    this.paginaActual = 1; // Reset a página 1
+    this.paginaActual = 1;
     this.cargarProductos();
   }
 
   filtrarNovedades(): void {
+    console.log('✨ Filtro: Novedades');
     this.filtroActivo = 'nuevos';
     this.filtrosActivos.ordenar = 'recientes';
     this.paginaActual = 1;
@@ -233,15 +180,15 @@ export class MarketplaceComponent implements OnInit {
   }
 
   filtrarOfertas(): void {
+    console.log('💰 Filtro: Ofertas');
     this.filtroActivo = 'ofertas';
-    // Aquí podrías agregar lógica para filtrar por descuentos
-    // Por ahora ordenamos por precio descendente
     this.filtrosActivos.ordenar = 'precio_desc';
     this.paginaActual = 1;
     this.cargarProductos();
   }
 
   filtrarPorPrecio(): void {
+    console.log('💵 Filtro: Por precio');
     this.filtroActivo = 'precio';
     this.filtrosActivos.ordenar = 'precio_asc';
     this.paginaActual = 1;
@@ -249,6 +196,7 @@ export class MarketplaceComponent implements OnInit {
   }
 
   limpiarFiltros(): void {
+    console.log('🔄 Limpiando filtros');
     this.filtroActivo = '';
     this.filtrosActivos = {
       categoryId: undefined,
@@ -262,23 +210,15 @@ export class MarketplaceComponent implements OnInit {
     this.cargarProductos();
   }
 
-  // ========== UTILIDADES PARA PRODUCTOS ==========
-  /**
-   * Obtiene la imagen principal del producto
-   */
-  getImagenProducto(producto: ProductoAPI): string {
+  getImagenProducto(producto: Product): string {
     if (producto.images && producto.images.length > 0) {
-      // Ordenar por 'orden' y tomar la primera
       const imagenPrincipal = producto.images.sort((a, b) => a.orden - b.orden)[0];
-      return imagenPrincipal.imageUrl; // 👈 Usar imageUrl en lugar de url
+      return imagenPrincipal.imageUrl;
     }
     return 'assets/images/placeholder-artesania.jpg';
   }
 
-  /**
-   * Verifica si un producto es nuevo (creado en los últimos 7 días)
-   */
-  esProductoNuevo(producto: ProductoAPI): boolean {
+  esProductoNuevo(producto: Product): boolean {
     const fechaCreacion = new Date(producto.createdAt);
     const ahora = new Date();
     const diferenciaDias = Math.floor(
@@ -287,14 +227,10 @@ export class MarketplaceComponent implements OnInit {
     return diferenciaDias <= 7;
   }
 
-  /**
-   * Verifica si un producto es popular (más de 10 ventas)
-   */
-  esProductoPopular(producto: ProductoAPI): boolean {
+  esProductoPopular(producto: Product): boolean {
     return producto.ventas >= 10;
   }
 
-  // ========== VENDEDOR CTA ==========
   verificarEstadoVendedor(): void {
     if (!this.authService.isAuthenticated()) {
       this.mostrarCTAVendedor = true;
@@ -315,7 +251,6 @@ export class MarketplaceComponent implements OnInit {
     });
   }
 
-  // ========== FUNCIONALIDADES ==========
   scrollToProductos(): void {
     if (this.productosSection) {
       this.productosSection.nativeElement.scrollIntoView({
@@ -325,13 +260,14 @@ export class MarketplaceComponent implements OnInit {
     }
   }
 
-  agregarAlCarrito(producto: ProductoAPI): void {
+  agregarAlCarrito(producto: Product): void {
     this.cartItems++;
     this.mostrarNotificacion(`"${producto.titulo}" agregado al carrito`);
   }
 
   onImgError(event: Event): void {
     const target = event.target as HTMLImageElement;
+    console.warn('⚠️ Error cargando imagen:', target.src);
     target.src = 'assets/images/placeholder-artesania.jpg';
     target.onerror = null;
   }
@@ -356,13 +292,11 @@ export class MarketplaceComponent implements OnInit {
     const notification = document.createElement('div');
     notification.textContent = mensaje;
 
-    const colorPrimary = '#9D2235';
-
     notification.style.cssText = `
       position: fixed;
       top: 20px;
       right: 20px;
-      background: ${colorPrimary};
+      background: #9D2235;
       color: white;
       padding: 1rem 1.5rem;
       border-radius: 8px;
